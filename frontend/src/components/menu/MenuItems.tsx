@@ -1,213 +1,212 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Search, Plus, Grid, List } from 'lucide-react';
 
+import{
+    getAllMenuItems,
+    getMenuByCategory,
+    searchMenuItems,
+    toggleMenuAvailability,
+} from "../services/menuService";
+
 interface MenuItem {
-  id: number;
-  name: string;
-  price: number;
-  category: string;
-  available: boolean;
-  imageColor: string;
+    id: number;
+    name: string;
+    price: number;
+    category: string;
+    available: boolean;
+    imageColor?: string; // UI-only
 }
 
-const mockItems: MenuItem[] = [
-  { id: 1, name: 'Cappuccino', price: 120, category: 'Coffee', available: true, imageColor: 'from-[#6C63FF] to-[#93E5AB]' },
-  { id: 2, name: 'Latte', price: 130, category: 'Coffee', available: true, imageColor: 'from-[#FFC8A2] to-[#FFD66C]' },
-  { id: 3, name: 'Espresso', price: 90, category: 'Coffee', available: true, imageColor: 'from-[#93E5AB] to-[#6C63FF]' },
-  { id: 4, name: 'Croissant', price: 80, category: 'Snacks', available: false, imageColor: 'from-[#FFD66C] to-[#FFC8A2]' },
-  { id: 5, name: 'Sandwich', price: 150, category: 'Snacks', available: true, imageColor: 'from-[#6C63FF] to-[#FFC8A2]' },
-  { id: 6, name: 'Cake Slice', price: 110, category: 'Desserts', available: true, imageColor: 'from-[#FFB3D9] to-[#FFD66C]' },
-];
-
 export default function MenuItems() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [items, setItems] = useState<MenuItem[]>(mockItems);
-  const [selectedCategory, setSelectedCategory] = useState('All');
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [items, setItems] = useState<MenuItem[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [loading, setLoading] = useState(true);
 
-  const categories = ['All', 'Coffee', 'Snacks', 'Beverages', 'Desserts'];
+    const categories = ['All', 'Coffee', 'Snacks', 'Desserts'];
 
-  const filteredItems = items.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+    /* ================= LOAD MENU ================= */
+    useEffect(() => {
+        fetchMenu();
+    }, []);
 
-  const toggleAvailability = (id: number) => {
-    setItems(items.map(item => 
-      item.id === id ? { ...item, available: !item.available } : item
-    ));
-  };
+    const fetchMenu = async () => {
+        try {
+            setLoading(true);
+            const data = await getAllMenuItems();
+            setItems(data);
+        } catch (err) {
+            console.error("Failed to load menu", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  return (
-    <div className="space-y-6">
-      {/* Controls */}
-      <div className="flex flex-col md:flex-row gap-4">
-        {/* Search */}
-        <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search menu items..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-4 bg-white border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30 transition-all shadow-soft-sm"
-          />
-        </div>
 
-        {/* View Mode Toggle */}
-        <div className="flex gap-2">
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setViewMode('grid')}
-            className={`
-              w-12 h-12 rounded-xl border border-border flex items-center justify-center transition-all
-              ${viewMode === 'grid' ? 'bg-[#6C63FF] text-white' : 'bg-white hover:bg-muted/50'}
-            `}
-          >
-            <Grid className="w-5 h-5" />
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setViewMode('list')}
-            className={`
-              w-12 h-12 rounded-xl border border-border flex items-center justify-center transition-all
-              ${viewMode === 'list' ? 'bg-[#6C63FF] text-white' : 'bg-white hover:bg-muted/50'}
-            `}
-          >
-            <List className="w-5 h-5" />
-          </motion.button>
-        </div>
+    /* ================= CATEGORY FILTER ================= */
+    const handleCategoryChange = async (category: string) => {
+        try {
+            setSelectedCategory(category);
+            setSearchQuery('');
 
-        {/* Add Item Button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="h-12 px-6 bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white rounded-xl flex items-center gap-2 shadow-soft hover:shadow-hover transition-all"
-        >
-          <Plus className="w-5 h-5" />
-          <span>Add Item</span>
-        </motion.button>
-      </div>
+            if (category === 'All') {
+                await fetchMenu();
+            } else {
+                const data = await getMenuByCategory(category);
+                setItems(data);
+            }
+        } catch (err) {
+            console.error("Category fetch failed", err);
+        }
+    };
 
-      {/* Category Filters */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        {categories.map(category => (
-          <motion.button
-            key={category}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setSelectedCategory(category)}
-            className={`
-              px-4 py-2 rounded-lg whitespace-nowrap transition-all
-              ${selectedCategory === category
-                ? 'bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white shadow-soft'
-                : 'bg-white border border-border hover:border-[#6C63FF]/30'
-              }
-            `}
-          >
-            {category}
-          </motion.button>
-        ))}
-      </div>
 
-      {/* Items Display */}
-      {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredItems.map((item, index) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="bg-white rounded-2xl border border-border overflow-hidden shadow-soft hover:shadow-hover transition-all"
-            >
-              {/* Image Placeholder */}
-              <div className={`h-40 bg-gradient-to-br ${item.imageColor} flex items-center justify-center relative`}>
-                <span className="text-white text-4xl">☕</span>
-                {!item.available && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <span className="text-white text-sm px-3 py-1 bg-red-500 rounded-full">Out of Stock</span>
-                  </div>
-                )}
-              </div>
+    /* ================= SEARCH ================= */
+    const handleSearch = async (value: string) => {
+        try {
+            setSearchQuery(value);
 
-              {/* Content */}
-              <div className="p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <h4>{item.name}</h4>
-                    <p className="text-sm text-muted-foreground">{item.category}</p>
-                  </div>
-                  <p className="text-[#6C63FF]">₹{item.price}</p>
-                </div>
+            if (!value.trim()) {
+                await fetchMenu();
+            } else {
+                const data = await searchMenuItems(value);
+                setItems(data);
+            }
+        } catch (err) {
+            console.error("Search failed", err);
+        }
+    };
 
-                {/* Availability Toggle */}
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
-                  <span className="text-sm text-muted-foreground">Available</span>
-                  <button
-                    onClick={() => toggleAvailability(item.id)}
-                    className={`
-                      relative w-12 h-6 rounded-full transition-all
-                      ${item.available ? 'bg-[#4CAF50]' : 'bg-muted'}
-                    `}
-                  >
-                    <motion.div
-                      animate={{ x: item.available ? 24 : 0 }}
-                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                      className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-soft"
+
+    /* ================= TOGGLE AVAILABILITY ================= */
+    const toggleAvailability = async (id: number) => {
+        await toggleMenuAvailability(id);
+        fetchMenu(); // refresh list
+    };
+
+    /* ================= UI ================= */
+    return (
+        <div className="space-y-6">
+
+            {/* Controls */}
+            <div className="flex flex-col md:flex-row gap-4">
+                {/* Search */}
+                <div className="flex-1 relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <input
+                        type="text"
+                        placeholder="Search menu items..."
+                        value={searchQuery}
+                        onChange={(e) => handleSearch(e.target.value)}
+                        className="w-full h-12 pl-12 pr-4 bg-white border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30 shadow-soft-sm"
                     />
-                  </button>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      ) : (
-        <div className="bg-white rounded-2xl border border-border shadow-soft overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-muted/30">
-              <tr>
-                <th className="text-left p-4">Name</th>
-                <th className="text-left p-4">Category</th>
-                <th className="text-left p-4">Price</th>
-                <th className="text-left p-4">Available</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredItems.map((item, index) => (
-                <motion.tr
-                  key={item.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="border-t border-border hover:bg-muted/20 transition-colors"
-                >
-                  <td className="p-4">{item.name}</td>
-                  <td className="p-4 text-muted-foreground">{item.category}</td>
-                  <td className="p-4 text-[#6C63FF]">₹{item.price}</td>
-                  <td className="p-4">
+
+                {/* View Toggle */}
+                <div className="flex gap-2">
                     <button
-                      onClick={() => toggleAvailability(item.id)}
-                      className={`
-                        relative w-12 h-6 rounded-full transition-all
-                        ${item.available ? 'bg-[#4CAF50]' : 'bg-muted'}
-                      `}
+                        onClick={() => setViewMode('grid')}
+                        className={`w-12 h-12 rounded-xl border ${
+                            viewMode === 'grid' ? 'bg-[#6C63FF] text-white' : 'bg-white'
+                        }`}
                     >
-                      <motion.div
-                        animate={{ x: item.available ? 24 : 0 }}
-                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                        className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-soft"
-                      />
+                        <Grid />
                     </button>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
+                    <button
+                        onClick={() => setViewMode('list')}
+                        className={`w-12 h-12 rounded-xl border ${
+                            viewMode === 'list' ? 'bg-[#6C63FF] text-white' : 'bg-white'
+                        }`}
+                    >
+                        <List />
+                    </button>
+                </div>
+
+                {/* Add Item (next phase) */}
+                <button className="h-12 px-6 bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white rounded-xl flex items-center gap-2">
+                    <Plus /> Add Item
+                </button>
+            </div>
+
+            {/* Categories */}
+            <div className="flex gap-2 overflow-x-auto">
+                {categories.map(cat => (
+                    <button
+                        key={cat}
+                        onClick={() => handleCategoryChange(cat)}
+                        className={`px-4 py-2 rounded-lg ${
+                            selectedCategory === cat
+                                ? 'bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white'
+                                : 'bg-white border'
+                        }`}
+                    >
+                        {cat}
+                    </button>
+                ))}
+            </div>
+
+            {/* Loading */}
+            {loading && <p className="text-muted-foreground">Loading menu...</p>}
+
+            {/* GRID VIEW */}
+            {viewMode === 'grid' && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {items.map(item => (
+                        <div key={item.id} className="bg-white rounded-xl border shadow-soft">
+                            <div className="p-4">
+                                <h4>{item.name}</h4>
+                                <p className="text-sm text-muted-foreground">{item.category}</p>
+                                <p className="text-[#6C63FF] mt-1">₹{item.price}</p>
+
+                                <div className="flex justify-between items-center mt-4">
+                                    <span>Available</span>
+                                    <button
+                                        onClick={() => toggleAvailability(item.id)}
+                                        className={`w-12 h-6 rounded-full ${
+                                            item.available ? 'bg-green-500' : 'bg-muted'
+                                        }`}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* LIST VIEW */}
+            {viewMode === 'list' && (
+                <div className="bg-white rounded-xl border shadow-soft">
+                    <table className="w-full">
+                        <thead>
+                        <tr className="bg-muted/30">
+                            <th className="p-4 text-left">Name</th>
+                            <th className="p-4 text-left">Category</th>
+                            <th className="p-4 text-left">Price</th>
+                            <th className="p-4 text-left">Available</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {items.map(item => (
+                            <tr key={item.id} className="border-t">
+                                <td className="p-4">{item.name}</td>
+                                <td className="p-4">{item.category}</td>
+                                <td className="p-4">₹{item.price}</td>
+                                <td className="p-4">
+                                    <button
+                                        onClick={() => toggleAvailability(item.id)}
+                                        className={`w-12 h-6 rounded-full ${
+                                            item.available ? 'bg-green-500' : 'bg-muted'
+                                        }`}
+                                    />
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 }

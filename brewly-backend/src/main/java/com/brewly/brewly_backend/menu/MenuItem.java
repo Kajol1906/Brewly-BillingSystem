@@ -19,7 +19,11 @@ public class MenuItem {
 
     private String name;
     private String price;
-    private String category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MenuCategory category;
+
     private String imageUrl;
 
     private boolean available;
