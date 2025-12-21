@@ -1,6 +1,8 @@
 package com.brewly.brewly_backend.menu;
 
 
+import com.brewly.brewly_backend.recipe.Recipe;
+import com.brewly.brewly_backend.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,7 @@ import java.util.List;
 public class MenuItemService {
 
     private final MenuItemRepository repository;
+    private final RecipeRepository recipeRepository;
 
     public List<MenuItem> getAllItems() {
         return repository.findAll();
@@ -41,10 +44,26 @@ public class MenuItemService {
         return repository.save(item);
     }
     public void updateAvailabilityBasedOnStock(MenuItem item) {
-        // TODO (Phase 2):
-        // 1. Fetch recipe by menu item
-        // 2. Check ingredient stock
-        // 3. If any ingredient insufficient → setAvailable(false)
-        // 4. Else → setAvailable(true)
+        // 1️⃣ Get all ingredients required for this menu item
+        List<Recipe> recipes = recipeRepository.findByMenuItem(item);
+
+        boolean available = true;
+
+        // 2️⃣ Check ingredient stock
+        for (Recipe recipe : recipes) {
+
+            double requiredQty = recipe.getRequiredQuantity();
+            double availableQty = recipe.getIngredient().getQuantity();
+
+            // ❌ If any ingredient is insufficient
+            if (availableQty < requiredQty) {
+                available = false;
+                break;
+            }
+        }
+
+        // 3️⃣ Update availability
+        item.setAvailable(available);
+        repository.save(item);
     }
 }

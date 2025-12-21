@@ -14,7 +14,7 @@ public class IngredientService {
     public Ingredient addIngredient(Ingredient ingredient) {
 
         //prevent duplicate ingredients
-       ingredientRepository.findByName(ingredient.getName())
+       ingredientRepository.findByNameIgnoreCase(ingredient.getName())
                .ifPresent(i -> {
                    throw new RuntimeException("Ingredient already exists");
                });
