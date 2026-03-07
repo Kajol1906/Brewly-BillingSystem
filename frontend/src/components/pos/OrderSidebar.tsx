@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { X, Search, Plus, Minus, CreditCard, Percent, Receipt, Split } from 'lucide-react';
 import type { Table } from './POSScreen';
 import { getAvailableMenuItems, getCategories, MenuItem } from '../../services/menuService';
+import { API_BASE } from '../../config/api';
 
 
 interface OrderSidebarProps {
@@ -31,7 +32,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
 
   useEffect(() => {
     if (table.status === 'occupied') {
-      fetch(`http://localhost:8080/api/pos/table/${table.id}/active`, {
+      fetch(`${API_BASE}/api/pos/table/${table.id}/active`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
@@ -62,7 +63,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
   const submitOrder = async () => {
     try {
       for (const item of cart) {
-        const response = await fetch("http://localhost:8080/api/pos/order", {
+        const response = await fetch(`${API_BASE}/api/pos/order`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -98,7 +99,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
       // 2. Generate Bill and Clear Table
       const finalAmount = total;
 
-      const response = await fetch("http://localhost:8080/api/billing/generate", {
+      const response = await fetch(`${API_BASE}/api/billing/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

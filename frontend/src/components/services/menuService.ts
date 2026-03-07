@@ -1,10 +1,11 @@
 import axios from "axios";
+import { API_BASE } from '../../config/api';
 
 /**
  * 🔹 Base API URL
  * Change only if backend URL changes
  */
-const API_URL = "http://localhost:8080/api/menu";
+const API_URL = `${API_BASE}/api/menu`;
 
 /**
  * 🔹 Helper to get JWT token

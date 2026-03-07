@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_BASE } from '../../config/api';
 
-const API_URL = "http://localhost:8080/api/inventory";
+const API_URL = `${API_BASE}/api/inventory`;
 
 export interface Ingredient {
     id: number;

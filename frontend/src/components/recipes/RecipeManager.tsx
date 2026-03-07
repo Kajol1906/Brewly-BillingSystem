@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Plus } from "lucide-react";
+import { API_BASE } from '../../config/api';
 
 /* ================= TYPES ================= */
 
@@ -23,7 +24,7 @@ interface RecipeIngredient {
 
 /* ================= API SETUP ================= */
 
-const API = "http://localhost:8080/api";
+const API = `${API_BASE}/api`;
 
 const authHeader = () => ({
     headers: {
@@ -173,20 +174,20 @@ export default function RecipeManager() {
                 <div className="bg-card border rounded-xl overflow-hidden">
                     <table className="w-full">
                         <thead className="bg-muted/30">
-                        <tr>
-                            <th className="p-3 text-left">Ingredient</th>
-                            <th className="p-3 text-left">Quantity</th>
-                        </tr>
+                            <tr>
+                                <th className="p-3 text-left">Ingredient</th>
+                                <th className="p-3 text-left">Quantity</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {recipeList.map((ri) => (
-                            <tr key={ri.id} className="border-t">
-                                <td className="p-3">{ri.ingredient.name}</td>
-                                <td className="p-3">
-                                    {ri.quantity} {ri.ingredient.unit}
-                                </td>
-                            </tr>
-                        ))}
+                            {recipeList.map((ri) => (
+                                <tr key={ri.id} className="border-t">
+                                    <td className="p-3">{ri.ingredient.name}</td>
+                                    <td className="p-3">
+                                        {ri.quantity} {ri.ingredient.unit}
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>

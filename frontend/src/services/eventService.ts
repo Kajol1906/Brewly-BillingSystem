@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_BASE } from '../config/api';
 
 // Update if backend URL changes
-const API_URL = "http://localhost:8080/api/events";
+const API_URL = `${API_BASE}/api/events`;
 
 export interface Event {
     id?: number;

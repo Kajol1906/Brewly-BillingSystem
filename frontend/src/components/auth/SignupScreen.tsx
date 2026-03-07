@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import axios from "axios";
 import { motion } from "motion/react";
 import { Coffee, Mail, Lock, UserPlus, Building2, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import { API_BASE } from '../../config/api';
 
 const VALID_DOMAINS = [
     'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com',
@@ -77,7 +78,7 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
 
         try {
             const response = await axios.post(
-                "http://localhost:8080/api/auth/signup",
+                `${API_BASE}/api/auth/signup`,
                 { name, email, password }
             );
 
@@ -89,7 +90,7 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
     };
 
     const handleGoogleSignIn = () => {
-        window.location.href = "http://localhost:8080/api/auth/google";
+        window.location.href = `${API_BASE}/api/auth/google`;
     };
 
     return (
@@ -222,11 +223,10 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     onBlur={() => setEmailTouched(true)}
-                                    className={`w-full h-12 pl-12 pr-10 bg-muted/30 border rounded-xl focus:outline-none focus:ring-2 ${
-                                        emailTouched && email.length > 0 && !emailValid
+                                    className={`w-full h-12 pl-12 pr-10 bg-muted/30 border rounded-xl focus:outline-none focus:ring-2 ${emailTouched && email.length > 0 && !emailValid
                                             ? 'border-red-500 focus:ring-red-500/30'
                                             : 'border-border focus:ring-[#6C63FF]/30'
-                                    }`}
+                                        }`}
                                     required
                                 />
                                 {emailTouched && email.length > 0 && (
@@ -318,11 +318,10 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.6 }}
-                            className={`w-full h-12 rounded-xl shadow-soft flex items-center justify-center gap-2 transition-all ${
-                                canSubmit
+                            className={`w-full h-12 rounded-xl shadow-soft flex items-center justify-center gap-2 transition-all ${canSubmit
                                     ? 'bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white hover:shadow-hover cursor-pointer'
                                     : 'bg-muted text-muted-foreground cursor-not-allowed'
-                            }`}
+                                }`}
                         >
                             <UserPlus className="w-5 h-5" />
                             Create Account
@@ -347,10 +346,10 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
                             className="w-full h-12 bg-white dark:bg-muted border border-border rounded-xl shadow-sm hover:shadow-md flex items-center justify-center gap-3 transition-shadow"
                         >
                             <svg width="20" height="20" viewBox="0 0 48 48">
-                                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                                <path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.04 24.04 0 0 0 0 21.56l7.98-6.19z"/>
-                                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                                <path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.04 24.04 0 0 0 0 21.56l7.98-6.19z" />
+                                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
                             </svg>
                             <span className="font-medium text-foreground">Sign in with Google</span>
                         </motion.button>

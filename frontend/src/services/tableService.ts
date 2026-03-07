@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_BASE } from '../config/api';
 
-const API = "http://localhost:8080/api/tables";
+const API = `${API_BASE}/api/tables`;
 
 export interface Table {
     id: number;
