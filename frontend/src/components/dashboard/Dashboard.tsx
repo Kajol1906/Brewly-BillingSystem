@@ -42,24 +42,24 @@ export default function Dashboard() {
 
   const revenueLabel = period === 'today' ? "Today's Revenue"
     : period === 'yesterday' ? "Yesterday's Revenue"
-    : period === 'week' ? "This Week's Revenue"
-    : "This Month's Revenue";
+      : period === 'week' ? "This Week's Revenue"
+        : "This Month's Revenue";
 
   const ordersLabel = period === 'today' ? "Today's Orders"
     : period === 'yesterday' ? "Yesterday's Orders"
-    : period === 'week' ? "This Week's Orders"
-    : "This Month's Orders";
+      : period === 'week' ? "This Week's Orders"
+        : "This Month's Orders";
 
   const revenueTrend = metricsData
     ? metricsData.revenueChangePercent > 0 ? 'up' as const
       : metricsData.revenueChangePercent < 0 ? 'down' as const
-      : 'neutral' as const
+        : 'neutral' as const
     : 'neutral' as const;
 
   const ordersTrend = metricsData
     ? metricsData.ordersChangePercent > 0 ? 'up' as const
       : metricsData.ordersChangePercent < 0 ? 'down' as const
-      : 'neutral' as const
+        : 'neutral' as const
     : 'neutral' as const;
 
   const formatChange = (pct: number | undefined) => {
@@ -70,8 +70,8 @@ export default function Dashboard() {
 
   const prevLabel = period === 'today' ? 'vs yesterday'
     : period === 'yesterday' ? 'vs day before'
-    : period === 'week' ? 'vs last week'
-    : 'vs last month';
+      : period === 'week' ? 'vs last week'
+        : 'vs last month';
 
   const metrics = [
     {
@@ -120,8 +120,8 @@ export default function Dashboard() {
 
   const subtitle = period === 'today' ? "Here's what's happening today."
     : period === 'yesterday' ? "Here's how yesterday went."
-    : period === 'week' ? "Your performance this week."
-    : "Monthly overview at a glance.";
+      : period === 'week' ? "Your performance this week."
+        : "Monthly overview at a glance.";
 
   return (
     <div className="p-8 space-y-8">
@@ -142,11 +142,10 @@ export default function Dashboard() {
             <button
               key={p.value}
               onClick={() => setPeriod(p.value)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                period === p.value
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${period === p.value
                   ? 'bg-white text-[#6C63FF] shadow-sm border border-[#6C63FF]/20'
                   : 'text-muted-foreground hover:text-foreground'
-              }`}
+                }`}
             >
               {p.label}
             </button>
@@ -246,7 +245,7 @@ export default function Dashboard() {
                           }
                         })
                       );
-                      return Array.from(aggregated.entries()).map(([name, data], idx) => (
+                      return Array.from(aggregated.entries()).map(([name, data]) => (
                         <div
                           key={name}
                           style={{

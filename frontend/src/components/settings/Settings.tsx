@@ -129,182 +129,182 @@ export default function Settings() {
 
                 {/* ===== TOP ROW: PROFILE + PASSWORD ===== */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
-                {/* ===== PROFILE CARD ===== */}
-                <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                    style={{
-                        background: settings.theme === 'dark'
-                            ? 'linear-gradient(135deg, #1e293b, #0f172a)'
-                            : 'linear-gradient(135deg, #ffffff, #f8fafc)',
-                        borderRadius: '28px',
-                        border: settings.theme === 'dark' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)',
-                        boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
-                        overflow: 'hidden',
-                    }}
-                >
-                    {/* Profile Header Banner */}
-                    <div style={{
-                        background: 'linear-gradient(135deg, #6C63FF, #4F46E5, #7C3AED)',
-                        padding: '32px 36px 28px',
-                        position: 'relative',
-                        overflow: 'hidden',
-                    }}>
-                        {/* Decorative circles */}
-                        <div style={{ position: 'absolute', top: -30, right: -30, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
-                        <div style={{ position: 'absolute', bottom: -20, left: '40%', width: 80, height: 80, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
+                    {/* ===== PROFILE CARD ===== */}
+                    <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
+                        style={{
+                            background: settings.theme === 'dark'
+                                ? 'linear-gradient(135deg, #1e293b, #0f172a)'
+                                : 'linear-gradient(135deg, #ffffff, #f8fafc)',
+                            borderRadius: '28px',
+                            border: settings.theme === 'dark' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)',
+                            boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
+                            overflow: 'hidden',
+                        }}
+                    >
+                        {/* Profile Header Banner */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #6C63FF, #4F46E5, #7C3AED)',
+                            padding: '32px 36px 28px',
+                            position: 'relative',
+                            overflow: 'hidden',
+                        }}>
+                            {/* Decorative circles */}
+                            <div style={{ position: 'absolute', top: -30, right: -30, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
+                            <div style={{ position: 'absolute', bottom: -20, left: '40%', width: 80, height: 80, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', zIndex: 2 }}>
-                            {/* Store Avatar */}
-                            <div style={{
-                                width: 72, height: 72, borderRadius: '22px',
-                                background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                border: '2px solid rgba(255,255,255,0.2)',
-                                flexShrink: 0,
-                            }}>
-                                <Store style={{ width: 36, height: 36, color: '#fff' }} />
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
-                                    {settings.storeName || 'Your Store'}
-                                </h2>
-                                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', margin: '4px 0 0', fontWeight: 500 }}>
-                                    Store Profile
-                                </p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', zIndex: 2 }}>
+                                {/* Store Avatar */}
+                                <div style={{
+                                    width: 72, height: 72, borderRadius: '22px',
+                                    background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    border: '2px solid rgba(255,255,255,0.2)',
+                                    flexShrink: 0,
+                                }}>
+                                    <Store style={{ width: 36, height: 36, color: '#fff' }} />
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
+                                        {settings.storeName || 'Your Store'}
+                                    </h2>
+                                    <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', margin: '4px 0 0', fontWeight: 500 }}>
+                                        Store Profile
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Profile Fields */}
-                    <div style={{ padding: '8px 12px 12px' }}>
-                        {profileFields.map((field, index) => {
-                            const Icon = field.icon;
-                            const isEditing = editingField === field.key;
+                        {/* Profile Fields */}
+                        <div style={{ padding: '8px 12px 12px' }}>
+                            {profileFields.map((field, index) => {
+                                const Icon = field.icon;
+                                const isEditing = editingField === field.key;
 
-                            return (
-                                <motion.div
-                                    key={field.key}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.15 + index * 0.05 }}
-                                    style={{
-                                        display: 'flex', alignItems: 'center', gap: '16px',
-                                        padding: '18px 24px',
-                                        borderRadius: '16px',
-                                        background: isEditing
-                                            ? (settings.theme === 'dark' ? 'rgba(108, 99, 255, 0.08)' : 'rgba(108, 99, 255, 0.04)')
-                                            : 'transparent',
-                                        transition: 'all 0.2s ease',
-                                        borderBottom: index < profileFields.length - 1
-                                            ? (settings.theme === 'dark' ? '1px solid rgba(255,255,255,0.04)' : '1px solid rgba(0,0,0,0.04)')
-                                            : 'none',
-                                    }}
-                                    onMouseEnter={(e) => { if (!isEditing) e.currentTarget.style.background = settings.theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'; }}
-                                    onMouseLeave={(e) => { if (!isEditing) e.currentTarget.style.background = 'transparent'; }}
-                                >
-                                    {/* Icon */}
-                                    <div style={{
-                                        width: 44, height: 44, borderRadius: '14px',
-                                        background: settings.theme === 'dark' ? 'rgba(108, 99, 255, 0.12)' : 'rgba(108, 99, 255, 0.08)',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        flexShrink: 0,
-                                    }}>
-                                        <Icon style={{ width: 20, height: 20, color: '#6C63FF' }} />
-                                    </div>
-
-                                    {/* Label & Value */}
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                        <p style={{
-                                            fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase',
-                                            letterSpacing: '0.08em', margin: '0 0 3px',
-                                            color: settings.theme === 'dark' ? '#64748b' : '#94a3b8',
-                                        }}>
-                                            {field.label}
-                                        </p>
-                                        {isEditing ? (
-                                            <input
-                                                autoFocus
-                                                type={field.key === 'email' ? 'email' : 'text'}
-                                                value={editValue}
-                                                onChange={(e) => setEditValue(e.target.value)}
-                                                onKeyDown={(e) => {
-                                                    if (e.key === 'Enter') saveEdit(field.key);
-                                                    if (e.key === 'Escape') cancelEdit();
-                                                }}
-                                                style={{
-                                                    width: '100%', padding: '8px 14px', fontSize: '0.95rem', fontWeight: 600,
-                                                    background: settings.theme === 'dark' ? '#1e293b' : '#fff',
-                                                    color: settings.theme === 'dark' ? '#f1f5f9' : '#1e293b',
-                                                    border: '2px solid #6C63FF', borderRadius: '12px', outline: 'none',
-                                                }}
-                                            />
-                                        ) : (
-                                            <p style={{
-                                                fontSize: '0.95rem', fontWeight: 600, margin: 0,
-                                                color: settings.theme === 'dark' ? '#e2e8f0' : '#1e293b',
-                                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                            }}>
-                                                {field.value || '—'}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    {/* Edit / Save / Cancel Buttons */}
-                                    {field.key === 'email' ? (
+                                return (
+                                    <motion.div
+                                        key={field.key}
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: 0.15 + index * 0.05 }}
+                                        style={{
+                                            display: 'flex', alignItems: 'center', gap: '16px',
+                                            padding: '18px 24px',
+                                            borderRadius: '16px',
+                                            background: isEditing
+                                                ? (settings.theme === 'dark' ? 'rgba(108, 99, 255, 0.08)' : 'rgba(108, 99, 255, 0.04)')
+                                                : 'transparent',
+                                            transition: 'all 0.2s ease',
+                                            borderBottom: index < profileFields.length - 1
+                                                ? (settings.theme === 'dark' ? '1px solid rgba(255,255,255,0.04)' : '1px solid rgba(0,0,0,0.04)')
+                                                : 'none',
+                                        }}
+                                        onMouseEnter={(e) => { if (!isEditing) e.currentTarget.style.background = settings.theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'; }}
+                                        onMouseLeave={(e) => { if (!isEditing) e.currentTarget.style.background = 'transparent'; }}
+                                    >
+                                        {/* Icon */}
                                         <div style={{
-                                            padding: '4px 10px', borderRadius: '8px', flexShrink: 0,
-                                            background: settings.theme === 'dark' ? 'rgba(100, 116, 139, 0.15)' : 'rgba(148, 163, 184, 0.12)',
+                                            width: 44, height: 44, borderRadius: '14px',
+                                            background: settings.theme === 'dark' ? 'rgba(108, 99, 255, 0.12)' : 'rgba(108, 99, 255, 0.08)',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            flexShrink: 0,
                                         }}>
-                                            <Lock style={{ width: 14, height: 14, color: settings.theme === 'dark' ? '#475569' : '#94a3b8' }} />
+                                            <Icon style={{ width: 20, height: 20, color: '#6C63FF' }} />
                                         </div>
-                                    ) : isEditing ? (
-                                        <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+
+                                        {/* Label & Value */}
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <p style={{
+                                                fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase',
+                                                letterSpacing: '0.08em', margin: '0 0 3px',
+                                                color: settings.theme === 'dark' ? '#64748b' : '#94a3b8',
+                                            }}>
+                                                {field.label}
+                                            </p>
+                                            {isEditing ? (
+                                                <input
+                                                    autoFocus
+                                                    type={field.key === 'email' ? 'email' : 'text'}
+                                                    value={editValue}
+                                                    onChange={(e) => setEditValue(e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') saveEdit(field.key);
+                                                        if (e.key === 'Escape') cancelEdit();
+                                                    }}
+                                                    style={{
+                                                        width: '100%', padding: '8px 14px', fontSize: '0.95rem', fontWeight: 600,
+                                                        background: settings.theme === 'dark' ? '#1e293b' : '#fff',
+                                                        color: settings.theme === 'dark' ? '#f1f5f9' : '#1e293b',
+                                                        border: '2px solid #6C63FF', borderRadius: '12px', outline: 'none',
+                                                    }}
+                                                />
+                                            ) : (
+                                                <p style={{
+                                                    fontSize: '0.95rem', fontWeight: 600, margin: 0,
+                                                    color: settings.theme === 'dark' ? '#e2e8f0' : '#1e293b',
+                                                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                                }}>
+                                                    {field.value || '—'}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* Edit / Save / Cancel Buttons */}
+                                        {field.key === 'email' ? (
+                                            <div style={{
+                                                padding: '4px 10px', borderRadius: '8px', flexShrink: 0,
+                                                background: settings.theme === 'dark' ? 'rgba(100, 116, 139, 0.15)' : 'rgba(148, 163, 184, 0.12)',
+                                            }}>
+                                                <Lock style={{ width: 14, height: 14, color: settings.theme === 'dark' ? '#475569' : '#94a3b8' }} />
+                                            </div>
+                                        ) : isEditing ? (
+                                            <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                                                <motion.button
+                                                    whileHover={{ scale: 1.1 }}
+                                                    whileTap={{ scale: 0.9 }}
+                                                    onClick={() => saveEdit(field.key)}
+                                                    style={{
+                                                        width: 36, height: 36, borderRadius: '10px', border: 'none', cursor: 'pointer',
+                                                        background: '#6C63FF', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    }}
+                                                >
+                                                    <Check style={{ width: 16, height: 16, color: '#fff' }} />
+                                                </motion.button>
+                                                <motion.button
+                                                    whileHover={{ scale: 1.1 }}
+                                                    whileTap={{ scale: 0.9 }}
+                                                    onClick={cancelEdit}
+                                                    style={{
+                                                        width: 36, height: 36, borderRadius: '10px', border: 'none', cursor: 'pointer',
+                                                        background: settings.theme === 'dark' ? '#334155' : '#e2e8f0',
+                                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    }}
+                                                >
+                                                    <X style={{ width: 16, height: 16, color: settings.theme === 'dark' ? '#94a3b8' : '#64748b' }} />
+                                                </motion.button>
+                                            </div>
+                                        ) : (
                                             <motion.button
                                                 whileHover={{ scale: 1.1 }}
                                                 whileTap={{ scale: 0.9 }}
-                                                onClick={() => saveEdit(field.key)}
+                                                onClick={() => startEdit(field.key, field.value)}
                                                 style={{
                                                     width: 36, height: 36, borderRadius: '10px', border: 'none', cursor: 'pointer',
-                                                    background: '#6C63FF', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                }}
-                                            >
-                                                <Check style={{ width: 16, height: 16, color: '#fff' }} />
-                                            </motion.button>
-                                            <motion.button
-                                                whileHover={{ scale: 1.1 }}
-                                                whileTap={{ scale: 0.9 }}
-                                                onClick={cancelEdit}
-                                                style={{
-                                                    width: 36, height: 36, borderRadius: '10px', border: 'none', cursor: 'pointer',
-                                                    background: settings.theme === 'dark' ? '#334155' : '#e2e8f0',
+                                                    background: 'transparent',
                                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    flexShrink: 0,
                                                 }}
                                             >
-                                                <X style={{ width: 16, height: 16, color: settings.theme === 'dark' ? '#94a3b8' : '#64748b' }} />
+                                                <Pencil style={{ width: 16, height: 16, color: settings.theme === 'dark' ? '#475569' : '#cbd5e1' }} />
                                             </motion.button>
-                                        </div>
-                                    ) : (
-                                        <motion.button
-                                            whileHover={{ scale: 1.1 }}
-                                            whileTap={{ scale: 0.9 }}
-                                            onClick={() => startEdit(field.key, field.value)}
-                                            style={{
-                                                width: 36, height: 36, borderRadius: '10px', border: 'none', cursor: 'pointer',
-                                                background: 'transparent',
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                flexShrink: 0,
-                                            }}
-                                        >
-                                            <Pencil style={{ width: 16, height: 16, color: settings.theme === 'dark' ? '#475569' : '#cbd5e1' }} />
-                                        </motion.button>
-                                    )}
-                                </motion.div>
-                            );
-                        })}
-                    </div>
-                </motion.div>
+                                        )}
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+                    </motion.div>
 
                     {/* Password Change Card (top right, next to profile) */}
                     <motion.div
@@ -517,7 +517,7 @@ export default function Settings() {
                                 onClick={() => updateSettings({ theme: 'light' })}
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: '14px',
-                                    padding: '18px 20px', borderRadius: '16px', border: 'none', cursor: 'pointer',
+                                    padding: '18px 20px', borderRadius: '16px', cursor: 'pointer',
                                     textAlign: 'left', width: '100%',
                                     background: settings.theme === 'light'
                                         ? 'linear-gradient(135deg, rgba(108, 99, 255, 0.08), rgba(108, 99, 255, 0.04))'
@@ -562,7 +562,7 @@ export default function Settings() {
                                 onClick={() => updateSettings({ theme: 'dark' })}
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: '14px',
-                                    padding: '18px 20px', borderRadius: '16px', border: 'none', cursor: 'pointer',
+                                    padding: '18px 20px', borderRadius: '16px', cursor: 'pointer',
                                     textAlign: 'left', width: '100%',
                                     background: settings.theme === 'dark'
                                         ? 'linear-gradient(135deg, rgba(108, 99, 255, 0.08), rgba(108, 99, 255, 0.04))'

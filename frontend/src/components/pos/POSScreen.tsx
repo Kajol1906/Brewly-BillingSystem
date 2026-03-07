@@ -4,7 +4,7 @@ import { Plus } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import TableCard from './TableCard';
 import OrderSidebar from './OrderSidebar';
-import { getAllTables, createTable, deleteTable, renumberTables, getTablesWithReservations, Table as TableData } from '../../services/tableService';
+import { createTable, deleteTable, renumberTables, getTablesWithReservations, Table as TableData } from '../../services/tableService';
 
 
 export interface Table extends Omit<TableData, 'status'> {
