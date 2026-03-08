@@ -1,16 +1,19 @@
 import { useState } from 'react';
-import { Search, User, LogOut, Coffee } from 'lucide-react';
+import { User, LogOut, Coffee, Settings } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useSettings } from '../../context/SettingsContext';
 
 interface NavbarProps {
 
   onLogout: () => void;
   sidebarCollapsed: boolean;
+  onNavigateToSettings: () => void;
 }
 
-export default function Navbar({ onLogout, sidebarCollapsed: _sidebarCollapsed }: NavbarProps) {
+export default function Navbar({ onLogout, sidebarCollapsed: _sidebarCollapsed, onNavigateToSettings }: NavbarProps) {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
+  const { settings } = useSettings();
+  const userName = settings.email ? settings.email.split('@')[0].charAt(0).toUpperCase() + settings.email.split('@')[0].slice(1) : 'Admin';
 
   return (
     <motion.nav
@@ -26,25 +29,8 @@ export default function Navbar({ onLogout, sidebarCollapsed: _sidebarCollapsed }
             <Coffee className="w-6 h-6 text-white" />
           </div>
           <span className="font-['DM_Serif_Display'] text-2xl tracking-wide bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            CaféHub
+            Brewly
           </span>
-        </div>
-
-        {/* Search Bar */}
-        <div className="flex-1 max-w-xl mx-8">
-          <div
-            className={`relative transition-all duration-200 ${searchFocused ? 'scale-105' : ''
-              }`}
-          >
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search anything..."
-              className="w-full h-12 pl-12 pr-4 bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all font-sans"
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => setSearchFocused(false)}
-            />
-          </div>
         </div>
 
         {/* Profile Dropdown */}
@@ -59,8 +45,7 @@ export default function Navbar({ onLogout, sidebarCollapsed: _sidebarCollapsed }
               <User className="w-5 h-5 text-white" />
             </div>
             <div className="text-left hidden md:block">
-
-              <p className="text-xs text-muted-foreground font-sans">Online</p>
+              <p className="text-sm font-semibold text-foreground font-sans">{userName}</p>
             </div>
           </motion.button>
 
@@ -73,8 +58,18 @@ export default function Navbar({ onLogout, sidebarCollapsed: _sidebarCollapsed }
               className="absolute right-0 top-full mt-2 w-48 bg-surface rounded-xl shadow-soft-lg border border-border overflow-hidden"
             >
               <button
-                onClick={onLogout}
+                onClick={() => {
+                  setShowDropdown(false);
+                  onNavigateToSettings();
+                }}
                 className="w-full px-4 py-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left font-bold text-foreground bg-transparent"
+              >
+                <Settings className="w-4 h-4" />
+                <span className="font-sans">Settings</span>
+              </button>
+              <button
+                onClick={onLogout}
+                className="w-full px-4 py-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left font-bold text-destructive bg-transparent"
               >
                 <LogOut className="w-4 h-4" />
                 <span className="font-sans">Logout</span>

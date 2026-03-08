@@ -77,8 +77,8 @@ function App() {
                 localStorage.setItem('brewlySettings', JSON.stringify(settingsObj));
             }
         }
-    // Only run once on mount to avoid infinite loop
-    // eslint-disable-next-line
+        // Only run once on mount to avoid infinite loop
+        // eslint-disable-next-line
     }, []);
 
     /* 🔹 Called after LOGIN or SIGNUP */
@@ -157,6 +157,7 @@ function App() {
             <Navbar
                 onLogout={handleLogout}
                 sidebarCollapsed={sidebarCollapsed}
+                onNavigateToSettings={() => setCurrentScreen('settings')}
             />
 
             <div className="flex pt-16">
