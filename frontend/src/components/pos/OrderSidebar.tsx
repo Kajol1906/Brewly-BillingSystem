@@ -187,7 +187,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
               placeholder="Search menu..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30 transition-all text-gray-800 placeholder-gray-400"
+              className="w-full h-10 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all text-gray-800 placeholder-gray-400"
             />
           </div>
         </div>
@@ -203,7 +203,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
                 className={`
                   px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors
                   ${selectedCategory === category
-                    ? 'bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white shadow-md'
+                    ? 'bg-gradient-to-r from-primary to-accent text-white shadow-md'
                     : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                   }
                 `}
@@ -231,7 +231,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
                 <p className="font-medium text-gray-900">{item.name}</p>
                 <p className="text-sm text-gray-500 font-medium">₹{item.price}</p>
               </div>
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6C63FF] to-[#93E5AB] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                 <Plus className="w-4 h-4 text-white" />
               </div>
             </motion.button>
@@ -263,7 +263,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
               {/* New Items */}
               {cart.length > 0 && (
                 <div>
-                  <h5 className="text-xs font-semibold text-[#6C63FF] uppercase mb-2">New Items</h5>
+                  <h5 className="text-xs font-semibold text-primary uppercase mb-2">New Items</h5>
                   <div className="space-y-2">
                     {cart.map(item => (
                       <div key={`new-${item.id}`} className="flex items-center justify-between text-sm">
@@ -336,7 +336,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
               onClick={submitOrder}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="col-span-2 flex items-center justify-center gap-2 h-12 bg-gradient-to-r from-[#FF6B6B] to-[#FF8E8B] text-white rounded-xl shadow-soft hover:shadow-hover transition-all"
+              className="col-span-2 flex items-center justify-center gap-2 h-12 bg-gradient-to-r from-danger to-[#FF8E8B] text-white rounded-xl shadow-soft hover:shadow-hover transition-all"
             >
               <Plus className="w-5 h-5" />
               <span>Place Order</span>
@@ -345,7 +345,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
               onClick={() => handleGenerateBill('CASH')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-2 h-12 bg-gradient-to-r from-[#FFC8A2] to-[#FFD66C] text-white rounded-xl shadow-soft hover:shadow-hover transition-all"
+              className="flex items-center justify-center gap-2 h-12 bg-gradient-to-r from-secondary to-warning text-white rounded-xl shadow-soft hover:shadow-hover transition-all"
             >
               <Receipt className="w-5 h-5" />
               <span>Generate Bill</span>
@@ -354,7 +354,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
               onClick={() => handleGenerateBill('UPI')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-2 h-12 bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white rounded-xl shadow-soft hover:shadow-hover transition-all"
+              className="flex items-center justify-center gap-2 h-12 bg-gradient-to-r from-primary to-accent text-white rounded-xl shadow-soft hover:shadow-hover transition-all"
             >
               <CreditCard className="w-5 h-5" />
               <span>Pay via UPI</span>

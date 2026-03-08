@@ -19,24 +19,24 @@ export default function TableCard({ table, onClick, onDelete, index }: TableCard
     switch (table.status) {
       case 'free':
         return {
-          bg: 'bg-[#93E5AB]/10',
-          border: 'border-[#93E5AB]/30',
-          glow: 'shadow-[#93E5AB]/20',
-          text: 'text-[#93E5AB]',
+          bg: 'bg-accent/10',
+          border: 'border-accent/30',
+          glow: 'shadow-accent/20',
+          text: 'text-accent',
         };
       case 'occupied':
         return {
-          bg: 'bg-[#FF6B6B]/10',
-          border: 'border-[#FF6B6B]/30',
-          glow: 'shadow-[#FF6B6B]/20',
-          text: 'text-[#FF6B6B]',
+          bg: 'bg-danger/10',
+          border: 'border-danger/30',
+          glow: 'shadow-danger/20',
+          text: 'text-danger',
         };
       case 'reserved':
         return {
-          bg: 'bg-[#FFD66C]/10',
-          border: 'border-[#FFD66C]/30',
-          glow: 'shadow-[#FFD66C]/20',
-          text: 'text-[#FFD66C]',
+          bg: 'bg-warning/10',
+          border: 'border-warning/30',
+          glow: 'shadow-warning/20',
+          text: 'text-warning',
         };
     }
   };
@@ -111,7 +111,7 @@ export default function TableCard({ table, onClick, onDelete, index }: TableCard
       {/* Reservation Info (if reserved) */}
       {table.status === 'reserved' && (table as any).reservedForEvent && (
         <div className="text-center px-2">
-          <p className="text-[10px] text-[#FFD66C]/80 leading-tight">
+          <p className="text-[10px] text-warning/80 leading-tight">
             Reserved for {(table as any).reservedForEvent}
           </p>
           <p className="text-[9px] text-muted-foreground leading-tight">

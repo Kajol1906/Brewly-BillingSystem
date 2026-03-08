@@ -27,9 +27,9 @@ export default function MetricCard({ title, value, change, trend, icon: Icon, co
   const getTrendColor = () => {
     switch (trend) {
       case 'up':
-        return 'text-[#4CAF50]';
+        return 'text-success';
       case 'down':
-        return 'text-[#FF6B6B]';
+        return 'text-danger';
       default:
         return 'text-muted-foreground';
     }
@@ -68,7 +68,7 @@ export default function MetricCard({ title, value, change, trend, icon: Icon, co
 
         {/* Pulse Effect on Hover */}
         <motion.div
-          className="absolute top-0 right-0 w-3 h-3 rounded-full bg-[#6C63FF]"
+          className="absolute top-0 right-0 w-3 h-3 rounded-full bg-primary"
           animate={{ scale: [1, 1.2, 1], opacity: [1, 0.5, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
         />

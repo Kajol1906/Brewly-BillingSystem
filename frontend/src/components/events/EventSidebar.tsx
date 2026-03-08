@@ -270,7 +270,7 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => { resetForm(); setIsCreating(true); }}
-          className="w-full h-12 bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white rounded-xl flex items-center justify-center gap-2 shadow-soft hover:shadow-hover transition-all"
+          className="w-full h-12 bg-gradient-to-r from-primary to-accent text-white rounded-xl flex items-center justify-center gap-2 shadow-soft hover:shadow-hover transition-all"
         >
           <Plus className="w-5 h-5" />
           <span>Create New Event</span>
@@ -298,7 +298,7 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
               placeholder="Enter name"
               value={formData.customerName}
               onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-              className="w-full h-10 px-4 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30 transition-all"
+              className="w-full h-10 px-4 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
             />
           </div>
 
@@ -314,8 +314,8 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
                   className={`
                     h-10 rounded-lg border-2 transition-all capitalize
                     ${formData.eventType === type
-                      ? 'border-[#6C63FF] bg-[#6C63FF]/10 text-[#6C63FF]'
-                      : 'border-border hover:border-[#6C63FF]/30'
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border hover:border-primary/30'
                     }
                   `}
                 >
@@ -337,8 +337,8 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
                   className={`
                     h-10 rounded-lg border-2 transition-all
                     ${formData.time === time
-                      ? 'border-[#6C63FF] bg-[#6C63FF]/10 text-[#6C63FF]'
-                      : 'border-border hover:border-[#6C63FF]/30'
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border hover:border-primary/30'
                     }
                   `}
                 >
@@ -352,7 +352,7 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
                 type="time"
                 value={formData.time}
                 onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                className="flex-1 h-9 px-3 bg-muted/30 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30 transition-all"
+                className="flex-1 h-9 px-3 bg-muted/30 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
               />
             </div>
           </div>
@@ -365,7 +365,7 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
               placeholder="Number of guests"
               value={formData.guestCount}
               onChange={(e) => setFormData({ ...formData, guestCount: e.target.value })}
-              className="w-full h-10 px-4 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30 transition-all"
+              className="w-full h-10 px-4 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
             />
           </div>
 
@@ -381,8 +381,8 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
                   className={`
                     h-10 rounded-lg border-2 transition-all
                     ${formData.package === pkg
-                      ? 'border-[#6C63FF] bg-[#6C63FF]/10 text-[#6C63FF]'
-                      : 'border-border hover:border-[#6C63FF]/30'
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border hover:border-primary/30'
                     }
                   `}
                 >
@@ -399,7 +399,7 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
               {Number(formData.guestCount) > 0 && freeTables.length > 0 && (
                 <button
                   onClick={autoSuggestTables}
-                  className="text-xs text-[#6C63FF] hover:underline"
+                  className="text-xs text-primary hover:underline"
                 >
                   Auto-suggest
                 </button>
@@ -416,7 +416,7 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
                       key={table.id}
                       onClick={() => toggleTable(table.id)}
                       className={`flex items-center justify-between p-2 rounded-lg border cursor-pointer transition-all ${formData.selectedTables.includes(table.id)
-                          ? 'border-[#6C63FF] bg-[#6C63FF]/5'
+                          ? 'border-primary bg-primary/5'
                           : 'border-border hover:bg-muted'
                         }`}
                     >
@@ -428,7 +428,7 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
                         </div>
                       </div>
                       {formData.selectedTables.includes(table.id) && (
-                        <div className="w-5 h-5 bg-[#6C63FF] rounded-full flex items-center justify-center">
+                        <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
                           <Check className="w-3 h-3 text-white" />
                         </div>
                       )}
@@ -441,10 +441,10 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
                       className="flex items-center justify-between p-2 rounded-lg border border-border opacity-40 cursor-not-allowed"
                     >
                       <div className="flex items-center gap-2 text-sm">
-                        <Armchair className="w-4 h-4 text-[#FFD66C]" />
+                        <Armchair className="w-4 h-4 text-warning" />
                         <div>
                           <p className="font-medium">Table {table.tableNumber}</p>
-                          <p className="text-xs text-[#FFD66C]">
+                          <p className="text-xs text-warning">
                             Reserved for {table.reservedForEvent || 'event'} &middot; {table.reservedForDate || ''}
                           </p>
                         </div>
@@ -476,7 +476,7 @@ export default function EventSidebar({ selectedDate, events, onClose, onEventCre
               onClick={editingEvent ? handleUpdate : handleCreate}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex-1 h-10 bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white rounded-lg shadow-soft hover:shadow-hover transition-all"
+              className="flex-1 h-10 bg-gradient-to-r from-primary to-accent text-white rounded-lg shadow-soft hover:shadow-hover transition-all"
             >
               {editingEvent ? 'Update Event' : 'Create Event'}
             </motion.button>

@@ -24,17 +24,17 @@ export default function WasteReduction() {
             Smart suggestions to minimize waste
           </p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#93E5AB] to-[#4CAF50] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-accent to-success flex items-center justify-center">
           <Recycle className="w-5 h-5 text-white" />
         </div>
       </div>
 
       {/* Total Savings */}
-      <div className="mb-6 p-4 bg-gradient-to-r from-[#93E5AB]/10 to-[#4CAF50]/10 rounded-xl border border-[#93E5AB]/30">
+      <div className="mb-6 p-4 bg-gradient-to-r from-accent/10 to-success/10 rounded-xl border border-accent/30">
         <p className="text-sm text-muted-foreground mb-1">Potential Weekly Savings</p>
         <div className="flex items-baseline gap-2">
-          <h2 className="text-[#4CAF50]">₹{totalSavings.toLocaleString()}</h2>
-          <div className="flex items-center gap-1 text-[#4CAF50]">
+          <h2 className="text-success">₹{totalSavings.toLocaleString()}</h2>
+          <div className="flex items-center gap-1 text-success">
             <ArrowDown className="w-4 h-4" />
             <span className="text-sm">32% waste</span>
           </div>
@@ -50,14 +50,14 @@ export default function WasteReduction() {
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.7 + index * 0.1 }}
             whileHover={{ x: 4 }}
-            className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border hover:border-[#93E5AB]/30 transition-all cursor-pointer"
+            className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-border hover:border-accent/30 transition-all cursor-pointer"
           >
             <div className="flex-1">
               <p className="mb-1">{suggestion.item}</p>
-              <p className="text-sm text-[#4CAF50]">{suggestion.impact}</p>
+              <p className="text-sm text-success">{suggestion.impact}</p>
             </div>
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#93E5AB]/20 to-[#4CAF50]/20 flex items-center justify-center">
-              <span className="text-[#4CAF50]">{suggestion.percentage}%</span>
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-accent/20 to-success/20 flex items-center justify-center">
+              <span className="text-success">{suggestion.percentage}%</span>
             </div>
           </motion.div>
         ))}

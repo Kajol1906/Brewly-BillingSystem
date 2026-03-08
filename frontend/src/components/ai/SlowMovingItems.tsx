@@ -46,7 +46,7 @@ export default function SlowMovingItems() {
           <h3>Slow-Moving Items</h3>
           <p className="text-sm text-muted-foreground mt-1">Least ordered — consider promoting or removing</p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#FF6B6B] to-[#FFB347] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-danger to-[#FFB347] flex items-center justify-center">
           <AlertTriangle className="w-5 h-5 text-white" />
         </div>
       </div>
@@ -75,7 +75,7 @@ export default function SlowMovingItems() {
                   initial={{ width: 0 }}
                   animate={{ width: `${item.demandPercent}%` }}
                   transition={{ delay: 0.8 + index * 0.08, duration: 0.6 }}
-                  className="h-full bg-gradient-to-r from-[#FF6B6B] to-[#FFB347] rounded-full"
+                  className="h-full bg-gradient-to-r from-danger to-[#FFB347] rounded-full"
                 />
               </div>
               <span className="text-xs font-medium text-muted-foreground min-w-[2.5rem] text-right">{item.demandPercent}%</span>
@@ -84,9 +84,9 @@ export default function SlowMovingItems() {
         ))}
       </div>
 
-      <div className="mt-4 px-4 py-3 bg-[#FF6B6B]/5 rounded-xl border border-[#FF6B6B]/20">
+      <div className="mt-4 px-4 py-3 bg-danger/5 rounded-xl border border-danger/20">
         <p className="text-xs text-muted-foreground">
-          <span className="text-[#FF6B6B] font-medium">Tip:</span> Items with low demand may benefit from discounts, combo offers, or menu removal to reduce waste.
+          <span className="text-danger font-medium">Tip:</span> Items with low demand may benefit from discounts, combo offers, or menu removal to reduce waste.
         </p>
       </div>
     </motion.div>

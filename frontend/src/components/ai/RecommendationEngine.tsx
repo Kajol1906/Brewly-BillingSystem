@@ -56,7 +56,7 @@ export default function RecommendationEngine() {
           repeat: Infinity,
           ease: 'easeInOut',
         }}
-        className="absolute inset-0 bg-gradient-to-br from-[#6C63FF] to-[#93E5AB] -z-10"
+        className="absolute inset-0 bg-gradient-to-br from-primary to-accent -z-10"
       />
 
       <div className="flex items-start justify-between mb-6">
@@ -66,7 +66,7 @@ export default function RecommendationEngine() {
             Top items to promote this week
           </p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#6C63FF] to-[#93E5AB] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
           <Star className="w-5 h-5 text-white" />
         </div>
       </div>
@@ -88,13 +88,13 @@ export default function RecommendationEngine() {
                     initial={{ width: 0 }}
                     animate={{ width: `${rec.confidence}%` }}
                     transition={{ delay: 0.7 + index * 0.1, duration: 0.8, ease: 'easeOut' }}
-                    className="h-full bg-gradient-to-r from-[#6C63FF] to-[#93E5AB]"
+                    className="h-full bg-gradient-to-r from-primary to-accent"
                   />
                 </div>
                 <span className="text-xs text-muted-foreground min-w-[3rem]">{rec.confidence}%</span>
               </div>
             </div>
-            <div className="ml-4 flex items-center gap-1 px-3 py-1 bg-[#4CAF50]/10 text-[#4CAF50] rounded-lg">
+            <div className="ml-4 flex items-center gap-1 px-3 py-1 bg-success/10 text-success rounded-lg">
               <TrendingUp className="w-3 h-3" />
               <span className="text-xs">{rec.trend}</span>
             </div>

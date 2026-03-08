@@ -100,7 +100,7 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
                 initial={{ x: -100, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#6C63FF] via-[#93E5AB] to-[#FFC8A2] relative overflow-hidden"
+                className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-accent to-secondary relative overflow-hidden"
             >
                 {/* Floating circles */}
                 <div className="absolute inset-0">
@@ -167,10 +167,10 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
                 <div className="w-full max-w-md">
                     {/* Mobile Logo */}
                     <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#6C63FF] to-[#93E5AB] flex items-center justify-center shadow-soft">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-soft">
                             <Coffee className="w-7 h-7 text-white" />
                         </div>
-                        <span className="bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                             Brewly
                         </span>
                     </div>
@@ -202,7 +202,7 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
                                     placeholder="Your company or café name"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full h-12 pl-12 pr-4 bg-muted/30 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30"
+                                    className="w-full h-12 pl-12 pr-4 bg-muted/30 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30"
                                     required
                                 />
                             </div>
@@ -225,7 +225,7 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
                                     onBlur={() => setEmailTouched(true)}
                                     className={`w-full h-12 pl-12 pr-10 bg-muted/30 border rounded-xl focus:outline-none focus:ring-2 ${emailTouched && email.length > 0 && !emailValid
                                             ? 'border-red-500 focus:ring-red-500/30'
-                                            : 'border-border focus:ring-[#6C63FF]/30'
+                                            : 'border-border focus:ring-primary/30'
                                         }`}
                                     required
                                 />
@@ -259,7 +259,7 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     onBlur={() => setPasswordTouched(true)}
-                                    className="w-full h-12 pl-12 pr-12 bg-muted/30 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30"
+                                    className="w-full h-12 pl-12 pr-12 bg-muted/30 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30"
                                     required
                                 />
                                 <button
@@ -319,7 +319,7 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.6 }}
                             className={`w-full h-12 rounded-xl shadow-soft flex items-center justify-center gap-2 transition-all ${canSubmit
-                                    ? 'bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white hover:shadow-hover cursor-pointer'
+                                    ? 'bg-gradient-to-r from-primary to-accent text-white hover:shadow-hover cursor-pointer'
                                     : 'bg-muted text-muted-foreground cursor-not-allowed'
                                 }`}
                         >
@@ -364,7 +364,7 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
                             <button
                                 type="button"
                                 onClick={onGoToLogin}
-                                className="text-sm text-[#6C63FF] hover:underline"
+                                className="text-sm text-primary hover:underline"
                             >
                                 Already have an account? Login
                             </button>

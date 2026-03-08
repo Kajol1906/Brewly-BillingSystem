@@ -55,7 +55,7 @@ export default function PaymentInsights() {
           <h3>Payment Insights</h3>
           <p className="text-sm text-muted-foreground mt-1">How customers prefer to pay</p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#6C63FF] to-[#4CAF50] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-success flex items-center justify-center">
           <CreditCard className="w-5 h-5 text-white" />
         </div>
       </div>
@@ -125,9 +125,9 @@ export default function PaymentInsights() {
         </div>
       </div>
 
-      <div className="mt-4 p-3 bg-[#6C63FF]/5 rounded-xl border border-[#6C63FF]/20">
+      <div className="mt-4 p-3 bg-primary/5 rounded-xl border border-primary/20">
         <p className="text-xs text-muted-foreground">
-          <span className="text-[#6C63FF] font-medium">Insight:</span>{' '}
+          <span className="text-primary font-medium">Insight:</span>{' '}
           {topMethod.count > 0
             ? `${METHOD_CONFIG[topMethod.method]?.label ?? topMethod.method} is the most popular payment method with ${topMethod.percent}% of all transactions.`
             : 'Not enough data to identify payment trends.'}

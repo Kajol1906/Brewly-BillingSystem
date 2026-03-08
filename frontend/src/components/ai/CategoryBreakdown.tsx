@@ -48,7 +48,7 @@ export default function CategoryBreakdown() {
           <h3>Category Sales</h3>
           <p className="text-sm text-muted-foreground mt-1">Revenue by menu category</p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#6C63FF] to-[#93E5AB] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
           <PieIcon className="w-5 h-5 text-white" />
         </div>
       </div>

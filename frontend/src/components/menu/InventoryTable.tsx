@@ -154,14 +154,14 @@ export default function InventoryTable() {
         switch (status) {
             case 'low':
                 return (
-                    <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FF6B6B]/10 text-[#FF6B6B]">
+                    <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-danger/10 text-danger">
                         <AlertTriangle className="w-3 h-3" />
                         <span className="text-xs">Low Stock</span>
                     </div>
                 );
             case 'good':
                 return (
-                    <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#4CAF50]/10 text-[#4CAF50]">
+                    <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-success/10 text-success">
                         <CheckCircle className="w-3 h-3" />
                         <span className="text-xs">Good</span>
                     </div>
@@ -186,12 +186,12 @@ export default function InventoryTable() {
                 <div className="flex gap-4">
                     <div className="px-4 py-2 bg-card rounded-xl border shadow-soft-sm">
                         <p className="text-sm text-muted-foreground">Low Stock Items</p>
-                        <p className="text-[#FF6B6B]">{lowStockCount}</p>
+                        <p className="text-danger">{lowStockCount}</p>
                     </div>
 
                     <div className="px-4 py-2 bg-card rounded-xl border shadow-soft-sm">
                         <p className="text-sm text-muted-foreground">Total Items</p>
-                        <p className="text-[#6C63FF]">{inventory.length}</p>
+                        <p className="text-primary">{inventory.length}</p>
                     </div>
                 </div>
 
@@ -199,7 +199,7 @@ export default function InventoryTable() {
                     onClick={() => setShowAddModal(true)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="h-12 px-6 bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white rounded-xl flex items-center gap-2"
+                    className="h-12 px-6 bg-gradient-to-r from-primary to-accent text-white rounded-xl flex items-center gap-2"
                 >
                     <Plus className="w-5 h-5" />
                     Add Ingredient
@@ -233,7 +233,7 @@ export default function InventoryTable() {
                                     <div className="flex gap-2">
                                         <button
                                             onClick={() => openStockDialog(item.id)}
-                                            className="px-3 py-1 bg-[#6C63FF]/10 text-[#6C63FF] rounded"
+                                            className="px-3 py-1 bg-primary/10 text-primary rounded"
                                         >
                                             Add Stock
                                         </button>

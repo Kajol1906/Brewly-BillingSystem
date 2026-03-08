@@ -91,8 +91,8 @@ export default function EventBooking() {
                 onClick={() => { setShowAllUpcoming(!showAllUpcoming); setShowHistory(false); setSelectedDate(null); }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all ${
                   showAllUpcoming
-                    ? 'border-[#6C63FF] bg-[#6C63FF]/10 text-[#6C63FF]'
-                    : 'border-border hover:border-[#6C63FF]/30 text-muted-foreground hover:text-foreground'
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <CalendarCheck className="w-4 h-4" />
@@ -108,8 +108,8 @@ export default function EventBooking() {
               onClick={() => { setShowHistory(!showHistory); setSelectedDate(null); setShowAllUpcoming(false); }}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all ${
                 showHistory
-                  ? 'border-[#6C63FF] bg-[#6C63FF]/10 text-[#6C63FF]'
-                  : 'border-border hover:border-[#6C63FF]/30 text-muted-foreground hover:text-foreground'
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'
               }`}
             >
               <History className="w-4 h-4" />

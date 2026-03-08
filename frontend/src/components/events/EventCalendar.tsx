@@ -87,15 +87,15 @@ export default function EventCalendar({ currentDate, events, onDateClick, select
               className={`
                 relative aspect-square p-2 rounded-xl transition-all
                 ${day.isCurrentMonth 
-                  ? 'bg-card border-2 border-border hover:border-[#6C63FF]/30' 
+                  ? 'bg-card border-2 border-border hover:border-primary/30' 
                   : 'bg-muted/30 border-2 border-transparent text-muted-foreground'
                 }
-                ${isSelected ? 'border-[#6C63FF] bg-[#6C63FF]/5' : ''}
-                ${isToday ? 'ring-2 ring-[#6C63FF]/30' : ''}
+                ${isSelected ? 'border-primary bg-primary/5' : ''}
+                ${isToday ? 'ring-2 ring-primary/30' : ''}
               `}
             >
               {/* Date number */}
-              <div className={`text-sm mb-1 ${isToday ? 'text-[#6C63FF]' : ''}`}>
+              <div className={`text-sm mb-1 ${isToday ? 'text-primary' : ''}`}>
                 {day.date.getDate()}
               </div>
 

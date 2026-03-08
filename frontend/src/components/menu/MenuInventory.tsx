@@ -32,7 +32,7 @@ export default function MenuInventory() {
             onClick={() => setActiveTab('menu')}
             className={`
               relative px-6 py-2 rounded-lg transition-all
-              ${activeTab === 'menu' ? 'text-[#6C63FF]' : 'text-muted-foreground hover:text-foreground'}
+              ${activeTab === 'menu' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}
             `}
           >
             {activeTab === 'menu' && (
@@ -48,7 +48,7 @@ export default function MenuInventory() {
             onClick={() => setActiveTab('inventory')}
             className={`
               relative px-6 py-2 rounded-lg transition-all
-              ${activeTab === 'inventory' ? 'text-[#6C63FF]' : 'text-muted-foreground hover:text-foreground'}
+              ${activeTab === 'inventory' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}
             `}
           >
             {activeTab === 'inventory' && (

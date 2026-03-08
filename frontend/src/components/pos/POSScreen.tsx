@@ -187,7 +187,7 @@ export function POSScreen() {
             >
                 <div className="bg-card rounded-xl p-4 border border-border shadow-soft">
                     <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 rounded-full bg-[#93E5AB]" />
+                        <div className="w-3 h-3 rounded-full bg-accent" />
                         <div>
                             <p className="text-sm text-muted-foreground">Available</p>
                             <p className="mt-1">{stats.free} tables</p>
@@ -196,7 +196,7 @@ export function POSScreen() {
                 </div>
                 <div className="bg-card rounded-xl p-4 border border-border shadow-soft">
                     <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 rounded-full bg-[#FF6B6B]" />
+                        <div className="w-3 h-3 rounded-full bg-danger" />
                         <div>
                             <p className="text-sm text-muted-foreground">Occupied</p>
                             <p className="mt-1">{stats.occupied} tables</p>
@@ -205,7 +205,7 @@ export function POSScreen() {
                 </div>
                 <div className="bg-card rounded-xl p-4 border border-border shadow-soft">
                     <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 rounded-full bg-[#FFD66C]" />
+                        <div className="w-3 h-3 rounded-full bg-warning" />
                         <div>
                             <p className="text-sm text-muted-foreground">Reserved</p>
                             <p className="mt-1">{stats.reserved} tables</p>

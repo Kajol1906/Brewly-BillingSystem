@@ -80,7 +80,7 @@ export default function Dashboard() {
       change: metricsData ? `${formatChange(metricsData.revenueChangePercent)} ${prevLabel}` : 'N/A',
       trend: revenueTrend,
       icon: IndianRupee,
-      color: 'from-[#6C63FF] to-[#93E5AB]',
+      color: 'from-primary to-accent',
     },
     {
       title: ordersLabel,
@@ -88,7 +88,7 @@ export default function Dashboard() {
       change: metricsData ? `${formatChange(metricsData.ordersChangePercent)} ${prevLabel}` : 'N/A',
       trend: ordersTrend,
       icon: ShoppingBag,
-      color: 'from-[#FFC8A2] to-[#FFD66C]',
+      color: 'from-secondary to-warning',
       onClick: handleOrdersClick,
     },
     {
@@ -97,7 +97,7 @@ export default function Dashboard() {
       change: 'Live',
       trend: 'neutral' as const,
       icon: Users,
-      color: 'from-[#93E5AB] to-[#6C63FF]',
+      color: 'from-accent to-primary',
     },
     {
       title: 'Low-Stock Alerts',
@@ -105,7 +105,7 @@ export default function Dashboard() {
       change: metricsData && metricsData.lowStockItems > 0 ? 'Needs attention' : 'All stocked',
       trend: metricsData && metricsData.lowStockItems > 0 ? 'down' as const : 'neutral' as const,
       icon: AlertTriangle,
-      color: 'from-[#FF6B6B] to-[#FFD66C]',
+      color: 'from-danger to-warning',
     },
     {
       title: 'Upcoming Events',
@@ -113,7 +113,7 @@ export default function Dashboard() {
       change: 'Scheduled',
       trend: 'neutral' as const,
       icon: Calendar,
-      color: 'from-[#FFD66C] to-[#FFC8A2]',
+      color: 'from-warning to-secondary',
       onClick: handleEventsClick,
     },
   ];
@@ -143,7 +143,7 @@ export default function Dashboard() {
               key={p.value}
               onClick={() => setPeriod(p.value)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${period === p.value
-                  ? 'bg-white text-[#6C63FF] shadow-sm border border-[#6C63FF]/20'
+                  ? 'bg-white text-primary shadow-sm border border-primary/20'
                   : 'text-muted-foreground hover:text-foreground'
                 }`}
             >

@@ -16,16 +16,16 @@ export default function Navbar({ onLogout, sidebarCollapsed: _sidebarCollapsed }
     <motion.nav
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-lg border-b border-border z-50"
+      className="fixed top-0 left-0 right-0 h-16 bg-background/90 backdrop-blur-lg border-b border-border z-50"
       style={{ boxShadow: 'var(--shadow-sm)' }}
     >
       <div className="h-full px-6 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6C63FF] to-[#93E5AB] flex items-center justify-center shadow-soft">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-soft">
             <Coffee className="w-6 h-6 text-white" />
           </div>
-          <span className="bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] bg-clip-text text-transparent">
+          <span className="font-['DM_Serif_Display'] text-2xl tracking-wide bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             CaféHub
           </span>
         </div>
@@ -40,7 +40,7 @@ export default function Navbar({ onLogout, sidebarCollapsed: _sidebarCollapsed }
             <input
               type="text"
               placeholder="Search anything..."
-              className="w-full h-12 pl-12 pr-4 bg-muted/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30 transition-all"
+              className="w-full h-12 pl-12 pr-4 bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all font-sans"
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
             />
@@ -55,12 +55,12 @@ export default function Navbar({ onLogout, sidebarCollapsed: _sidebarCollapsed }
             onClick={() => setShowDropdown(!showDropdown)}
             className="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-muted/50 transition-colors"
           >
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FFC8A2] to-[#FFD66C] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center">
               <User className="w-5 h-5 text-white" />
             </div>
             <div className="text-left hidden md:block">
 
-              <p className="text-xs text-muted-foreground">Online</p>
+              <p className="text-xs text-muted-foreground font-sans">Online</p>
             </div>
           </motion.button>
 
@@ -70,14 +70,14 @@ export default function Navbar({ onLogout, sidebarCollapsed: _sidebarCollapsed }
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-soft-lg border border-border overflow-hidden"
+              className="absolute right-0 top-full mt-2 w-48 bg-surface rounded-xl shadow-soft-lg border border-border overflow-hidden"
             >
               <button
                 onClick={onLogout}
-                className="w-full px-4 py-3 flex items-center gap-3 hover:bg-[#f3f3f3] transition-colors text-left font-bold text-black bg-white"
+                className="w-full px-4 py-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left font-bold text-foreground bg-transparent"
               >
                 <LogOut className="w-4 h-4" />
-                <span>Logout</span>
+                <span className="font-sans">Logout</span>
               </button>
             </motion.div>
           )}

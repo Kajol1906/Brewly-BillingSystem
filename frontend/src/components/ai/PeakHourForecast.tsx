@@ -47,7 +47,7 @@ export default function PeakHourForecast() {
             Predicted customer traffic today
           </p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#FFC8A2] to-[#FFD66C] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-secondary to-warning flex items-center justify-center">
           <Clock className="w-5 h-5 text-white" />
         </div>
       </div>
@@ -91,12 +91,12 @@ export default function PeakHourForecast() {
         </AreaChart>
       </ResponsiveContainer>
 
-      <div className="mt-4 p-4 bg-gradient-to-r from-[#FFC8A2]/10 to-[#FFD66C]/10 rounded-xl border border-[#FFC8A2]/30">
+      <div className="mt-4 p-4 bg-gradient-to-r from-secondary/10 to-warning/10 rounded-xl border border-secondary/30">
         <p className="text-sm">
           {(() => {
             const peak = data.reduce((max, d) => d.traffic > max.traffic ? d : max, data[0]);
             return peak.traffic > 0
-              ? <><span className="text-[#FFC8A2]">Peak at {peak.hour}</span> — {peak.traffic} orders. Staff up for optimal service.</>
+              ? <><span className="text-secondary">Peak at {peak.hour}</span> — {peak.traffic} orders. Staff up for optimal service.</>
               : <span className="text-muted-foreground">Not enough data yet to identify peak hours.</span>;
           })()}
         </p>

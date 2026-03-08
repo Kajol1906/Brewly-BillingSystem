@@ -104,7 +104,7 @@ export default function TableTurnover() {
                 <Clock className="w-3.5 h-3.5" />
                 <span>{table.avgSessionMinutes > 0 ? `${table.avgSessionMinutes}m` : '—'}</span>
               </div>
-              <span className="text-xs font-medium text-[#4CAF50]">₹{table.revenuePerOrder.toLocaleString()}/order</span>
+              <span className="text-xs font-medium text-success">₹{table.revenuePerOrder.toLocaleString()}/order</span>
             </div>
           </motion.div>
         ))}

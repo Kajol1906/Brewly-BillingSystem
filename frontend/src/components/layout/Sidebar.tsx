@@ -35,13 +35,13 @@ export default function Sidebar({ currentScreen, onNavigate, collapsed, onToggle
       initial={{ x: -240 }}
       animate={{ x: 0, width: collapsed ? 64 : 240 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="fixed left-0 top-16 bottom-0 bg-card border-r border-border shadow-soft-sm overflow-hidden"
+      className="fixed left-0 top-16 bottom-0 bg-sidebar border-r border-sidebar-border shadow-soft-sm overflow-hidden"
     >
       {/* Toggle Button */}
       <button
         onClick={onToggleCollapse}
-        className="absolute right-2 top-6 w-6 h-6 bg-white border-2 border-[#6C63FF] rounded-full flex items-center justify-center hover:bg-[#6C63FF]/10 transition-colors z-50 shadow-lg"
-        style={{ outline: '2px solid #6C63FF', outlineOffset: '-2px' }}
+        className="absolute right-2 top-6 w-6 h-6 bg-surface border-2 border-sidebar-primary rounded-full flex items-center justify-center hover:bg-sidebar-primary/10 transition-colors z-50 shadow-lg text-sidebar-foreground"
+        style={{ outline: '2px solid var(--sidebar-primary)', outlineOffset: '-2px' }}
       >
         {collapsed ? (
           <ChevronRight className="w-3 h-3" />
@@ -63,17 +63,17 @@ export default function Sidebar({ currentScreen, onNavigate, collapsed, onToggle
               whileHover={{ x: collapsed ? 0 : 4 }}
               whileTap={{ scale: 0.95 }}
               className={`
-                w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all relative overflow-hidden
+                w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all relative overflow-hidden font-medium
                 ${isActive
-                  ? 'bg-gradient-to-r from-[#6C63FF]/10 to-[#93E5AB]/10 text-[#6C63FF]'
-                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                  ? 'bg-gradient-to-r from-sidebar-primary/10 to-accent/10 text-sidebar-primary'
+                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground'
                 }
               `}
             >
               {isActive && (
                 <motion.div
                   layoutId="activeIndicator"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-[#6C63FF] to-[#93E5AB] rounded-r-full"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-sidebar-primary to-accent rounded-r-full"
                   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
               )}
@@ -92,7 +92,7 @@ export default function Sidebar({ currentScreen, onNavigate, collapsed, onToggle
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="ml-auto w-2 h-2 rounded-full bg-[#6C63FF]"
+                  className="ml-auto w-2 h-2 rounded-full bg-sidebar-primary"
                 />
               )}
             </motion.button>

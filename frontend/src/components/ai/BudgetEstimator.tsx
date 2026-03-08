@@ -29,7 +29,7 @@ export default function BudgetEstimator() {
             Calculate event costs instantly
           </p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#6C63FF] to-[#C9B3FF] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-[#C9B3FF] flex items-center justify-center">
           <Calculator className="w-5 h-5 text-white" />
         </div>
       </div>
@@ -39,8 +39,8 @@ export default function BudgetEstimator() {
         <div className="flex items-center justify-between mb-3">
           <label className="text-sm text-muted-foreground">Guest Count</label>
           <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-[#6C63FF]" />
-            <span className="text-[#6C63FF]">{guestCount}</span>
+            <Users className="w-4 h-4 text-primary" />
+            <span className="text-primary">{guestCount}</span>
           </div>
         </div>
         <input
@@ -49,7 +49,7 @@ export default function BudgetEstimator() {
           max="200"
           value={guestCount}
           onChange={(e) => setGuestCount(parseInt(e.target.value))}
-          className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r [&::-webkit-slider-thumb]:from-[#6C63FF] [&::-webkit-slider-thumb]:to-[#93E5AB] [&::-webkit-slider-thumb]:cursor-pointer"
+          className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r [&::-webkit-slider-thumb]:from-primary [&::-webkit-slider-thumb]:to-accent [&::-webkit-slider-thumb]:cursor-pointer"
         />
       </div>
 
@@ -65,8 +65,8 @@ export default function BudgetEstimator() {
               className={`
                 px-4 py-2 rounded-lg border-2 capitalize transition-all
                 ${eventType === type
-                  ? 'border-[#6C63FF] bg-[#6C63FF]/10 text-[#6C63FF]'
-                  : 'border-border hover:border-[#6C63FF]/30'
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border hover:border-primary/30'
                 }
               `}
             >
@@ -77,13 +77,13 @@ export default function BudgetEstimator() {
       </div>
 
       {/* Estimated Total */}
-      <div className="p-4 bg-gradient-to-r from-[#6C63FF]/10 to-[#C9B3FF]/10 rounded-xl border border-[#6C63FF]/30 mb-4">
+      <div className="p-4 bg-gradient-to-r from-primary/10 to-[#C9B3FF]/10 rounded-xl border border-primary/30 mb-4">
         <p className="text-sm text-muted-foreground mb-1">Estimated Total</p>
         <motion.div
           key={estimatedCost}
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="text-[#6C63FF]"
+          className="text-primary"
         >
           ₹{estimatedCost.toLocaleString()}
         </motion.div>

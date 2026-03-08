@@ -11,10 +11,10 @@ const categoryIcons = {
 };
 
 const categoryColors = {
-  photographer: 'from-[#6C63FF] to-[#93E5AB]',
-  dj: 'from-[#FFC8A2] to-[#FFD66C]',
-  cake: 'from-[#FFB3D9] to-[#FFD66C]',
-  decorator: 'from-[#C9B3FF] to-[#93E5AB]',
+  photographer: 'from-primary to-accent',
+  dj: 'from-secondary to-warning',
+  cake: 'from-[#FFB3D9] to-warning',
+  decorator: 'from-[#C9B3FF] to-accent',
 };
 
 export default function VendorManagement() {
@@ -94,14 +94,14 @@ export default function VendorManagement() {
     switch (availability) {
       case 'available':
         return (
-          <div className="flex items-center gap-1 px-3 py-1 bg-[#4CAF50]/10 text-[#4CAF50] rounded-full">
+          <div className="flex items-center gap-1 px-3 py-1 bg-success/10 text-success rounded-full">
             <CheckCircle className="w-3 h-3" />
             <span className="text-xs">Available</span>
           </div>
         );
       case 'busy':
         return (
-          <div className="flex items-center gap-1 px-3 py-1 bg-[#FFD66C]/20 text-[#FFD66C] rounded-full">
+          <div className="flex items-center gap-1 px-3 py-1 bg-warning/20 text-warning rounded-full">
             <Clock className="w-3 h-3" />
             <span className="text-xs">Busy</span>
           </div>
@@ -139,7 +139,7 @@ export default function VendorManagement() {
             placeholder="Search vendors..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-4 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30 transition-all shadow-soft-sm"
+            className="w-full h-12 pl-12 pr-4 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all shadow-soft-sm"
           />
         </div>
 
@@ -148,7 +148,7 @@ export default function VendorManagement() {
           onClick={() => setShowAddModal(true)}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="h-12 px-6 bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white rounded-xl flex items-center gap-2 shadow-soft hover:shadow-hover transition-all"
+          className="h-12 px-6 bg-gradient-to-r from-primary to-accent text-white rounded-xl flex items-center gap-2 shadow-soft hover:shadow-hover transition-all"
         >
           <Plus className="w-5 h-5" />
           <span>Add Vendor</span>
@@ -170,8 +170,8 @@ export default function VendorManagement() {
             className={`
               px-4 py-2 rounded-lg whitespace-nowrap transition-all
               ${selectedCategory === category.id
-                ? 'bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white shadow-soft'
-                : 'bg-card border border-border hover:border-[#6C63FF]/30'
+                ? 'bg-gradient-to-r from-primary to-accent text-white shadow-soft'
+                : 'bg-card border border-border hover:border-primary/30'
               }
             `}
           >
@@ -219,7 +219,7 @@ export default function VendorManagement() {
                       <Star
                         key={i}
                         className={`w-4 h-4 ${i < Math.floor(vendor.rating)
-                            ? 'fill-[#FFD66C] text-[#FFD66C]'
+                            ? 'fill-warning text-warning'
                             : 'text-muted'
                           }`}
                       />
@@ -236,7 +236,7 @@ export default function VendorManagement() {
                   </div>
                   <div className="text-sm">
                     <span className="text-muted-foreground">Price info </span>
-                    <span className="text-[#6C63FF]">{vendor.price}</span>
+                    <span className="text-primary">{vendor.price}</span>
                   </div>
                 </div>
 
@@ -313,7 +313,7 @@ export default function VendorManagement() {
 
             <button
               onClick={handleAddVendor}
-              className="w-full bg-[#6C63FF] text-white py-2 rounded-lg hover:bg-[#5a52d5]"
+              className="w-full bg-primary text-white py-2 rounded-lg hover:bg-[#5a52d5]"
             >
               Save Vendor
             </button>

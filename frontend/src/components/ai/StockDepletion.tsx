@@ -56,7 +56,7 @@ export default function StockDepletion() {
           <h3>Stock Depletion</h3>
           <p className="text-sm text-muted-foreground mt-1">Predicted days until restock needed</p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#FF6B6B] to-[#C9B3FF] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-danger to-[#C9B3FF] flex items-center justify-center">
           <Package className="w-5 h-5 text-white" />
         </div>
       </div>

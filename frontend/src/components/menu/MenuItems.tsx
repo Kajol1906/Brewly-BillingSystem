@@ -279,7 +279,7 @@ export default function MenuItems() {
                         placeholder="Search menu items..."
                         value={searchQuery}
                         onChange={(e) => handleSearch(e.target.value)}
-                        className="w-full h-12 pl-12 pr-4 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/30 shadow-soft-sm"
+                        className="w-full h-12 pl-12 pr-4 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 shadow-soft-sm"
                     />
                 </div>
 
@@ -287,14 +287,14 @@ export default function MenuItems() {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setViewMode('grid')}
-                        className={`w-12 h-12 rounded-xl border flex items-center justify-center ${viewMode === 'grid' ? 'bg-[#6C63FF] text-white' : 'bg-card'
+                        className={`w-12 h-12 rounded-xl border flex items-center justify-center ${viewMode === 'grid' ? 'bg-primary text-white' : 'bg-card'
                             }`}
                     >
                         <Grid />
                     </button>
                     <button
                         onClick={() => setViewMode('list')}
-                        className={`w-12 h-12 rounded-xl border flex items-center justify-center ${viewMode === 'list' ? 'bg-[#6C63FF] text-white' : 'bg-card'
+                        className={`w-12 h-12 rounded-xl border flex items-center justify-center ${viewMode === 'list' ? 'bg-primary text-white' : 'bg-card'
                             }`}
                     >
                         <List />
@@ -306,7 +306,7 @@ export default function MenuItems() {
                     onClick={() => setShowAddModal(true)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="h-12 px-6 bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white rounded-xl flex items-center gap-2 shadow-soft"
+                    className="h-12 px-6 bg-gradient-to-r from-primary to-accent text-white rounded-xl flex items-center gap-2 shadow-soft"
                 >
                     <Plus className="w-5 h-5" />
                     Add Menu Item
@@ -317,7 +317,7 @@ export default function MenuItems() {
                     onClick={openManageModal}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="h-12 px-6 bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white rounded-xl flex items-center gap-2 shadow-soft"
+                    className="h-12 px-6 bg-gradient-to-r from-primary to-accent text-white rounded-xl flex items-center gap-2 shadow-soft"
                 >
                     <Settings className="w-5 h-5" />
                     Manage Categories
@@ -351,7 +351,7 @@ export default function MenuItems() {
                         key={cat}
                         onClick={() => handleCategoryChange(cat)}
                         className={`px-4 py-2 rounded-lg ${selectedCategory === cat
-                            ? 'bg-gradient-to-r from-[#6C63FF] to-[#93E5AB] text-white'
+                            ? 'bg-gradient-to-r from-primary to-accent text-white'
                             : 'bg-card border'
                             }`}
                     >
@@ -371,7 +371,7 @@ export default function MenuItems() {
                             <div className="p-4">
                                 <h4>{item.name}</h4>
                                 <p className="text-sm text-muted-foreground">{item.category}</p>
-                                <p className="text-[#6C63FF] mt-1">₹{item.price}</p>
+                                <p className="text-primary mt-1">₹{item.price}</p>
 
                                 <div className="flex justify-between items-center mt-4">
                                     <div className="flex items-center gap-2">

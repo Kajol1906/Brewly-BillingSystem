@@ -66,7 +66,7 @@ export default function RevenueForecast() {
           <h3>Revenue Forecast</h3>
           <p className="text-sm text-muted-foreground mt-1">Last 7 days + next 7 projected</p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#4CAF50] to-[#81C784] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-success to-[#81C784] flex items-center justify-center">
           <TrendingUp className="w-5 h-5 text-white" />
         </div>
       </div>
@@ -80,11 +80,11 @@ export default function RevenueForecast() {
           <p className="text-xs text-muted-foreground mb-1">Next Week (Est.)</p>
           <p className="text-lg font-semibold">₹{data.projectedWeekly.toLocaleString()}</p>
         </div>
-        <div className={`flex-1 px-4 py-3.5 rounded-xl border ${isUp ? 'bg-[#4CAF50]/5 border-[#4CAF50]/20' : 'bg-red-500/5 border-red-500/20'}`}>
+        <div className={`flex-1 px-4 py-3.5 rounded-xl border ${isUp ? 'bg-success/5 border-success/20' : 'bg-red-500/5 border-red-500/20'}`}>
           <p className="text-xs text-muted-foreground mb-1">Trend</p>
           <div className="flex items-center gap-1.5">
-            {isUp ? <TrendingUp className="w-4 h-4 text-[#4CAF50]" /> : <TrendingDown className="w-4 h-4 text-red-500" />}
-            <span className={`text-lg font-semibold ${isUp ? 'text-[#4CAF50]' : 'text-red-500'}`}>
+            {isUp ? <TrendingUp className="w-4 h-4 text-success" /> : <TrendingDown className="w-4 h-4 text-red-500" />}
+            <span className={`text-lg font-semibold ${isUp ? 'text-success' : 'text-red-500'}`}>
               {isUp ? '+' : ''}{data.changePercent}%
             </span>
           </div>

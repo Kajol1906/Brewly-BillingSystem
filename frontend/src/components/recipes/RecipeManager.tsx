@@ -161,7 +161,7 @@ export default function RecipeManager() {
 
                     <button
                         onClick={handleAddRecipeItem}
-                        className="flex items-center gap-2 px-4 py-2 bg-[#6C63FF] text-white rounded-lg"
+                        className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg"
                     >
                         <Plus size={16} />
                         Add Ingredient

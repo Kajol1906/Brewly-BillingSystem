@@ -19,7 +19,7 @@ export default function AIInsights() {
         className="relative"
       >
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#6C63FF] to-[#93E5AB] flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <h1>AI Insights</h1>
@@ -39,7 +39,7 @@ export default function AIInsights() {
             repeat: Infinity,
             ease: 'easeInOut',
           }}
-          className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-[#6C63FF] to-[#93E5AB] rounded-full blur-3xl -z-10"
+          className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-primary to-accent rounded-full blur-3xl -z-10"
         />
       </motion.div>
 
