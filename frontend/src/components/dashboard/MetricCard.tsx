@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { GlassButton } from '../ui/GlassButton';
 
 interface MetricCardProps {
   title: string;
@@ -50,9 +51,12 @@ export default function MetricCard({ title, value, change, trend, icon: Icon, co
 
       <div className="relative">
         {/* Icon */}
-        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-          <Icon className="w-6 h-6 text-white" />
-        </div>
+        <GlassButton
+          className="w-12 h-12 mb-4 group-hover:scale-110 transition-transform pointer-events-none"
+          iconOnly
+        >
+          <Icon className="w-6 h-6 text-primary" />
+        </GlassButton>
 
         {/* Title */}
         <p className="text-sm text-muted-foreground mb-2">{title}</p>

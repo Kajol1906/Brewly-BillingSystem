@@ -4,6 +4,7 @@ import { Plus } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import TableCard from './TableCard';
 import OrderSidebar from './OrderSidebar';
+import { GlassButton } from '../ui/GlassButton';
 import { createTable, deleteTable, renumberTables, getTablesWithReservations, Table as TableData } from '../../services/tableService';
 
 
@@ -107,13 +108,13 @@ export function POSScreen() {
                         Manage orders and table reservations
                     </p>
                 </div>
-                <button
+                <GlassButton
                     onClick={() => setIsAddDialogOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                    className="text-foreground text-sm font-semibold tracking-wide"
                 >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-5 h-5 text-primary" />
                     Add Table
-                </button>
+                </GlassButton>
             </motion.div>
 
             {/* Add Table Dialog */}

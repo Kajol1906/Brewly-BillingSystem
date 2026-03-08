@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { User, LogOut, Coffee, Settings, LayoutDashboard, ShoppingCart, Menu, Package, Calendar, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useSettings } from '../../context/SettingsContext';
+import { GlassButton } from '../ui/GlassButton';
 import type { Screen } from '../../App';
 
 const menuItems = [
@@ -35,9 +36,9 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
       <div className="h-full px-6 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-soft">
-            <Coffee className="w-6 h-6 text-white" />
-          </div>
+          <GlassButton iconOnly className="w-10 h-10 rounded-xl pointer-events-none">
+            <Coffee className="w-6 h-6 text-primary" />
+          </GlassButton>
           <span className="font-['DM_Serif_Display'] text-2xl tracking-wide bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             Brewly
           </span>
@@ -64,7 +65,13 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
                     }
                   `}
                 >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  {isActive ? (
+                    <GlassButton iconOnly className="w-8 h-8 rounded-lg pointer-events-none">
+                      <Icon className="w-4 h-4 text-primary" />
+                    </GlassButton>
+                  ) : (
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                  )}
                   <span className="truncate w-full text-center">{item.label}</span>
                   {isActive && (
                     <motion.div
@@ -87,9 +94,9 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
             onClick={() => setShowDropdown(!showDropdown)}
             className="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-muted/50 transition-colors"
           >
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center">
-              <User className="w-5 h-5 text-white" />
-            </div>
+            <GlassButton iconOnly className="w-10 h-10 rounded-full pointer-events-none">
+              <User className="w-5 h-5 text-primary" />
+            </GlassButton>
             <div className="text-left hidden md:block">
               <p className="text-sm font-semibold text-foreground font-sans">{userName}</p>
             </div>
@@ -110,14 +117,18 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
                 }}
                 className="w-full px-4 py-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left font-bold text-foreground bg-transparent"
               >
-                <Settings className="w-4 h-4" />
+                <GlassButton iconOnly className="w-8 h-8 p-0 rounded-lg pointer-events-none">
+                  <Settings className="w-4 h-4 text-primary" />
+                </GlassButton>
                 <span className="font-sans">Settings</span>
               </button>
               <button
                 onClick={onLogout}
                 className="w-full px-4 py-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left font-bold text-destructive bg-transparent"
               >
-                <LogOut className="w-4 h-4" />
+                <GlassButton iconOnly className="w-8 h-8 p-0 rounded-lg pointer-events-none">
+                  <LogOut className="w-4 h-4 text-destructive" />
+                </GlassButton>
                 <span className="font-sans">Logout</span>
               </button>
             </motion.div>
