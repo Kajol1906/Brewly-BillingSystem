@@ -30,16 +30,15 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
     <motion.nav
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 h-16 bg-background/90 backdrop-blur-lg border-b border-border z-[100]"
-      style={{ boxShadow: 'var(--shadow-sm)' }}
+      className="fixed top-0 left-0 right-0 h-24 border-b z-[100]" style={{ background: '#B48665', boxShadow: 'var(--shadow-sm)', borderBottom: '1px solid var(--border)', backdropFilter: 'blur(8px)' }}
     >
-      <div className="h-full px-6 flex items-center justify-between">
+      <div className="h-full px-8 flex items-center justify-between text-[#fff6e9]">
         {/* Logo */}
         <div className="flex items-center gap-3">
           <GlassButton iconOnly className="w-10 h-10 rounded-xl pointer-events-none">
             <Coffee className="w-6 h-6 text-primary" />
           </GlassButton>
-          <span className="font-['DM_Serif_Display'] text-2xl tracking-wide bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <span className="font-['DM_Serif_Display'] text-2xl tracking-wide" style={{ color: '#fff6e9' }}>
             Brewly
           </span>
         </div>
@@ -67,12 +66,12 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
                 >
                   {isActive ? (
                     <GlassButton iconOnly className="w-8 h-8 rounded-lg pointer-events-none">
-                      <Icon className="w-4 h-4 text-primary" />
+                      <Icon className="w-4 h-4" style={{ color: '#fff6e9' }} />
                     </GlassButton>
                   ) : (
-                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    <Icon className="w-5 h-5 flex-shrink-0" style={{ color: '#fff6e9' }} />
                   )}
-                  <span className="truncate w-full text-center">{item.label}</span>
+                  <span className="truncate w-full text-center" style={{ color: '#fff6e9' }}>{item.label}</span>
                   {isActive && (
                     <motion.div
                       layoutId="nav-indicator"
@@ -98,7 +97,7 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
               <User className="w-5 h-5 text-primary" />
             </GlassButton>
             <div className="text-left hidden md:block">
-              <p className="text-sm font-semibold text-foreground font-sans">{userName}</p>
+              <p className="text-sm font-semibold font-sans" style={{ color: '#fff6e9' }}>{userName}</p>
             </div>
           </motion.button>
 
