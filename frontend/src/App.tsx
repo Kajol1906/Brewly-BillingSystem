@@ -13,7 +13,6 @@ import AIInsights from './components/ai/AIInsights';
 import Settings from './components/settings/Settings';
 
 import Navbar from './components/layout/Navbar';
-import Sidebar from './components/layout/Sidebar';
 import { Toaster } from './components/ui/toaster';
 import { useSettings } from './context/SettingsContext';
 import { decodeJwt } from './utils/jwt';
@@ -33,7 +32,6 @@ function App() {
     // 🔹 ALWAYS start with login
     const [currentScreen, setCurrentScreen] = useState<Screen>('login');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const { updateSettings } = useSettings();
 
     // Handle Google OAuth redirect — extract token from URL
@@ -156,25 +154,14 @@ function App() {
             {/* 🔧 UPDATED: userRole removed */}
             <Navbar
                 onLogout={handleLogout}
-                sidebarCollapsed={sidebarCollapsed}
+                currentScreen={currentScreen}
+                onNavigate={setCurrentScreen}
                 onNavigateToSettings={() => setCurrentScreen('settings')}
             />
 
-            <div className="flex pt-16">
-                <Sidebar
-                    currentScreen={currentScreen}
-                    onNavigate={setCurrentScreen}
-                    collapsed={sidebarCollapsed}
-                    onToggleCollapse={() =>
-                        setSidebarCollapsed(!sidebarCollapsed)
-                    }
-                />
-
+            <div className="flex pt-16 w-full h-[auto]">
                 <main
-                    className="flex-1 transition-all duration-300"
-                    style={{
-                        marginLeft: sidebarCollapsed ? '64px' : '240px',
-                    }}
+                    className="flex-1 w-full transition-all duration-300 py-6"
                 >
                     <AnimatePresence mode="wait">
                         <motion.div
