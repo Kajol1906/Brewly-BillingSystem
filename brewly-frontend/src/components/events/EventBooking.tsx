@@ -15,6 +15,7 @@ export interface Event {
   guestCount: number;
   time: string;
   package: string;
+  status?: string;
 }
 
 export default function EventBooking() {
@@ -50,11 +51,17 @@ export default function EventBooking() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  const isPastEvent = (e: Event) => {
+    if (e.status === 'COMPLETED') return true;
+    const d = e.date instanceof Date ? new Date(e.date) : new Date(String(e.date) + 'T00:00:00');
+    d.setHours(0, 0, 0, 0);
+    return d.getTime() < today.getTime();
+  };
+
+  const isUpcomingEvent = (e: Event) => !isPastEvent(e);
+
   const pastEvents = events
-    .filter(e => {
-      const d = e.date instanceof Date ? e.date : new Date(String(e.date) + 'T00:00:00');
-      return d.getTime() < today.getTime();
-    })
+    .filter(isPastEvent)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const colors: Record<string, string> = {
@@ -80,20 +87,16 @@ export default function EventBooking() {
         </div>
         <div className="flex items-center gap-3">
           {(() => {
-            const upcomingCount = events.filter(e => {
-              const d = e.date instanceof Date ? e.date : new Date(String(e.date) + 'T00:00:00');
-              return d.getTime() >= today.getTime();
-            }).length;
+            const upcomingCount = events.filter(isUpcomingEvent).length;
             return upcomingCount > 0 ? (
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => { setShowAllUpcoming(!showAllUpcoming); setShowHistory(false); setSelectedDate(null); }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all ${
-                  showAllUpcoming
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'
-                }`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all ${showAllUpcoming
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'
+                  }`}
               >
                 <CalendarCheck className="w-4 h-4" />
                 <span className="text-sm font-medium">Upcoming Events</span>
@@ -106,11 +109,10 @@ export default function EventBooking() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => { setShowHistory(!showHistory); setSelectedDate(null); setShowAllUpcoming(false); }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all ${
-                showHistory
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all ${showHistory
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'
+                }`}
             >
               <History className="w-4 h-4" />
               <span className="text-sm font-medium">Event History</span>
@@ -209,13 +211,7 @@ export default function EventBooking() {
                 <div>
                   <h3>Upcoming Events</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {events.filter(e => {
-                      const d = e.date instanceof Date ? e.date : new Date(String(e.date) + 'T00:00:00');
-                      return d.getTime() >= today.getTime();
-                    }).length} upcoming event{events.filter(e => {
-                      const d = e.date instanceof Date ? e.date : new Date(String(e.date) + 'T00:00:00');
-                      return d.getTime() >= today.getTime();
-                    }).length !== 1 ? 's' : ''}
+                    {events.filter(isUpcomingEvent).length} upcoming event{events.filter(isUpcomingEvent).length !== 1 ? 's' : ''}
                   </p>
                 </div>
                 <button
@@ -228,10 +224,7 @@ export default function EventBooking() {
 
               <div className="space-y-3">
                 {events
-                  .filter(e => {
-                    const d = e.date instanceof Date ? e.date : new Date(String(e.date) + 'T00:00:00');
-                    return d.getTime() >= today.getTime();
-                  })
+                  .filter(isUpcomingEvent)
                   .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                   .map(event => {
                     const eventDate = new Date(event.date);

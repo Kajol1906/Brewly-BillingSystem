@@ -107,7 +107,7 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 w-48 bg-surface rounded-xl shadow-soft-lg border border-border overflow-hidden z-[100]"
+              className="absolute right-0 top-full mt-2 w-48 bg-[#FFF6E9] dark:bg-[#1e293b] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-[#B48665]/20 overflow-hidden z-[100]"
             >
               <button
                 onClick={() => {

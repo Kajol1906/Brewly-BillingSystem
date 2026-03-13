@@ -25,7 +25,7 @@ export default function EventCalendar({ currentDate, events, onDateClick, select
   const daysInPrevMonth = new Date(year, month, 0).getDate();
 
   const days = [];
-  
+
   // Previous month days
   for (let i = firstDay - 1; i >= 0; i--) {
     days.push({
@@ -78,6 +78,10 @@ export default function EventCalendar({ currentDate, events, onDateClick, select
           const isSelected = selectedDate?.toDateString() === day.date.toDateString();
           const isToday = day.date.toDateString() === new Date().toDateString();
 
+          const todayDt = new Date();
+          todayDt.setHours(0, 0, 0, 0);
+          const isPast = day.date.getTime() < todayDt.getTime();
+
           return (
             <motion.button
               key={index}
@@ -86,8 +90,8 @@ export default function EventCalendar({ currentDate, events, onDateClick, select
               whileTap={{ scale: 0.95 }}
               className={`
                 relative aspect-square p-2 rounded-xl transition-all
-                ${day.isCurrentMonth 
-                  ? 'bg-card border-2 border-border hover:border-primary/30' 
+                ${day.isCurrentMonth
+                  ? 'bg-card border-2 border-border hover:border-primary/30'
                   : 'bg-muted/30 border-2 border-transparent text-muted-foreground'
                 }
                 ${isSelected ? 'border-primary bg-primary/5' : ''}
@@ -100,7 +104,7 @@ export default function EventCalendar({ currentDate, events, onDateClick, select
               </div>
 
               {/* Event indicators */}
-              {dayEvents.length > 0 && (
+              {!isPast && dayEvents.length > 0 && (
                 <div className="flex flex-wrap gap-1 justify-center items-center">
                   {dayEvents.slice(0, 3).map((event, i) => (
                     <motion.div

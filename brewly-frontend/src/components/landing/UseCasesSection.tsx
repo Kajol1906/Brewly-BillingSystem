@@ -3,39 +3,35 @@ import { Coffee, Wine, ShoppingBag, Store, TrendingUp, Users } from "lucide-reac
 
 export function UseCasesSection() {
 	const useCases = [
-		{
-			icon: Coffee,
-			title: "Coffee Shops",
-			description: "Streamline operations for busy cafes with quick checkout and inventory tracking",
-			features: ["Quick service mode", "Loyalty programs", "Barista scheduling"],
-			color: "#B48665",
-			stats: { metric: "3x", label: "Faster checkout" },
-		},
-		{
-			icon: Wine,
-			title: "Bars & Pubs",
-			description: "Manage complex tabs, split bills, and track high-volume evening rushes",
-			features: ["Tab management", "Split billing", "Happy hour pricing"],
-			color: "#6A4334",
-			stats: { metric: "45%", label: "Revenue increase" },
-		},
-		{
-			icon: Store,
-			title: "Restaurants",
-			description: "Table management, kitchen orders, and seamless dine-in experience",
-			features: ["Table tracking", "Kitchen integration", "Waitstaff tips"],
-			color: "#D4A574",
-			stats: { metric: "60%", label: "Order accuracy" },
-		},
-		{
-			icon: ShoppingBag,
-			title: "Food Trucks",
-			description: "Mobile-first solution for on-the-go vendors with offline capabilities",
-			features: ["Offline mode", "Location tracking", "Quick menus"],
-			color: "#65350E",
-			stats: { metric: "99%", label: "Uptime" },
-		},
-	];
+			{
+				icon: Coffee,
+				title: "Coffee Shops",
+				description: "Streamline operations for busy cafes with quick checkout and inventory tracking",
+				features: ["Quick service mode", "Loyalty programs", "Barista scheduling"],
+				color: "#B48665",
+			},
+			{
+				icon: Wine,
+				title: "Bars & Pubs",
+				description: "Manage complex tabs, split bills, and track high-volume evening rushes",
+				features: ["Tab management", "Split billing", "Happy hour pricing"],
+				color: "#6A4334",
+			},
+			{
+				icon: Store,
+				title: "Restaurants",
+				description: "Table management, kitchen orders, and seamless dine-in experience",
+				features: ["Table tracking", "Kitchen integration", "Waitstaff tips"],
+				color: "#D4A574",
+			},
+			{
+				icon: ShoppingBag,
+				title: "Food Trucks",
+				description: "Mobile-first solution for on-the-go vendors with offline capabilities",
+				features: ["Offline mode", "Location tracking", "Quick menus"],
+				color: "#65350E",
+			},
+		];
 
 	const benefits = [
 		{
@@ -87,7 +83,7 @@ export function UseCasesSection() {
 				</motion.div>
 
 				{/* Use Cases Grid */}
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-20">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
 					{useCases.map((useCase, index) => {
 						const Icon = useCase.icon;
 						return (
@@ -97,33 +93,27 @@ export function UseCasesSection() {
 								whileInView={{ opacity: 1, y: 0 }}
 								viewport={{ once: true, margin: "-100px" }}
 								transition={{ duration: 0.7, delay: index * 0.1 }}
-								className="relative bg-white rounded-3xl shadow-2xl p-10 flex flex-col gap-6 border border-[#B48665]/10"
+								className="relative bg-white rounded-2xl shadow-2xl p-7 flex flex-col gap-4 border border-[#B48665]/10"
 							>
 								{/* Icon and Title */}
 								<div className="flex items-center gap-4">
-									<div className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: `${useCase.color}20` }}>
-										<Icon className="w-7 h-7" style={{ color: useCase.color }} />
+									<div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: `${useCase.color}20` }}>
+										<Icon className="w-6 h-6" style={{ color: useCase.color }} />
 									</div>
 									<div>
-										<h3 className="text-2xl font-serif text-[#65350E]">{useCase.title}</h3>
+										<h3 className="text-xl font-serif text-[#65350E]">{useCase.title}</h3>
 										<div className="text-[#6A4334]/60 text-sm">{useCase.description}</div>
 									</div>
 								</div>
 
 								{/* Features List */}
-								<ul className="flex flex-wrap gap-3 mt-2">
+								<ul className="flex flex-wrap gap-2 mt-2">
 									{useCase.features.map((feature) => (
 										<li key={feature} className="bg-[#FBF8F3] text-[#6A4334]/80 px-3 py-1 rounded-full text-xs font-medium border border-[#B48665]/20">
 											{feature}
 										</li>
 									))}
 								</ul>
-
-								{/* Stats */}
-								<div className="flex items-center gap-2 mt-4">
-									<span className="font-serif text-3xl text-[#B48665]">{useCase.stats.metric}</span>
-									<span className="text-[#6A4334]/60 text-sm">{useCase.stats.label}</span>
-								</div>
 							</motion.div>
 						);
 					})}

@@ -12,18 +12,29 @@ export function ContactSection() {
 
   const [status, setStatus] = useState<"idle" | "sending" | "success">("idle");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setStatus("success");
-      setTimeout(() => {
+    try {
+      const response = await fetch("http://localhost:8080/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        setStatus("success");
+        setTimeout(() => {
+          setStatus("idle");
+          setFormData({ name: "", email: "", subject: "", message: "" });
+        }, 3000);
+      } else {
         setStatus("idle");
-        setFormData({ name: "", email: "", subject: "", message: "" });
-      }, 3000);
-    }, 1500);
+        alert("Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      setStatus("idle");
+      alert("Error sending message. Please try again.");
+    }
   };
 
   const contactInfo = [

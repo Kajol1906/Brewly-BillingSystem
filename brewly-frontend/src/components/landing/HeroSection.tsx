@@ -128,21 +128,7 @@ export function HeroSection({ onGetStarted }: { onGetStarted?: () => void }) {
 							</motion.button>
 						</motion.div>
 
-						{/* Stats */}
-						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ delay: 0.7 }}
-							className="flex flex-wrap gap-8 pt-8"
-						>
-							{[
-								{ value: "5000+", label: "Active Cafes" },
-								{ value: "99.9%", label: "Uptime" },
-								{ value: "24/7", label: "Support" },
-							].map((stat, i) => (
-								<div key={i} className="space-y-1"></div>
-							))}
-						</motion.div>
+
 					</motion.div>
 
 					{/* Right - 3D Coffee Machine Centerpiece */}

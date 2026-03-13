@@ -89,8 +89,8 @@ export default function Settings() {
     return (
         <div style={{ minHeight: 'calc(100vh - 80px)', background: settings.theme === 'dark' ? '#0F172A' : '#F8FAFC', position: 'relative', overflow: 'hidden' }}>
             {/* Ambient Background Glows */}
-            <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', background: 'rgba(108, 99, 255, 0.08)', filter: 'blur(120px)', borderRadius: '50%', pointerEvents: 'none' }} />
-            <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', background: 'rgba(147, 229, 171, 0.08)', filter: 'blur(120px)', borderRadius: '50%', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', background: 'rgba(180, 134, 101, 0.08)', filter: 'blur(120px)', borderRadius: '50%', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', background: 'rgba(212, 165, 116, 0.08)', filter: 'blur(120px)', borderRadius: '50%', pointerEvents: 'none' }} />
 
             <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 24px', position: 'relative', zIndex: 10 }}>
                 {/* Header */}
@@ -100,7 +100,7 @@ export default function Settings() {
                     style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '36px' }}
                 >
                     <div>
-                        <h1 style={{ fontSize: '2rem', fontWeight: 900, background: 'linear-gradient(135deg, #6C63FF, #93E5AB)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
+                        <h1 style={{ fontSize: '2rem', fontWeight: 900, background: 'linear-gradient(135deg, #B48665, #D4A574)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
                             Settings
                         </h1>
                     </div>
@@ -113,8 +113,8 @@ export default function Settings() {
                         style={{
                             display: 'flex', alignItems: 'center', gap: '10px',
                             padding: '12px 28px', borderRadius: '16px', border: 'none', cursor: 'pointer',
-                            background: 'linear-gradient(135deg, #6C63FF, #4F46E5)', color: '#fff',
-                            fontWeight: 700, fontSize: '0.9rem', boxShadow: '0 8px 30px rgba(108, 99, 255, 0.3)',
+                            background: 'linear-gradient(135deg, #B48665, #6A4334)', color: '#fff',
+                            fontWeight: 700, fontSize: '0.9rem', boxShadow: '0 8px 30px rgba(180, 134, 101, 0.3)',
                             opacity: isSaving ? 0.7 : 1,
                         }}
                     >
@@ -146,7 +146,7 @@ export default function Settings() {
                     >
                         {/* Profile Header Banner */}
                         <div style={{
-                            background: 'linear-gradient(135deg, #6C63FF, #4F46E5, #7C3AED)',
+                            background: 'linear-gradient(135deg, #B48665, #6A4334, #65350E)',
                             padding: '32px 36px 28px',
                             position: 'relative',
                             overflow: 'hidden',
@@ -194,7 +194,7 @@ export default function Settings() {
                                             padding: '18px 24px',
                                             borderRadius: '16px',
                                             background: isEditing
-                                                ? (settings.theme === 'dark' ? 'rgba(108, 99, 255, 0.08)' : 'rgba(108, 99, 255, 0.04)')
+                                                ? (settings.theme === 'dark' ? 'rgba(180, 134, 101, 0.08)' : 'rgba(180, 134, 101, 0.04)')
                                                 : 'transparent',
                                             transition: 'all 0.2s ease',
                                             borderBottom: index < profileFields.length - 1
@@ -207,11 +207,11 @@ export default function Settings() {
                                         {/* Icon */}
                                         <div style={{
                                             width: 44, height: 44, borderRadius: '14px',
-                                            background: settings.theme === 'dark' ? 'rgba(108, 99, 255, 0.12)' : 'rgba(108, 99, 255, 0.08)',
+                                            background: settings.theme === 'dark' ? 'rgba(180, 134, 101, 0.12)' : 'rgba(180, 134, 101, 0.08)',
                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                                             flexShrink: 0,
                                         }}>
-                                            <Icon style={{ width: 20, height: 20, color: '#6C63FF' }} />
+                                            <Icon style={{ width: 20, height: 20, color: '#B48665' }} />
                                         </div>
 
                                         {/* Label & Value */}
@@ -237,7 +237,7 @@ export default function Settings() {
                                                         width: '100%', padding: '8px 14px', fontSize: '0.95rem', fontWeight: 600,
                                                         background: settings.theme === 'dark' ? '#1e293b' : '#fff',
                                                         color: settings.theme === 'dark' ? '#f1f5f9' : '#1e293b',
-                                                        border: '2px solid #6C63FF', borderRadius: '12px', outline: 'none',
+                                                        border: '2px solid #B48665', borderRadius: '12px', outline: 'none',
                                                     }}
                                                 />
                                             ) : (
@@ -267,7 +267,7 @@ export default function Settings() {
                                                     onClick={() => saveEdit(field.key)}
                                                     style={{
                                                         width: 36, height: 36, borderRadius: '10px', border: 'none', cursor: 'pointer',
-                                                        background: '#6C63FF', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                        background: '#B48665', display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                     }}
                                                 >
                                                     <Check style={{ width: 16, height: 16, color: '#fff' }} />
@@ -520,17 +520,17 @@ export default function Settings() {
                                     padding: '18px 20px', borderRadius: '16px', cursor: 'pointer',
                                     textAlign: 'left', width: '100%',
                                     background: settings.theme === 'light'
-                                        ? 'linear-gradient(135deg, rgba(108, 99, 255, 0.08), rgba(108, 99, 255, 0.04))'
+                                        ? 'linear-gradient(135deg, rgba(180, 134, 101, 0.08), rgba(180, 134, 101, 0.04))'
                                         : (settings.theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'),
                                     border: settings.theme === 'light'
-                                        ? '2px solid #6C63FF'
+                                        ? '2px solid #B48665'
                                         : (settings.theme === 'dark' ? '2px solid rgba(255,255,255,0.06)' : '2px solid rgba(0,0,0,0.04)'),
                                     transition: 'all 0.2s ease',
                                 }}
                             >
                                 <div style={{
                                     width: 44, height: 44, borderRadius: '14px',
-                                    background: settings.theme === 'light' ? '#6C63FF' : (settings.theme === 'dark' ? '#334155' : '#e2e8f0'),
+                                    background: settings.theme === 'light' ? '#B48665' : (settings.theme === 'dark' ? '#334155' : '#e2e8f0'),
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     flexShrink: 0,
                                 }}>
@@ -548,7 +548,7 @@ export default function Settings() {
                                     <motion.div
                                         initial={{ scale: 0 }}
                                         animate={{ scale: 1 }}
-                                        style={{ marginLeft: 'auto', width: 24, height: 24, borderRadius: '50%', background: '#6C63FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                        style={{ marginLeft: 'auto', width: 24, height: 24, borderRadius: '50%', background: '#B48665', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                     >
                                         <Check style={{ width: 14, height: 14, color: '#fff' }} />
                                     </motion.div>
@@ -565,17 +565,17 @@ export default function Settings() {
                                     padding: '18px 20px', borderRadius: '16px', cursor: 'pointer',
                                     textAlign: 'left', width: '100%',
                                     background: settings.theme === 'dark'
-                                        ? 'linear-gradient(135deg, rgba(108, 99, 255, 0.08), rgba(108, 99, 255, 0.04))'
+                                        ? 'linear-gradient(135deg, rgba(180, 134, 101, 0.08), rgba(180, 134, 101, 0.04))'
                                         : 'rgba(0,0,0,0.02)',
                                     border: settings.theme === 'dark'
-                                        ? '2px solid #6C63FF'
+                                        ? '2px solid #B48665'
                                         : '2px solid rgba(0,0,0,0.04)',
                                     transition: 'all 0.2s ease',
                                 }}
                             >
                                 <div style={{
                                     width: 44, height: 44, borderRadius: '14px',
-                                    background: settings.theme === 'dark' ? '#6C63FF' : '#e2e8f0',
+                                    background: settings.theme === 'dark' ? '#B48665' : '#e2e8f0',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     flexShrink: 0,
                                 }}>
@@ -593,7 +593,7 @@ export default function Settings() {
                                     <motion.div
                                         initial={{ scale: 0 }}
                                         animate={{ scale: 1 }}
-                                        style={{ marginLeft: 'auto', width: 24, height: 24, borderRadius: '50%', background: '#6C63FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                        style={{ marginLeft: 'auto', width: 24, height: 24, borderRadius: '50%', background: '#B48665', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                     >
                                         <Check style={{ width: 14, height: 14, color: '#fff' }} />
                                     </motion.div>
@@ -624,7 +624,7 @@ export default function Settings() {
                             border: '1px solid rgba(255,255,255,0.08)',
                         }}>
                             <div style={{
-                                width: 32, height: 32, borderRadius: '50%', background: '#93E5AB',
+                                width: 32, height: 32, borderRadius: '50%', background: '#D4A574',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                             }}>
                                 <CheckCircle2 style={{ width: 18, height: 18, color: '#0f172a' }} />

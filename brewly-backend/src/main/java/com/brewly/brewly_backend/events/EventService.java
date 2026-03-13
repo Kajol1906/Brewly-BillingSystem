@@ -21,7 +21,8 @@ public class EventService {
     }
 
     public Event createEvent(EventRequest request) {
-        // Check table conflict: only block if requested tables overlap with existing event tables at same date+time
+        // Check table conflict: only block if requested tables overlap with existing
+        // event tables at same date+time
         if (request.getTableIds() != null && !request.getTableIds().isEmpty()) {
             List<Event> sameSlot = repository.findByDateAndTime(request.getDate(), request.getTime());
             Set<Long> requestedTables = new HashSet<>(request.getTableIds());
@@ -32,7 +33,8 @@ public class EventService {
                             .collect(Collectors.toSet());
                     existingTableIds.retainAll(requestedTables);
                     if (!existingTableIds.isEmpty()) {
-                        throw new RuntimeException("Some selected tables are already booked at " + request.getTime() + " on this date.");
+                        throw new RuntimeException(
+                                "Some selected tables are already booked at " + request.getTime() + " on this date.");
                     }
                 }
             }
@@ -45,6 +47,7 @@ public class EventService {
         event.setGuestCount(request.getGuestCount());
         event.setTime(request.getTime());
         event.setPackageType(request.getPackageType());
+        event.setStatus("UPCOMING");
 
         // Handle Vendors
         if (request.getVendorIds() != null && !request.getVendorIds().isEmpty()) {
@@ -84,7 +87,8 @@ public class EventService {
                             .collect(Collectors.toSet());
                     existingTableIds.retainAll(requestedTables);
                     if (!existingTableIds.isEmpty()) {
-                        throw new RuntimeException("Some selected tables are already booked at " + request.getTime() + " on this date.");
+                        throw new RuntimeException(
+                                "Some selected tables are already booked at " + request.getTime() + " on this date.");
                     }
                 }
             }

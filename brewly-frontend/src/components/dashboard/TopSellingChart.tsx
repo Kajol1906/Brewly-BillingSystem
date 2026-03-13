@@ -29,42 +29,49 @@ export default function TopSellingChart({ period }: { period: Period }) {
         <p className="text-sm text-muted-foreground mt-1">{subtitles[period]}</p>
       </div>
 
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-          <XAxis
-            dataKey="item"
-            stroke="#9ca3af"
-            tick={{ fill: '#6b7280' }}
-            axisLine={{ stroke: '#e5e7eb' }}
-          />
-          <YAxis
-            stroke="#9ca3af"
-            tick={{ fill: '#6b7280' }}
-            axisLine={{ stroke: '#e5e7eb' }}
-          />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: 'white',
-              border: '1px solid #e5e7eb',
-              borderRadius: '12px',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
-            }}
-            formatter={(value: number) => [`${value} orders`, 'Sales']}
-          />
-          <Bar
-            dataKey="sales"
-            fill="url(#barGradient)"
-            radius={[8, 8, 0, 0]}
-          />
-          <defs>
-            <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#FFC8A2" />
-              <stop offset="100%" stopColor="#FFD66C" />
-            </linearGradient>
-          </defs>
-        </BarChart>
-      </ResponsiveContainer>
+      {data.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-[300px] text-muted-foreground w-full">
+          <p className="text-lg font-medium text-[#65350E]/60">No sales data yet</p>
+          <p className="text-sm text-[#6A4334]/50 mt-1">Start billing orders to see top-selling items!</p>
+        </div>
+      ) : (
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+            <XAxis
+              dataKey="item"
+              stroke="#9ca3af"
+              tick={{ fill: '#6b7280' }}
+              axisLine={{ stroke: '#e5e7eb' }}
+            />
+            <YAxis
+              stroke="#9ca3af"
+              tick={{ fill: '#6b7280' }}
+              axisLine={{ stroke: '#e5e7eb' }}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '12px',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
+              }}
+              formatter={(value: number) => [`${value} orders`, 'Sales']}
+            />
+            <Bar
+              dataKey="sales"
+              fill="url(#barGradient)"
+              radius={[8, 8, 0, 0]}
+            />
+            <defs>
+              <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#FFC8A2" />
+                <stop offset="100%" stopColor="#FFD66C" />
+              </linearGradient>
+            </defs>
+          </BarChart>
+        </ResponsiveContainer>
+      )}
     </motion.div>
   );
 }

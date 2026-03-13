@@ -9,7 +9,6 @@ export function UseCasesSection() {
       description: "Streamline operations for busy cafes with quick checkout and inventory tracking",
       features: ["Quick service mode", "Loyalty programs", "Barista scheduling"],
       color: "#B48665",
-      stats: { metric: "3x", label: "Faster checkout" },
     },
     {
       icon: Wine,
@@ -17,7 +16,6 @@ export function UseCasesSection() {
       description: "Manage complex tabs, split bills, and track high-volume evening rushes",
       features: ["Tab management", "Split billing", "Happy hour pricing"],
       color: "#6A4334",
-      stats: { metric: "45%", label: "Revenue increase" },
     },
     {
       icon: Store,
@@ -25,7 +23,6 @@ export function UseCasesSection() {
       description: "Table management, kitchen orders, and seamless dine-in experience",
       features: ["Table tracking", "Kitchen integration", "Waitstaff tips"],
       color: "#D4A574",
-      stats: { metric: "60%", label: "Order accuracy" },
     },
     {
       icon: ShoppingBag,
@@ -33,7 +30,6 @@ export function UseCasesSection() {
       description: "Mobile-first solution for on-the-go vendors with offline capabilities",
       features: ["Offline mode", "Location tracking", "Quick menus"],
       color: "#65350E",
-      stats: { metric: "99%", label: "Uptime" },
     },
   ];
 
@@ -148,11 +144,7 @@ export function UseCasesSection() {
                     ))}
                   </div>
 
-                  {/* Stats Badge */}
-                  
-
-                  {/* Decorative coffee bean */}
-                  
+                  {/* Removed stats badge and adjusted spacing */}
                 </div>
               </motion.div>
             );

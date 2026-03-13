@@ -39,17 +39,24 @@ public class TableService {
             Table.TableStatus effectiveStatus = t.getStatus();
 
             // Check if this table is linked to any event today
-            List<com.brewly.brewly_backend.events.Event> todayEvents =
-                    eventRepository.findByTablesIdAndDate(t.getId(), today);
+            List<com.brewly.brewly_backend.events.Event> todayEvents = eventRepository.findByTablesIdAndDate(t.getId(),
+                    today);
 
             for (com.brewly.brewly_backend.events.Event ev : todayEvents) {
+                if ("COMPLETED".equals(ev.getStatus())) {
+                    continue;
+                }
+
                 try {
                     LocalTime eventTime = LocalTime.parse(ev.getTime());
-                    LocalTime blockStart = eventTime.minusMinutes(10);
-                    LocalTime blockEnd = eventTime.plusHours(2);
 
-                    if (!now.isBefore(blockStart) && now.isBefore(blockEnd)) {
-                        effectiveStatus = Table.TableStatus.RESERVED;
+                    // Start reserving exactly at the event time. Reserving ends when bill is
+                    // generated (status=COMPLETED).
+                    if (!now.isBefore(eventTime)) {
+                        // Only show RESERVED if they haven't started ordering yet
+                        if (effectiveStatus != Table.TableStatus.OCCUPIED) {
+                            effectiveStatus = Table.TableStatus.RESERVED;
+                        }
                         eventName = ev.getTitle();
                         eventDate = ev.getDate() + " " + ev.getTime();
                         break;
@@ -79,7 +86,8 @@ public class TableService {
         if (time != null && !time.isBlank()) {
             try {
                 requestedTime = LocalTime.parse(time);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         final LocalTime reqTime = requestedTime;
@@ -89,10 +97,14 @@ public class TableService {
             String eventDate = null;
             Table.TableStatus effectiveStatus = t.getStatus();
 
-            List<com.brewly.brewly_backend.events.Event> dateEvents =
-                    eventRepository.findByTablesIdAndDate(t.getId(), date);
+            List<com.brewly.brewly_backend.events.Event> dateEvents = eventRepository.findByTablesIdAndDate(t.getId(),
+                    date);
 
             for (com.brewly.brewly_backend.events.Event ev : dateEvents) {
+                if ("COMPLETED".equals(ev.getStatus())) {
+                    continue;
+                }
+
                 if (reqTime != null) {
                     try {
                         LocalTime evTime = LocalTime.parse(ev.getTime());
@@ -105,7 +117,8 @@ public class TableService {
                             eventDate = ev.getDate() + " " + ev.getTime();
                             break;
                         }
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 } else {
                     effectiveStatus = Table.TableStatus.RESERVED;
                     eventName = ev.getTitle();

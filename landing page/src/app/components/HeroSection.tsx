@@ -75,7 +75,7 @@ export function HeroSection() {
             className="space-y-8"
           >
             {/* Badge */}
-            
+
 
             {/* Main Heading */}
             <div className="space-y-4">
@@ -129,163 +129,145 @@ export function HeroSection() {
                 />
               </motion.button>
 
-              
+
             </motion.div>
 
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="flex flex-wrap gap-8 pt-8"
-            >
-              {[
-                { value: "5000+", label: "Active Cafes" },
-                { value: "99.9%", label: "Uptime" },
-                { value: "24/7", label: "Support" },
-              ].map((stat, i) => (
-                <div key={i} className="space-y-1">
-                  
-                  
-                </div>
-              ))}
-            </motion.div>
           </motion.div>
+        </div>
 
-          {/* Right - 3D Coffee Machine Centerpiece */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="relative h-[600px] hidden lg:block"
-            style={{
-              transform: `perspective(1000px) rotateY(${mousePosition.x * 0.5}deg) rotateX(${mousePosition.y * -0.5}deg)`,
-            }}
-          >
-            {/* Central Machine Illustration */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <motion.div
-                animate={{ y: [0, -20, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="relative w-80 h-96"
-              >
-                {/* Coffee Machine Body */}
-                <div className="absolute inset-x-12 top-8 bottom-20 bg-gradient-to-br from-[#6A4334] via-[#65350E] to-[#6A4334] rounded-3xl shadow-2xl transform -skew-y-1">
-                  {/* Screen */}
-                  <div className="absolute top-8 left-8 right-8 h-32 bg-gradient-to-br from-[#D4A574] to-[#B48665] rounded-xl shadow-inner flex items-center justify-center overflow-hidden">
-                    <motion.div
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="text-[#FBF8F3] text-sm font-mono"
-                    >
-                      ANALYTICS READY
-                    </motion.div>
-                  </div>
-
-                  {/* Buttons */}
-                  <div className="absolute bottom-12 left-8 right-8 flex gap-4">
-                    {[...Array(3)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        whileHover={{ scale: 1.1 }}
-                        className="flex-1 h-8 bg-[#B48665] rounded-lg shadow-lg"
-                      />
-                    ))}
-                  </div>
+        {/* Right - 3D Coffee Machine Centerpiece */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.3 }}
+          className="relative h-[600px] hidden lg:block"
+          style={{
+            transform: `perspective(1000px) rotateY(${mousePosition.x * 0.5}deg) rotateX(${mousePosition.y * -0.5}deg)`,
+          }}
+        >
+          {/* Central Machine Illustration */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <motion.div
+              animate={{ y: [0, -20, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="relative w-80 h-96"
+            >
+              {/* Coffee Machine Body */}
+              <div className="absolute inset-x-12 top-8 bottom-20 bg-gradient-to-br from-[#6A4334] via-[#65350E] to-[#6A4334] rounded-3xl shadow-2xl transform -skew-y-1">
+                {/* Screen */}
+                <div className="absolute top-8 left-8 right-8 h-32 bg-gradient-to-br from-[#D4A574] to-[#B48665] rounded-xl shadow-inner flex items-center justify-center overflow-hidden">
+                  <motion.div
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="text-[#FBF8F3] text-sm font-mono"
+                  >
+                    ANALYTICS READY
+                  </motion.div>
                 </div>
 
-                {/* Steam Wand */}
-                <div className="absolute right-4 top-16 w-4 h-32 bg-gradient-to-b from-[#B48665] to-[#6A4334] rounded-full shadow-xl" />
+                {/* Buttons */}
+                <div className="absolute bottom-12 left-8 right-8 flex gap-4">
+                  {[...Array(3)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      whileHover={{ scale: 1.1 }}
+                      className="flex-1 h-8 bg-[#B48665] rounded-lg shadow-lg"
+                    />
+                  ))}
+                </div>
+              </div>
 
-                {/* Cup Platform */}
-                <div className="absolute inset-x-16 bottom-12 h-8 bg-gradient-to-b from-[#B48665] to-[#65350E] rounded-t-xl shadow-xl" />
+              {/* Steam Wand */}
+              <div className="absolute right-4 top-16 w-4 h-32 bg-gradient-to-b from-[#B48665] to-[#6A4334] rounded-full shadow-xl" />
+
+              {/* Cup Platform */}
+              <div className="absolute inset-x-16 bottom-12 h-8 bg-gradient-to-b from-[#B48665] to-[#65350E] rounded-t-xl shadow-xl" />
+            </motion.div>
+          </div>
+
+          {/* Floating UI Elements */}
+          {floatingElements.map((elem, i) => {
+            const Icon = elem.icon;
+            const angle = (i / floatingElements.length) * Math.PI * 2;
+            const x = Math.cos(angle) * elem.radius;
+            const y = Math.sin(angle) * elem.radius;
+
+            return (
+              <motion.div
+                key={i}
+                className="absolute left-1/2 top-1/2"
+                style={{
+                  x: x - 32,
+                  y: y - 32,
+                }}
+                animate={{
+                  rotate: [0, 360],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  rotate: { duration: 20, repeat: Infinity, ease: "linear" },
+                  scale: { duration: 2, repeat: Infinity, delay: elem.delay },
+                }}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.3, rotate: 15 }}
+                  className="w-16 h-16 rounded-2xl bg-white/90 backdrop-blur-sm shadow-2xl flex items-center justify-center border-2 border-white/50 cursor-pointer"
+                >
+                  <Icon className="w-8 h-8" style={{ color: elem.color }} />
+                </motion.div>
+
+                {/* Coffee Bean Particles */}
+                <motion.div
+                  className="absolute -top-2 -right-2 w-4 h-5 rounded-full bg-gradient-to-br from-[#6A4334] to-[#65350E] shadow-lg"
+                  animate={{
+                    y: [0, -10, 0],
+                    rotate: [0, 180, 360],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    delay: elem.delay + 0.5,
+                  }}
+                />
               </motion.div>
-            </div>
+            );
+          })}
 
-            {/* Floating UI Elements */}
-            {floatingElements.map((elem, i) => {
-              const Icon = elem.icon;
-              const angle = (i / floatingElements.length) * Math.PI * 2;
-              const x = Math.cos(angle) * elem.radius;
-              const y = Math.sin(angle) * elem.radius;
-
+          {/* Orbiting Receipts */}
+          <motion.div
+            className="absolute left-1/2 top-1/2"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          >
+            {[...Array(6)].map((_, i) => {
+              const angle = (i / 6) * Math.PI * 2;
+              const radius = 350;
               return (
                 <motion.div
                   key={i}
-                  className="absolute left-1/2 top-1/2"
+                  className="absolute w-12 h-16 bg-white rounded shadow-xl border border-[#B48665]/20"
                   style={{
-                    x: x - 32,
-                    y: y - 32,
+                    left: Math.cos(angle) * radius - 24,
+                    top: Math.sin(angle) * radius - 32,
                   }}
-                  animate={{
-                    rotate: [0, 360],
-                    scale: [1, 1.2, 1],
-                  }}
+                  animate={{ rotateZ: [0, 360] }}
                   transition={{
-                    rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-                    scale: { duration: 2, repeat: Infinity, delay: elem.delay },
+                    duration: 10,
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: i * 0.5,
                   }}
                 >
-                  <motion.div
-                    whileHover={{ scale: 1.3, rotate: 15 }}
-                    className="w-16 h-16 rounded-2xl bg-white/90 backdrop-blur-sm shadow-2xl flex items-center justify-center border-2 border-white/50 cursor-pointer"
-                  >
-                    <Icon className="w-8 h-8" style={{ color: elem.color }} />
-                  </motion.div>
-
-                  {/* Coffee Bean Particles */}
-                  <motion.div
-                    className="absolute -top-2 -right-2 w-4 h-5 rounded-full bg-gradient-to-br from-[#6A4334] to-[#65350E] shadow-lg"
-                    animate={{
-                      y: [0, -10, 0],
-                      rotate: [0, 180, 360],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      delay: elem.delay + 0.5,
-                    }}
-                  />
+                  <div className="p-2 space-y-1">
+                    <div className="h-1 bg-[#B48665]/30 rounded" />
+                    <div className="h-1 bg-[#B48665]/30 rounded w-2/3" />
+                    <div className="h-1 bg-[#B48665]/30 rounded" />
+                  </div>
                 </motion.div>
               );
             })}
-
-            {/* Orbiting Receipts */}
-            <motion.div
-              className="absolute left-1/2 top-1/2"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            >
-              {[...Array(6)].map((_, i) => {
-                const angle = (i / 6) * Math.PI * 2;
-                const radius = 350;
-                return (
-                  <motion.div
-                    key={i}
-                    className="absolute w-12 h-16 bg-white rounded shadow-xl border border-[#B48665]/20"
-                    style={{
-                      left: Math.cos(angle) * radius - 24,
-                      top: Math.sin(angle) * radius - 32,
-                    }}
-                    animate={{ rotateZ: [0, 360] }}
-                    transition={{
-                      duration: 10,
-                      repeat: Infinity,
-                      ease: "linear",
-                      delay: i * 0.5,
-                    }}
-                  >
-                    <div className="p-2 space-y-1">
-                      <div className="h-1 bg-[#B48665]/30 rounded" />
-                      <div className="h-1 bg-[#B48665]/30 rounded w-2/3" />
-                      <div className="h-1 bg-[#B48665]/30 rounded" />
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
           </motion.div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Scroll Indicator */}

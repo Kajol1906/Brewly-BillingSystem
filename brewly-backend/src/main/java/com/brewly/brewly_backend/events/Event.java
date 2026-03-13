@@ -25,6 +25,7 @@ public class Event {
     private Integer guestCount;
     private String time;
     private String packageType; // Gold, Silver, Platinum
+    private String status; // UPCOMING, COMPLETED
 
     @ManyToMany
     @JoinTable(name = "event_vendors", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "vendor_id"))

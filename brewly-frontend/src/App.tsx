@@ -15,11 +15,13 @@ import { Toaster } from './components/ui/toaster';
 import { useSettings } from './context/SettingsContext';
 import { decodeJwt } from './utils/jwt';
 // Landing page imports
+
 import { HeroSection } from './components/landing/HeroSection';
 import { FeaturesSection } from './components/landing/FeaturesSection';
 import { UseCasesSection } from './components/landing/UseCasesSection';
 import { ContactSection } from './components/landing/ContactSection';
 import { Footer } from './components/landing/Footer';
+import LandingNavbar from './components/landing/LandingNavbar';
 
 
 export type Screen =
@@ -99,13 +101,18 @@ function App() {
     const handleLogout = () => {
         localStorage.removeItem('token');
         setIsAuthenticated(false);
-        setCurrentScreen('login');
+        setCurrentScreen('landing');
     };
 
     // Landing page flow
+
     if (!isAuthenticated && currentScreen === 'landing') {
         return (
-            <div className="min-h-screen bg-background">
+            <div className="min-h-screen bg-background relative">
+                <LandingNavbar
+                    onLogin={() => setCurrentScreen('login')}
+                    onSignup={() => setCurrentScreen('signup')}
+                />
                 <HeroSection onGetStarted={() => setCurrentScreen('login')} />
                 <FeaturesSection />
                 <UseCasesSection />
