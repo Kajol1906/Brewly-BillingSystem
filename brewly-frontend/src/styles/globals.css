@@ -1,0 +1,290 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Café Design System Tokens — "Espresso & Cream" */
+  --font-size: 16px;
+  --font-heading: 'DM Serif Display', Georgia, serif;
+
+  /* Primary Colors */
+  --primary: #c8956c;
+  /* Warm Amber */
+  --primary-foreground: #ffffff;
+  --secondary: #5c3d2e;
+  /* Rich Brown */
+  --secondary-foreground: #faf6f0;
+  --accent: #d97b3c;
+  /* Burnt Orange */
+  --accent-foreground: #ffffff;
+
+  /* Semantic Colors */
+  --danger: #c0392b;
+  --danger-foreground: #ffffff;
+  --warning: #e67e22;
+  --warning-foreground: #ffffff;
+  --success: #27ae60;
+  --success-foreground: #ffffff;
+
+  /* Base Colors */
+  --background: #faf6f0;
+  /* Warm Cream */
+  --foreground: #2c1810;
+  --surface: #ffffff;
+
+  /* Card & Surfaces */
+  --card: #ffffff;
+  --card-foreground: #2c1810;
+  --popover: #ffffff;
+  --popover-foreground: #2c1810;
+
+  /* Muted & Subtle */
+  --muted: #f0ebe3;
+  --muted-foreground: #8c7b6b;
+
+  /* Destructive (mapped to danger) */
+  --destructive: #c0392b;
+  --destructive-foreground: #ffffff;
+
+  /* Border & Input */
+  --border: rgba(92, 61, 46, 0.12);
+  --input: transparent;
+  --input-background: #f5f0e8;
+  --switch-background: #d4c8b8;
+
+  /* Shadows — warm tinted */
+  --shadow-sm: 0 2px 8px rgba(92, 61, 46, 0.06);
+  --shadow-md: 0 4px 14px rgba(92, 61, 46, 0.08);
+  --shadow-lg: 0 8px 24px rgba(92, 61, 46, 0.10);
+  --shadow-hover: 0 6px 20px rgba(92, 61, 46, 0.14);
+
+  /* Typography */
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Spacing System (8px base) */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-5: 2.5rem;
+  --space-6: 3rem;
+
+  /* Border Radius */
+  --radius: 0.75rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+
+  /* Ring */
+  --ring: #c8956c;
+
+  /* Chart Colors */
+  --chart-1: #c8956c;
+  --chart-2: #5c3d2e;
+  --chart-3: #d97b3c;
+  --chart-4: #c0392b;
+  --chart-5: #e67e22;
+
+  /* Sidebar Colors — Dark Espresso */
+  --sidebar: #1a1612;
+  --sidebar-foreground: #e8ddd0;
+  --sidebar-primary: #c8956c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #2a2218;
+  --sidebar-accent-foreground: #c8956c;
+  --sidebar-border: rgba(232, 221, 208, 0.1);
+  --sidebar-ring: #c8956c;
+
+  /* Table Status Colors */
+  --table-free: #27ae60;
+  --table-occupied: #c0392b;
+  --table-reserved: #e67e22;
+
+  /* Event Colors */
+  --event-birthday: #e08a9e;
+  --event-corporate: #7ca8c6;
+  --event-family: #c8956c;
+  --event-anniversary: #d4a03c;
+
+  /* Transitions */
+  --transition-fast: 150ms;
+  --transition-normal: 200ms;
+  --transition-slow: 250ms;
+}
+
+.dark {
+  --background: #0f0d0a;
+  --foreground: #e8ddd0;
+  --card: #1a1612;
+  --card-foreground: #e8ddd0;
+  --popover: #1a1612;
+  --popover-foreground: #e8ddd0;
+  --primary: #c8956c;
+  --primary-foreground: #ffffff;
+  --secondary: #3a2820;
+  --secondary-foreground: #e8ddd0;
+  --muted: #2a2218;
+  --muted-foreground: #8c7b6b;
+  --accent: #d97b3c;
+  --accent-foreground: #ffffff;
+  --destructive: #c0392b;
+  --destructive-foreground: #ffffff;
+  --border: rgba(232, 221, 208, 0.1);
+  --input: rgba(232, 221, 208, 0.1);
+  --ring: #c8956c;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --chart-1: #c8956c;
+  --chart-2: #d97b3c;
+  --chart-3: #e67e22;
+  --chart-4: #c0392b;
+  --chart-5: #d4a03c;
+  --sidebar: #0f0d0a;
+  --sidebar-foreground: #e8ddd0;
+  --sidebar-primary: #c8956c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #2a2218;
+  --sidebar-accent-foreground: #c8956c;
+  --sidebar-border: rgba(232, 221, 208, 0.08);
+  --sidebar-ring: #c8956c;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/**
+ * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
+ */
+@layer base {
+  :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
+    h1 {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h2 {
+      font-size: var(--text-xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h4 {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    label {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    button {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    input {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* Custom Utility Classes */
+@layer utilities {
+  .shadow-soft {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-soft-sm {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .shadow-soft-lg {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shadow-hover {
+    box-shadow: var(--shadow-hover);
+  }
+
+  .transition-smooth {
+    transition: all var(--transition-normal) ease-out;
+  }
+
+  .transition-fast {
+    transition: all var(--transition-fast) ease-out;
+  }
+
+  .transition-slow {
+    transition: all var(--transition-slow) ease-out;
+  }
+}
