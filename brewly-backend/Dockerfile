@@ -11,4 +11,4 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/brewly-backend-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 10000
-ENTRYPOINT ["java", "-Xmx384m", "-Xms192m", "-XX:+UseSerialGC", "-Dspring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Xmx256m", "-Xms128m", "-XX:MaxMetaspaceSize=128m", "-XX:+UseSerialGC", "-jar", "app.jar"]
