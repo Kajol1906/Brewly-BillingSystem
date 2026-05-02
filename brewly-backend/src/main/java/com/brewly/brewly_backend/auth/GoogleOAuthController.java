@@ -38,6 +38,9 @@ public class GoogleOAuthController {
     @Value("${google.redirect.uri}")
     private String redirectUri;
 
+    @Value("${frontend.url:http://localhost:3000}")
+    private String frontendUrl;
+
     private static final String GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
     private static final String GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
     private static final String GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
@@ -80,7 +83,7 @@ public class GoogleOAuthController {
         JsonNode tokenJson = mapper.readTree(tokenResponse.body());
 
         if (!tokenJson.has("access_token")) {
-            response.sendRedirect("http://localhost:3000?error=google_auth_failed");
+            response.sendRedirect(frontendUrl + "?error=google_auth_failed");
             return;
         }
 
@@ -103,12 +106,12 @@ public class GoogleOAuthController {
         boolean userExists = userRepository.findByEmail(email).isPresent();
 
         if ("signup".equals(mode) && userExists) {
-            response.sendRedirect("http://localhost:3000?error=User already registered. Please login instead.");
+            response.sendRedirect(frontendUrl + "?error=User already registered. Please login instead.");
             return;
         }
 
         if ("login".equals(mode) && !userExists) {
-            response.sendRedirect("http://localhost:3000?error=Account not found. Please sign up first.");
+            response.sendRedirect(frontendUrl + "?error=Account not found. Please sign up first.");
             return;
         }
 
@@ -123,6 +126,6 @@ public class GoogleOAuthController {
         // Generate JWT and redirect to frontend
         String jwt = jwtService.generateToken(user.getEmail());
         String encodedName = URLEncoder.encode(user.getName(), StandardCharsets.UTF_8);
-        response.sendRedirect("http://localhost:3000?token=" + jwt + "&name=" + encodedName);
+        response.sendRedirect(frontendUrl + "?token=" + jwt + "&name=" + encodedName);
     }
 }
