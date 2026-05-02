@@ -87,4 +87,16 @@ public class MenuItemController {
     public Map<String, Object> bulkImport(@RequestBody List<MenuItem> items){
         return service.bulkImport(items);
     }
+
+    //delete a single menu item
+    @DeleteMapping("/{id}")
+    public void deleteMenuItem(@PathVariable Long id){
+        service.deleteMenuItem(id);
+    }
+
+    //bulk reassignment
+    @PutMapping("/category/{newCategory}/bulk")
+    public void bulkUpdateCategory(@PathVariable String newCategory, @RequestBody List<Long> itemIds){
+        service.bulkUpdateCategory(itemIds, newCategory);
+    }
 }

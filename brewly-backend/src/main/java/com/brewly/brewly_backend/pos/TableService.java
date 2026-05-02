@@ -1,5 +1,7 @@
 package com.brewly.brewly_backend.pos;
 
+import com.brewly.brewly_backend.security.UserContextHelper;
+import com.brewly.brewly_backend.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +14,17 @@ import java.util.List;
 public class TableService {
 
     private final TableRepository tableRepository;
+    private final OrderRepository orderRepository;
+    private final UserContextHelper userContextHelper;
 
     public List<Table> getAllTables() {
-        return tableRepository.findAll();
+        User user = userContextHelper.getCurrentUser();
+        return tableRepository.findByUser(user);
     }
 
     public List<Table> getFreeTables() {
-        return tableRepository.findByStatus(Table.TableStatus.FREE);
+        User user = userContextHelper.getCurrentUser();
+        return tableRepository.findByUserAndStatus(user, Table.TableStatus.FREE);
     }
 
     /**
@@ -29,7 +35,8 @@ public class TableService {
      */
     public List<TableWithReservation> getTablesWithReservationInfo(
             com.brewly.brewly_backend.events.EventRepository eventRepository) {
-        List<Table> all = tableRepository.findAll();
+        User user = userContextHelper.getCurrentUser();
+        List<Table> all = tableRepository.findByUser(user);
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
 
@@ -39,7 +46,7 @@ public class TableService {
             Table.TableStatus effectiveStatus = t.getStatus();
 
             // Check if this table is linked to any event today
-            List<com.brewly.brewly_backend.events.Event> todayEvents = eventRepository.findByTablesIdAndDate(t.getId(),
+            List<com.brewly.brewly_backend.events.Event> todayEvents = eventRepository.findByUserAndTablesIdAndDate(user, t.getId(),
                     today);
 
             for (com.brewly.brewly_backend.events.Event ev : todayEvents) {
@@ -80,7 +87,8 @@ public class TableService {
     public List<TableWithReservation> getTablesForDate(
             com.brewly.brewly_backend.events.EventRepository eventRepository,
             LocalDate date, String time) {
-        List<Table> all = tableRepository.findAll();
+        User user = userContextHelper.getCurrentUser();
+        List<Table> all = tableRepository.findByUser(user);
 
         LocalTime requestedTime = null;
         if (time != null && !time.isBlank()) {
@@ -97,7 +105,7 @@ public class TableService {
             String eventDate = null;
             Table.TableStatus effectiveStatus = t.getStatus();
 
-            List<com.brewly.brewly_backend.events.Event> dateEvents = eventRepository.findByTablesIdAndDate(t.getId(),
+            List<com.brewly.brewly_backend.events.Event> dateEvents = eventRepository.findByUserAndTablesIdAndDate(user, t.getId(),
                     date);
 
             for (com.brewly.brewly_backend.events.Event ev : dateEvents) {
@@ -134,11 +142,18 @@ public class TableService {
     }
 
     public Table getTableById(Long id) {
-        return tableRepository.findById(id)
+        User user = userContextHelper.getCurrentUser();
+        Table table = tableRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Table not found"));
+        if (!table.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
+        return table;
     }
 
     public Table createTable(Table table) {
+        User user = userContextHelper.getCurrentUser();
+        table.setUser(user);
         return tableRepository.save(table);
     }
 
@@ -149,14 +164,30 @@ public class TableService {
     }
 
     public void deleteTable(Long id) {
-        if (!tableRepository.existsById(id)) {
-            throw new RuntimeException("Table not found");
+        User user = userContextHelper.getCurrentUser();
+        Table table = tableRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Table not found"));
+        if (!table.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized");
         }
+
+        // Prevent deletion of occupied tables
+        if (table.getStatus() == Table.TableStatus.OCCUPIED) {
+            throw new RuntimeException("Cannot delete an occupied table. Clear the bill first.");
+        }
+
+        // Prevent deletion of tables with active orders
+        java.util.List<Order> activeOrders = orderRepository.findByUserAndTableIdAndStatus(user, id, "ACTIVE");
+        if (!activeOrders.isEmpty()) {
+            throw new RuntimeException("Cannot delete table with active orders.");
+        }
+
         tableRepository.deleteById(id);
     }
 
     public void renumberTables() {
-        List<Table> tables = tableRepository.findAll();
+        User user = userContextHelper.getCurrentUser();
+        List<Table> tables = tableRepository.findByUser(user);
         tables.sort((a, b) -> {
             try {
                 return Integer.compare(Integer.parseInt(a.getTableNumber()), Integer.parseInt(b.getTableNumber()));

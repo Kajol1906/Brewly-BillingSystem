@@ -6,8 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import com.brewly.brewly_backend.user.User;
+
 @Entity
-@Table(name = "ingredients")
+@Table(name = "ingredients", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"name", "user_id"})
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,7 +23,7 @@ public class Ingredient {
     private Long id;
 
     //milk, coffee Beans , Sugar
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false)
     private String name;
 
     //quantity available
@@ -33,4 +37,7 @@ public class Ingredient {
     //minimum stock warning
     private Double minThreshold;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

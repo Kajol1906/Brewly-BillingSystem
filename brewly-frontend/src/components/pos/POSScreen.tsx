@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus } from 'lucide-react';
+import { Plus, ShoppingBag } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import TableCard from './TableCard';
 import OrderSidebar from './OrderSidebar';
@@ -22,6 +22,7 @@ export function POSScreen() {
     const [loading, setLoading] = useState(true);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [newTableSeats, setNewTableSeats] = useState('4');
+    const [isTakeawayMode, setIsTakeawayMode] = useState(false);
 
     useEffect(() => {
         fetchTables();
@@ -53,6 +54,7 @@ export function POSScreen() {
 
     const handleCloseSidebar = () => {
         setSelectedTable(null);
+        setIsTakeawayMode(false);
         fetchTables();
     };
 
@@ -103,18 +105,26 @@ export function POSScreen() {
                 className="mb-6 flex justify-between items-start"
             >
                 <div>
-                    <h1>Point of Sale</h1>
-                    <p className="text-muted-foreground mt-1">
+                    <p className="text-muted-foreground">
                         Manage orders and table reservations
                     </p>
                 </div>
-                <GlassButton
-                    onClick={() => setIsAddDialogOpen(true)}
-                    className="text-foreground text-sm font-semibold tracking-wide"
-                >
-                    <Plus className="w-5 h-5 text-primary" />
-                    Add Table
-                </GlassButton>
+                <div className="flex items-center gap-3">
+                    <GlassButton
+                        onClick={() => { setIsTakeawayMode(true); setSelectedTable(null); }}
+                        className="text-foreground text-sm font-semibold tracking-wide"
+                    >
+                        <ShoppingBag className="w-5 h-5 text-primary" />
+                        Takeaway Order
+                    </GlassButton>
+                    <GlassButton
+                        onClick={() => setIsAddDialogOpen(true)}
+                        className="text-foreground text-sm font-semibold tracking-wide"
+                    >
+                        <Plus className="w-5 h-5 text-primary" />
+                        Add Table
+                    </GlassButton>
+                </div>
             </motion.div>
 
             {/* Add Table Dialog */}
@@ -230,7 +240,7 @@ export function POSScreen() {
 
             {/* Order Sidebar */}
             <AnimatePresence>
-                {selectedTable && (
+                {(selectedTable || isTakeawayMode) && (
                     <OrderSidebar
                         table={selectedTable}
                         onClose={handleCloseSidebar}

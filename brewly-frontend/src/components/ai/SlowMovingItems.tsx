@@ -46,7 +46,7 @@ export default function SlowMovingItems() {
           <h3>Slow-Moving Items</h3>
           <p className="text-sm text-muted-foreground mt-1">Least ordered — consider promoting or removing</p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-danger to-[#FFB347] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
           <AlertTriangle className="w-5 h-5 text-white" />
         </div>
       </div>

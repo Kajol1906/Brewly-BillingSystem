@@ -29,4 +29,10 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column
+    private String phoneNumber;
+
+    @Column
+    private String storeAddress;
 }

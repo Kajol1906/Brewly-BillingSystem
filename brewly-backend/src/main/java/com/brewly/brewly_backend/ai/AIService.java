@@ -6,6 +6,8 @@ import com.brewly.brewly_backend.menu.MenuItem;
 import com.brewly.brewly_backend.pos.*;
 import com.brewly.brewly_backend.recipe.RecipeIngredient;
 import com.brewly.brewly_backend.recipe.RecipeIngredientRepository;
+import com.brewly.brewly_backend.security.UserContextHelper;
+import com.brewly.brewly_backend.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +26,11 @@ public class AIService {
     private final IngredientRepository ingredientRepository;
     private final RecipeIngredientRepository recipeIngredientRepository;
     private final TableRepository tableRepository;
+    private final UserContextHelper userContextHelper;
 
     public List<Map<String, Object>> getPeakHours() {
-        List<Order> orders = orderRepository.findAll();
+        User user = userContextHelper.getCurrentUser();
+        List<Order> orders = orderRepository.findByUser(user);
 
         Map<Integer, Long> ordersByHour = orders.stream()
                 .collect(Collectors.groupingBy(
@@ -50,7 +54,8 @@ public class AIService {
     }
 
     public List<Map<String, Object>> getRecommendations() {
-        List<Order> orders = orderRepository.findAll();
+        User user = userContextHelper.getCurrentUser();
+        List<Order> orders = orderRepository.findByUser(user);
 
         // Count total quantity ordered per menu item
         Map<String, Long> itemCounts = orders.stream()
@@ -88,10 +93,11 @@ public class AIService {
 
     // 1. Revenue Forecast — daily revenue for last 7 days + projected next 7 days
     public Map<String, Object> getRevenueForecast() {
+        User user = userContextHelper.getCurrentUser();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime fourteenDaysAgo = now.minusDays(14);
 
-        List<Bill> allBills = billRepository.findAll();
+        List<Bill> allBills = billRepository.findByUser(user);
 
         // Group bills by date for last 14 days
         Map<LocalDate, Double> dailyRevenue = allBills.stream()
@@ -151,7 +157,8 @@ public class AIService {
 
     // 2. Category Sales Breakdown — revenue by menu category
     public List<Map<String, Object>> getCategorySales() {
-        List<Order> orders = orderRepository.findAll();
+        User user = userContextHelper.getCurrentUser();
+        List<Order> orders = orderRepository.findByUser(user);
 
         Map<String, Double> categoryRevenue = orders.stream()
                 .filter(o -> "BILLED".equals(o.getStatus()))
@@ -176,7 +183,8 @@ public class AIService {
 
     // 3. Slow-Moving Items — least ordered items
     public List<Map<String, Object>> getSlowMovingItems() {
-        List<Order> orders = orderRepository.findAll();
+        User user = userContextHelper.getCurrentUser();
+        List<Order> orders = orderRepository.findByUser(user);
 
         // Get all item order counts (from billed orders only for accuracy)
         Map<String, Long> itemCounts = orders.stream()
@@ -223,9 +231,10 @@ public class AIService {
 
     // 4. Stock Depletion Prediction
     public List<Map<String, Object>> getStockDepletion() {
-        List<Ingredient> ingredients = ingredientRepository.findAll();
-        List<Order> recentOrders = orderRepository.findAllByCreatedAtAfter(
-                LocalDateTime.now().minusDays(7));
+        User user = userContextHelper.getCurrentUser();
+        List<Ingredient> ingredients = ingredientRepository.findByUser(user);
+        List<Order> recentOrders = orderRepository.findAllByUserAndCreatedAtAfter(
+                user, LocalDateTime.now().minusDays(7));
 
         // Calculate daily consumption per ingredient from recent orders
         Map<Long, Double> dailyUsage = new HashMap<>();
@@ -278,7 +287,8 @@ public class AIService {
 
     // 5. Payment Method Insights
     public Map<String, Object> getPaymentInsights() {
-        List<Bill> bills = billRepository.findAll();
+        User user = userContextHelper.getCurrentUser();
+        List<Bill> bills = billRepository.findByUser(user);
 
         Map<String, Long> countByMethod = bills.stream()
                 .filter(b -> b.getPaymentMethod() != null)
@@ -313,8 +323,9 @@ public class AIService {
 
     // 6. Table Turnover Rate
     public List<Map<String, Object>> getTableTurnover() {
-        List<Bill> bills = billRepository.findAll();
-        List<Order> orders = orderRepository.findAll();
+        User user = userContextHelper.getCurrentUser();
+        List<Bill> bills = billRepository.findByUser(user);
+        List<Order> orders = orderRepository.findByUser(user);
 
         // Group bills and orders by tableId
         Map<Long, List<Bill>> billsByTable = bills.stream()
@@ -325,7 +336,7 @@ public class AIService {
                 .collect(Collectors.groupingBy(Order::getTableId));
 
         // Get all tables for table number mapping
-        List<com.brewly.brewly_backend.pos.Table> tables = tableRepository.findAll();
+        List<com.brewly.brewly_backend.pos.Table> tables = tableRepository.findByUser(user);
         Map<Long, String> tableNumberMap = tables.stream()
                 .collect(Collectors.toMap(
                         com.brewly.brewly_backend.pos.Table::getId,

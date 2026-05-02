@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.util.List;
 
+import com.brewly.brewly_backend.user.User;
+
 @Entity
 @Table(name = "recipes")
 @Getter
@@ -29,4 +31,8 @@ public class Recipe {
 
     // Required quantity for ONE item
     private Double requiredQuantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

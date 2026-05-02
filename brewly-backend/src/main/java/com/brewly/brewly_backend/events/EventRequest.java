@@ -12,6 +12,5 @@ public class EventRequest {
     private Integer guestCount;
     private String time;
     private String packageType;
-    private List<Long> vendorIds;
     private List<Long> tableIds;
 }

@@ -7,6 +7,8 @@ import com.brewly.brewly_backend.menu.MenuItemRepository;
 import com.brewly.brewly_backend.menu.MenuItemService;
 import com.brewly.brewly_backend.recipe.RecipeIngredient;
 import com.brewly.brewly_backend.recipe.RecipeIngredientRepository;
+import com.brewly.brewly_backend.security.UserContextHelper;
+import com.brewly.brewly_backend.user.User;
 // These imports are in fact used at the bottom of the file inside placeOrder()
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +27,17 @@ public class OrderService {
     private final MenuItemService menuItemService;
     private final OrderRepository orderRepository;
     private final TableRepository tableRepository;
+    private final UserContextHelper userContextHelper;
 
     public void placeOrder(OrderRequest request) {
+        User user = userContextHelper.getCurrentUser();
 
         // 1️⃣ Fetch menu item
         MenuItem menuItem = menuItemRepository.findById(request.getMenuItemId())
                 .orElseThrow(() -> new RuntimeException("Menu item not found"));
+        if (!menuItem.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
 
         // 2️⃣ Fetch recipe ingredients
         List<RecipeIngredient> recipeIngredients = recipeIngredientRepository.findByRecipe_MenuItem(menuItem);
@@ -64,9 +71,11 @@ public class OrderService {
 
         // 6️⃣ SAVE ORDER TO DB
         Order order = new Order();
+        order.setUser(user);
         OrderItem orderItem = new OrderItem();
         orderItem.setMenuItem(menuItem);
         orderItem.setQuantity(request.getQuantity());
+        orderItem.setPriceAtOrder(menuItem.getPrice());
         orderItem.setOrder(order);
 
         order.setItems(List.of(orderItem));
@@ -74,6 +83,9 @@ public class OrderService {
         if (request.getTableId() != null) {
             order.setTableId(request.getTableId());
             order.setStatus("ACTIVE");
+        } else {
+            // Takeaway order — no table lifecycle, mark as BILLED immediately
+            order.setStatus("BILLED");
         }
 
         orderRepository.save(order);
@@ -82,6 +94,9 @@ public class OrderService {
         if (request.getTableId() != null) {
             Table table = tableRepository.findById(request.getTableId())
                     .orElseThrow(() -> new RuntimeException("Table not found"));
+            if (!table.getUser().getId().equals(user.getId())) {
+                throw new RuntimeException("Unauthorized");
+            }
             table.setStatus(Table.TableStatus.OCCUPIED);
             double itemTotal = menuItem.getPrice() * request.getQuantity();
             table.setCurrentBill((table.getCurrentBill() == null ? 0.0 : table.getCurrentBill()) + itemTotal);
@@ -90,23 +105,27 @@ public class OrderService {
     }
 
     public List<OrderItemDTO> getActiveOrdersForTable(Long tableId) {
-        List<Order> activeOrders = orderRepository.findByTableIdAndStatus(tableId, "ACTIVE");
+        User user = userContextHelper.getCurrentUser();
+        List<Order> activeOrders = orderRepository.findByUserAndTableIdAndStatus(user, tableId, "ACTIVE");
 
-        // Aggregate items by menu item ID to combine quantities of identical items
-        // placed in separate orders
-        java.util.Map<Long, OrderItemDTO> aggregatedItems = new java.util.HashMap<>();
+        // Aggregate items by menu item ID AND price to combine quantities of identical items
+        // placed in separate orders, but keep them separate if price changed.
+        java.util.Map<String, OrderItemDTO> aggregatedItems = new java.util.HashMap<>();
 
         for (Order order : activeOrders) {
             for (OrderItem item : order.getItems()) {
                 Long menuId = item.getMenuItem().getId();
-                if (aggregatedItems.containsKey(menuId)) {
-                    OrderItemDTO existingDto = aggregatedItems.get(menuId);
+                Double priceAtOrder = item.getPriceAtOrder() != null ? item.getPriceAtOrder() : item.getMenuItem().getPrice();
+                String key = menuId + "_" + priceAtOrder;
+                
+                if (aggregatedItems.containsKey(key)) {
+                    OrderItemDTO existingDto = aggregatedItems.get(key);
                     existingDto.setQuantity(existingDto.getQuantity() + item.getQuantity());
                 } else {
-                    aggregatedItems.put(menuId, new OrderItemDTO(
-                            menuId,
+                    aggregatedItems.put(key, new OrderItemDTO(
+                            item.getId() != null ? item.getId() : menuId, // Use OrderItem ID for unique React key
                             item.getMenuItem().getName(),
-                            item.getMenuItem().getPrice(),
+                            priceAtOrder,
                             item.getQuantity()));
                 }
             }

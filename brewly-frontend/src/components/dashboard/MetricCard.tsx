@@ -55,7 +55,7 @@ export default function MetricCard({ title, value, change, trend, icon: Icon, co
           className="w-12 h-12 mb-4 group-hover:scale-110 transition-transform pointer-events-none"
           iconOnly
         >
-          <Icon className="w-6 h-6 text-primary" />
+          <Icon className="w-6 h-6" style={{ color: '#5C3D2E', strokeWidth: 2 }} />
         </GlassButton>
 
         {/* Title */}
@@ -72,7 +72,7 @@ export default function MetricCard({ title, value, change, trend, icon: Icon, co
 
         {/* Pulse Effect on Hover */}
         <motion.div
-          className="absolute top-0 right-0 w-3 h-3 rounded-full bg-primary"
+          className="absolute top-0 right-0 w-3 h-3 rounded-full" style={{ backgroundColor: '#5C3D2E' }}
           animate={{ scale: [1, 1.2, 1], opacity: [1, 0.5, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
         />

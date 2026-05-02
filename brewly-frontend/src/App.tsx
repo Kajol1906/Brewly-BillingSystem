@@ -41,24 +41,41 @@ function App() {
     // Start with landing page if not authenticated
     const [currentScreen, setCurrentScreen] = useState<Screen>('landing');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [authError, setAuthError] = useState('');  
     const { updateSettings } = useSettings();
 
-    // Handle Google OAuth redirect — extract token from URL
+    // Handle Google OAuth redirect — extract token or error from URL
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
+        const errorMsg = params.get('error');
+        if (errorMsg) {
+            setAuthError(errorMsg);
+            // Route to the correct screen based on the error
+            if (errorMsg.toLowerCase().includes('login')) {
+                setCurrentScreen('login');
+            } else {
+                setCurrentScreen('signup');
+            }
+            window.history.replaceState({}, '', window.location.pathname);
+            return;
+        }
         const token = params.get('token');
         if (token) {
             localStorage.setItem('token', token);
             setIsAuthenticated(true);
             setCurrentScreen('dashboard');
-            // Extract email from JWT and update settings
+            // Extract email from JWT and name from URL param, update settings
             const payload = decodeJwt(token);
-            if (payload && (payload.email || payload.sub)) {
-                const userEmail = payload.email || payload.sub;
-                updateSettings({ email: userEmail });
+            const userEmail = payload?.email || payload?.sub || '';
+            const userName = params.get('name') || '';
+            const settingsUpdate: any = {};
+            if (userEmail) settingsUpdate.email = userEmail;
+            if (userName) settingsUpdate.storeName = userName;
+            if (Object.keys(settingsUpdate).length > 0) {
+                updateSettings(settingsUpdate);
                 const savedSettings = localStorage.getItem('brewlySettings');
                 let settingsObj = savedSettings ? JSON.parse(savedSettings) : {};
-                settingsObj.email = userEmail;
+                Object.assign(settingsObj, settingsUpdate);
                 localStorage.setItem('brewlySettings', JSON.stringify(settingsObj));
             }
             window.history.replaceState({}, '', window.location.pathname);
@@ -73,28 +90,65 @@ function App() {
             if (payload && (payload.email || payload.sub)) {
                 const userEmail = payload.email || payload.sub;
                 updateSettings({ email: userEmail });
-                const savedSettings = localStorage.getItem('brewlySettings');
-                let settingsObj = savedSettings ? JSON.parse(savedSettings) : {};
-                settingsObj.email = userEmail;
-                localStorage.setItem('brewlySettings', JSON.stringify(settingsObj));
+                
+                // Fetch settings from backend
+                import('axios').then(axios => {
+                    axios.default.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/user/settings`, {
+                        headers: { Authorization: `Bearer ${storedToken}` }
+                    }).then(res => {
+                        const { storeName, phoneNumber, storeAddress } = res.data;
+                        const updates: any = {};
+                        if (storeName) updates.storeName = storeName;
+                        if (phoneNumber) updates.phoneNumber = phoneNumber;
+                        if (storeAddress) updates.storeAddress = storeAddress;
+                        
+                        updateSettings(updates);
+                        const savedSettings = localStorage.getItem('brewlySettings');
+                        let settingsObj = savedSettings ? JSON.parse(savedSettings) : {};
+                        Object.assign(settingsObj, updates, { email: userEmail });
+                        localStorage.setItem('brewlySettings', JSON.stringify(settingsObj));
+                    }).catch(console.error);
+                });
             }
         }
     }, []);
 
     // Called after LOGIN or SIGNUP
-    const handleAuthSuccess = (token: string) => {
+    const handleAuthSuccess = (token: string, name?: string) => {
         localStorage.setItem('token', token);
         setIsAuthenticated(true);
         setCurrentScreen('dashboard');
         const payload = decodeJwt(token);
-        if (payload && (payload.email || payload.sub)) {
-            const userEmail = payload.email || payload.sub;
-            updateSettings({ email: userEmail });
+        const userEmail = payload?.email || payload?.sub || '';
+        const settingsUpdate: any = {};
+        if (userEmail) settingsUpdate.email = userEmail;
+        if (name) settingsUpdate.storeName = name;
+        if (Object.keys(settingsUpdate).length > 0) {
+            updateSettings(settingsUpdate);
             const savedSettings = localStorage.getItem('brewlySettings');
             let settingsObj = savedSettings ? JSON.parse(savedSettings) : {};
-            settingsObj.email = userEmail;
+            Object.assign(settingsObj, settingsUpdate);
             localStorage.setItem('brewlySettings', JSON.stringify(settingsObj));
         }
+        
+        // Fetch full settings from backend
+        import('axios').then(axios => {
+            axios.default.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/user/settings`, {
+                headers: { Authorization: `Bearer ${token}` }
+            }).then(res => {
+                const { storeName, phoneNumber, storeAddress } = res.data;
+                const updates: any = {};
+                if (storeName) updates.storeName = storeName;
+                if (phoneNumber) updates.phoneNumber = phoneNumber;
+                if (storeAddress) updates.storeAddress = storeAddress;
+                
+                updateSettings(updates);
+                const savedSettings = localStorage.getItem('brewlySettings');
+                let settingsObj = savedSettings ? JSON.parse(savedSettings) : {};
+                Object.assign(settingsObj, updates);
+                localStorage.setItem('brewlySettings', JSON.stringify(settingsObj));
+            }).catch(console.error);
+        });
     };
 
     // Logout
@@ -126,17 +180,27 @@ function App() {
     if (!isAuthenticated) {
         if (currentScreen === 'signup') {
             return (
-                <SignupScreen
-                    onSignupSuccess={handleAuthSuccess}
-                    onGoToLogin={() => setCurrentScreen('login')}
-                />
+                <div className="dark h-full w-full">
+                    <div className="min-h-screen bg-background text-foreground">
+                        <SignupScreen
+                            onSignupSuccess={handleAuthSuccess}
+                            onGoToLogin={() => { setAuthError(''); setCurrentScreen('login'); }}
+                            googleError={authError}
+                        />
+                    </div>
+                </div>
             );
         }
         return (
-            <LoginScreen
-                onLoginSuccess={handleAuthSuccess}
-                onGoToSignup={() => setCurrentScreen('signup')}
-            />
+            <div className="dark h-full w-full">
+                <div className="min-h-screen bg-background text-foreground">
+                    <LoginScreen
+                        onLoginSuccess={handleAuthSuccess}
+                        onGoToSignup={() => { setAuthError(''); setCurrentScreen('signup'); }}
+                        googleError={authError}
+                    />
+                </div>
+            </div>
         );
     }
 
@@ -163,9 +227,10 @@ function App() {
     };
 
     return (
-        <div className="min-h-screen bg-background">
-            <Toaster />
-            <Navbar
+        <div className="dark h-full w-full">
+            <div className="min-h-screen bg-background text-foreground">
+                <Toaster />
+                <Navbar
                 onLogout={handleLogout}
                 currentScreen={currentScreen}
                 onNavigate={setCurrentScreen}
@@ -185,6 +250,7 @@ function App() {
                         </motion.div>
                     </AnimatePresence>
                 </main>
+            </div>
             </div>
         </div>
     );

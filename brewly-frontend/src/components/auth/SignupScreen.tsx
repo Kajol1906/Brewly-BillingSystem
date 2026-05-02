@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import axios from "axios";
 import { motion } from "motion/react";
-import { Coffee, Mail, Lock, UserPlus, Building2, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Coffee, Mail, Lock, UserPlus, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
 import { API_BASE } from '../../config/api';
 
 const VALID_DOMAINS = [
@@ -44,24 +44,24 @@ function getPasswordStrength(pw: string): PasswordStrength {
 
 
 interface SignupScreenProps {
-    onSignupSuccess: (token: string) => void;
+    onSignupSuccess: (token: string, name?: string) => void;
     onGoToLogin: () => void;
+    googleError?: string;
 }
 
 
-export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScreenProps) {
+export default function SignupScreen({ onSignupSuccess, onGoToLogin, googleError = '' }: SignupScreenProps) {
 
-    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState(googleError);
     const [emailTouched, setEmailTouched] = useState(false);
     const [passwordTouched, setPasswordTouched] = useState(false);
 
     const emailValid = email.length === 0 || (/^[^\s@]+@[^\s@]+$/.test(email) && isValidEmailDomain(email));
     const pwStrength = useMemo(() => getPasswordStrength(password), [password]);
-    const canSubmit = name.trim().length > 0 && email.length > 0 && emailValid && pwStrength.score >= 3;
+    const canSubmit = email.length > 0 && emailValid && pwStrength.score >= 3;
 
     const handleSignup = async (e: any) => {
         e.preventDefault();
@@ -79,18 +79,27 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
         try {
             const response = await axios.post(
                 `${API_BASE}/api/auth/signup`,
-                { name, email, password }
+                { email, password }
             );
 
-            onSignupSuccess(response.data.token);
+            onSignupSuccess(response.data.token, response.data.name);
 
         } catch (err: any) {
-            setError(err.response?.data || "Signup failed");
+            const data = err.response?.data;
+            if (typeof data === 'string') {
+                setError(data);
+            } else if (data?.message) {
+                setError(data.message);
+            } else if (data?.error) {
+                setError(data.error);
+            } else {
+                setError("Signup failed. Please try again.");
+            }
         }
     };
 
     const handleGoogleSignIn = () => {
-        window.location.href = `${API_BASE}/api/auth/google`;
+        window.location.href = `${API_BASE}/api/auth/google?mode=signup`;
     };
 
     return (
@@ -188,25 +197,7 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
 
                     {/* SIGNUP FORM */}
                     <form onSubmit={handleSignup} className="space-y-5">
-                        {/* Company Name */}
-                        <motion.div
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 0.3 }}
-                        >
-                            <label>Company Name</label>
-                            <div className="relative mt-2">
-                                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                                <input
-                                    type="text"
-                                    placeholder="Your company or café name"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="w-full h-12 pl-12 pr-4 bg-muted/30 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30"
-                                    required
-                                />
-                            </div>
-                        </motion.div>
+
 
                         {/* Email */}
                         <motion.div
@@ -351,7 +342,7 @@ export default function SignupScreen({ onSignupSuccess, onGoToLogin }: SignupScr
                                 <path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.04 24.04 0 0 0 0 21.56l7.98-6.19z" />
                                 <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
                             </svg>
-                            <span className="font-medium text-foreground">Sign in with Google</span>
+                            <span className="font-medium text-foreground">Sign up with Google</span>
                         </motion.button>
 
                         {/* Switch to Login */}

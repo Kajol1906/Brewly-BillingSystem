@@ -43,19 +43,23 @@ public class GoogleOAuthController {
     private static final String GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
 
     @GetMapping("/google")
-    public void redirectToGoogle(HttpServletResponse response) throws IOException {
+    public void redirectToGoogle(@RequestParam(value = "mode", defaultValue = "login") String mode,
+                                 HttpServletResponse response) throws IOException {
         String url = GOOGLE_AUTH_URL
                 + "?client_id=" + URLEncoder.encode(clientId, StandardCharsets.UTF_8)
                 + "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8)
                 + "&response_type=code"
                 + "&scope=" + URLEncoder.encode("openid email profile", StandardCharsets.UTF_8)
-                + "&access_type=offline";
+                + "&access_type=offline"
+                + "&state=" + URLEncoder.encode(mode, StandardCharsets.UTF_8);
 
         response.sendRedirect(url);
     }
 
     @GetMapping("/google/callback")
-    public void handleGoogleCallback(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
+    public void handleGoogleCallback(@RequestParam("code") String code,
+                                     @RequestParam(value = "state", defaultValue = "login") String mode,
+                                     HttpServletResponse response) throws Exception {
         // Exchange authorization code for access token
         String tokenRequestBody = "code=" + URLEncoder.encode(code, StandardCharsets.UTF_8)
                 + "&client_id=" + URLEncoder.encode(clientId, StandardCharsets.UTF_8)
@@ -95,7 +99,19 @@ public class GoogleOAuthController {
         String email = userInfo.get("email").asText();
         String name = userInfo.has("name") ? userInfo.get("name").asText() : email;
 
-        // Find existing user or create new one
+        // Find existing user or create new one based on mode
+        boolean userExists = userRepository.findByEmail(email).isPresent();
+
+        if ("signup".equals(mode) && userExists) {
+            response.sendRedirect("http://localhost:3000?error=User already registered. Please login instead.");
+            return;
+        }
+
+        if ("login".equals(mode) && !userExists) {
+            response.sendRedirect("http://localhost:3000?error=Account not found. Please sign up first.");
+            return;
+        }
+
         User user = userRepository.findByEmail(email).orElseGet(() -> {
             User newUser = new User();
             newUser.setName(name);
@@ -106,6 +122,7 @@ public class GoogleOAuthController {
 
         // Generate JWT and redirect to frontend
         String jwt = jwtService.generateToken(user.getEmail());
-        response.sendRedirect("http://localhost:3000?token=" + jwt);
+        String encodedName = URLEncoder.encode(user.getName(), StandardCharsets.UTF_8);
+        response.sendRedirect("http://localhost:3000?token=" + jwt + "&name=" + encodedName);
     }
 }

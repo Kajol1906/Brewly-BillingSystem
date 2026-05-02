@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import com.brewly.brewly_backend.user.User;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -25,4 +27,8 @@ public class Bill {
     private String paymentMethod; // CASH, UPI, CARD
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

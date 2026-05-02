@@ -14,21 +14,31 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final DataSeederService dataSeederService;
 
     public AuthResponse signup(SignupRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already registered");
         }
 
+        // Derive display name from email if not provided
+        String displayName = (request.getName() != null && !request.getName().isBlank())
+                ? request.getName()
+                : request.getEmail().split("@")[0].substring(0, 1).toUpperCase()
+                  + request.getEmail().split("@")[0].substring(1);
+
         User user = new User();
-        user.setName(request.getName());
+        user.setName(displayName);
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         userRepository.save(user);
+        
+        // Seed initial data for the new user
+        dataSeederService.seedDataForNewUser(user);
 
         String token = jwtService.generateToken(user.getEmail());
-        return new AuthResponse(token);
+        return new AuthResponse(token, user.getName());
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -40,6 +50,6 @@ public class AuthService {
         }
 
         String token = jwtService.generateToken(user.getEmail());
-        return new AuthResponse(token);
+        return new AuthResponse(token, user.getName());
     }
 }

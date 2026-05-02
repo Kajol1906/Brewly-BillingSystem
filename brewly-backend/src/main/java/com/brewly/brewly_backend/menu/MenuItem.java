@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
+import com.brewly.brewly_backend.user.User;
+
 @Entity
 @Table
 @Getter
@@ -26,4 +28,8 @@ public class MenuItem {
     private String imageUrl;
 
     private Boolean available=true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

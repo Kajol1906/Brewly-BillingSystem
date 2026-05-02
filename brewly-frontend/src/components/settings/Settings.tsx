@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import axios from 'axios';
+import { API_BASE } from '../../config/api';
 import {
     Store,
     Save,
@@ -34,13 +36,21 @@ export default function Settings() {
     const [showConfirmPw, setShowConfirmPw] = useState(false);
     const [passwordMsg, setPasswordMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setIsSaving(true);
-        setTimeout(() => {
-            setIsSaving(false);
+        try {
+            await axios.put(`${API_BASE}/api/user/settings`, {
+                storeName: settings.storeName,
+                phoneNumber: settings.phoneNumber,
+                storeAddress: settings.storeAddress
+            });
             setShowSavedToast(true);
             setTimeout(() => setShowSavedToast(false), 3000);
-        }, 1000);
+        } catch (error) {
+            console.error("Failed to save settings to backend", error);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const startEdit = (field: string, value: string) => {
@@ -59,7 +69,7 @@ export default function Settings() {
         setEditValue('');
     };
 
-    const handlePasswordChange = () => {
+    const handlePasswordChange = async () => {
         if (!currentPassword || !newPassword || !confirmPassword) {
             setPasswordMsg({ text: 'Please fill in all fields', type: 'error' });
             return;
@@ -72,10 +82,22 @@ export default function Settings() {
             setPasswordMsg({ text: 'New passwords do not match', type: 'error' });
             return;
         }
-        setPasswordMsg({ text: 'Password updated successfully!', type: 'success' });
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
+
+        try {
+            await axios.put(`${API_BASE}/api/user/password`, {
+                currentPassword,
+                newPassword
+            });
+            setPasswordMsg({ text: 'Password updated successfully!', type: 'success' });
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+        } catch (error: any) {
+            const errorMsg = typeof error.response?.data === 'string' 
+                ? error.response.data 
+                : 'Failed to update password';
+            setPasswordMsg({ text: errorMsg, type: 'error' });
+        }
         setTimeout(() => setPasswordMsg(null), 3000);
     };
 
@@ -87,48 +109,14 @@ export default function Settings() {
     ];
 
     return (
-        <div style={{ minHeight: 'calc(100vh - 80px)', background: settings.theme === 'dark' ? '#0F172A' : '#F8FAFC', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ minHeight: 'calc(100vh - 80px)', background: settings.theme === 'dark' ? '#0f0d0a' : '#faf6f0', position: 'relative', overflow: 'hidden' }}>
             {/* Ambient Background Glows */}
             <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', background: 'rgba(180, 134, 101, 0.08)', filter: 'blur(120px)', borderRadius: '50%', pointerEvents: 'none' }} />
             <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', background: 'rgba(212, 165, 116, 0.08)', filter: 'blur(120px)', borderRadius: '50%', pointerEvents: 'none' }} />
 
-            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 24px', position: 'relative', zIndex: 10 }}>
-                {/* Header */}
-                <motion.div
-                    initial={{ y: -20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '36px' }}
-                >
-                    <div>
-                        <h1 style={{ fontSize: '2rem', fontWeight: 900, background: 'linear-gradient(135deg, #B48665, #D4A574)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
-                            Settings
-                        </h1>
-                    </div>
-
-                    <motion.button
-                        whileHover={{ scale: 1.04, y: -2 }}
-                        whileTap={{ scale: 0.97 }}
-                        onClick={handleSave}
-                        disabled={isSaving}
-                        style={{
-                            display: 'flex', alignItems: 'center', gap: '10px',
-                            padding: '12px 28px', borderRadius: '16px', border: 'none', cursor: 'pointer',
-                            background: 'linear-gradient(135deg, #B48665, #6A4334)', color: '#fff',
-                            fontWeight: 700, fontSize: '0.9rem', boxShadow: '0 8px 30px rgba(180, 134, 101, 0.3)',
-                            opacity: isSaving ? 0.7 : 1,
-                        }}
-                    >
-                        {isSaving ? (
-                            <div style={{ width: 18, height: 18, border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid #fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                        ) : (
-                            <Save style={{ width: 18, height: 18, color: '#fff' }} />
-                        )}
-                        <span style={{ color: '#fff' }}>Save Changes</span>
-                    </motion.button>
-                </motion.div>
-
-                {/* ===== TOP ROW: PROFILE + PASSWORD ===== */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
+            <div style={{ padding: '40px 40px 24px', position: 'relative', zIndex: 10 }}>
+                {/* ===== HORIZONTAL 3-COLUMN LAYOUT ===== */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '32px', alignItems: 'start' }}>
                     {/* ===== PROFILE CARD ===== */}
                     <motion.div
                         initial={{ y: 20, opacity: 0 }}
@@ -136,7 +124,7 @@ export default function Settings() {
                         transition={{ delay: 0.1 }}
                         style={{
                             background: settings.theme === 'dark'
-                                ? 'linear-gradient(135deg, #1e293b, #0f172a)'
+                                ? 'linear-gradient(135deg, #1a1612, #0f0d0a)'
                                 : 'linear-gradient(135deg, #ffffff, #f8fafc)',
                             borderRadius: '28px',
                             border: settings.theme === 'dark' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)',
@@ -144,36 +132,22 @@ export default function Settings() {
                             overflow: 'hidden',
                         }}
                     >
-                        {/* Profile Header Banner */}
-                        <div style={{
-                            background: 'linear-gradient(135deg, #B48665, #6A4334, #65350E)',
-                            padding: '32px 36px 28px',
-                            position: 'relative',
-                            overflow: 'hidden',
-                        }}>
-                            {/* Decorative circles */}
-                            <div style={{ position: 'absolute', top: -30, right: -30, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
-                            <div style={{ position: 'absolute', bottom: -20, left: '40%', width: 80, height: 80, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', zIndex: 2 }}>
-                                {/* Store Avatar */}
-                                <div style={{
-                                    width: 72, height: 72, borderRadius: '22px',
-                                    background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    border: '2px solid rgba(255,255,255,0.2)',
-                                    flexShrink: 0,
-                                }}>
-                                    <Store style={{ width: 36, height: 36, color: '#fff' }} />
-                                </div>
-                                <div style={{ flex: 1 }}>
-                                    <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
-                                        {settings.storeName || 'Your Store'}
-                                    </h2>
-                                    <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', margin: '4px 0 0', fontWeight: 500 }}>
-                                        Store Profile
-                                    </p>
-                                </div>
+                        {/* Profile Header */}
+                        <div style={{ padding: '28px 28px 0', display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '8px' }}>
+                            <div style={{
+                                width: 44, height: 44, borderRadius: '14px',
+                                background: 'linear-gradient(135deg, #B48665, #6A4334)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            }}>
+                                <Store style={{ width: 22, height: 22, color: '#fff' }} />
+                            </div>
+                            <div>
+                                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: settings.theme === 'dark' ? '#f1f5f9' : '#1e293b' }}>
+                                    Store Profile
+                                </h3>
+                                <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '2px 0 0', fontWeight: 500 }}>
+                                    Manage your business details
+                                </p>
                             </div>
                         </div>
 
@@ -306,14 +280,14 @@ export default function Settings() {
                         </div>
                     </motion.div>
 
-                    {/* Password Change Card (top right, next to profile) */}
+                    {/* ===== SECURITY CARD ===== */}
                     <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.2 }}
                         style={{
                             background: settings.theme === 'dark'
-                                ? 'linear-gradient(135deg, #1e293b, #0f172a)'
+                                ? 'linear-gradient(135deg, #1a1612, #0f0d0a)'
                                 : 'linear-gradient(135deg, #ffffff, #f8fafc)',
                             borderRadius: '24px',
                             border: settings.theme === 'dark' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)',
@@ -324,7 +298,7 @@ export default function Settings() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
                             <div style={{
                                 width: 44, height: 44, borderRadius: '14px',
-                                background: 'linear-gradient(135deg, #F59E0B, #EF4444)',
+                                background: 'linear-gradient(135deg, #B48665, #6A4334)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                             }}>
                                 <ShieldCheck style={{ width: 22, height: 22, color: '#fff' }} />
@@ -462,7 +436,7 @@ export default function Settings() {
                                 onClick={handlePasswordChange}
                                 style={{
                                     width: '100%', padding: '13px', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                                    background: 'linear-gradient(135deg, #1e293b, #0f172a)',
+                                    background: 'linear-gradient(135deg, #1a1612, #0f0d0a)',
                                     color: '#fff', fontWeight: 700, fontSize: '0.88rem',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                                     marginTop: '4px',
@@ -473,28 +447,27 @@ export default function Settings() {
                             </motion.button>
                         </div>
                     </motion.div>
-                </div>
 
-                {/* ===== APPEARANCE CARD — Below profile ===== */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginTop: '24px' }}>
-                    <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                        style={{
-                            background: settings.theme === 'dark'
-                                ? 'linear-gradient(135deg, #1e293b, #0f172a)'
-                                : 'linear-gradient(135deg, #ffffff, #f8fafc)',
-                            borderRadius: '24px',
-                            border: settings.theme === 'dark' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)',
-                            boxShadow: '0 12px 40px rgba(0,0,0,0.06)',
-                            padding: '28px',
-                        }}
-                    >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
+                    {/* ===== APPEARANCE CARD & SAVE BUTTON ===== */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                        <motion.div
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                            style={{
+                                background: settings.theme === 'dark'
+                                    ? 'linear-gradient(135deg, #1a1612, #0f0d0a)'
+                                    : 'linear-gradient(135deg, #ffffff, #f8fafc)',
+                                borderRadius: '24px',
+                                border: settings.theme === 'dark' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.06)',
+                                boxShadow: '0 12px 40px rgba(0,0,0,0.06)',
+                                padding: '28px',
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
                             <div style={{
                                 width: 44, height: 44, borderRadius: '14px',
-                                background: 'linear-gradient(135deg, #EC4899, #F472B6)',
+                                background: 'linear-gradient(135deg, #D4A574, #B48665)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                             }}>
                                 <Palette style={{ width: 22, height: 22, color: '#fff' }} />
@@ -601,6 +574,30 @@ export default function Settings() {
                             </motion.button>
                         </div>
                     </motion.div>
+
+                        {/* Save Button (Below Appearance Card) */}
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={handleSave}
+                            disabled={isSaving}
+                            style={{
+                                width: '100%', padding: '14px', borderRadius: '14px', border: 'none', cursor: 'pointer',
+                                background: 'linear-gradient(135deg, #B48665, #6A4334)',
+                                color: '#fff', fontWeight: 700, fontSize: '0.95rem',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                                boxShadow: '0 8px 30px rgba(180, 134, 101, 0.3)',
+                                opacity: isSaving ? 0.7 : 1,
+                            }}
+                        >
+                            {isSaving ? (
+                                <div style={{ width: 18, height: 18, border: '2px solid rgba(255,255,255,0.3)', borderTop: '2px solid #fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                            ) : (
+                                <Save style={{ width: 18, height: 18, color: '#fff' }} />
+                            )}
+                            <span style={{ color: '#fff' }}>Save Changes</span>
+                        </motion.button>
+                    </div>
                 </div>
 
                 {/* Footer Padding */}
@@ -619,7 +616,7 @@ export default function Settings() {
                         }}
                     >
                         <div style={{
-                            background: '#0f172a', color: '#fff', padding: '14px 28px', borderRadius: '20px',
+                            background: '#0f0d0a', color: '#fff', padding: '14px 28px', borderRadius: '20px',
                             boxShadow: '0 20px 60px rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', gap: '12px',
                             border: '1px solid rgba(255,255,255,0.08)',
                         }}>
@@ -627,7 +624,7 @@ export default function Settings() {
                                 width: 32, height: 32, borderRadius: '50%', background: '#D4A574',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                             }}>
-                                <CheckCircle2 style={{ width: 18, height: 18, color: '#0f172a' }} />
+                                <CheckCircle2 style={{ width: 18, height: 18, color: '#0f0d0a' }} />
                             </div>
                             <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#fff' }}>Settings saved successfully</span>
                         </div>

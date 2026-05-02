@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.brewly.brewly_backend.user.User;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -27,11 +29,14 @@ public class Event {
     private String packageType; // Gold, Silver, Platinum
     private String status; // UPCOMING, COMPLETED
 
-    @ManyToMany
-    @JoinTable(name = "event_vendors", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "vendor_id"))
-    private List<com.brewly.brewly_backend.vendors.Vendor> vendors;
+
+
 
     @ManyToMany
     @JoinTable(name = "event_tables", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "table_id"))
     private List<com.brewly.brewly_backend.pos.Table> tables;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

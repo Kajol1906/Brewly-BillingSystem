@@ -140,3 +140,21 @@ export const bulkImportMenuItems = async (items: { name: string; price: number; 
     const response = await axios.post(`${API_URL}/bulk`, items, getAuthHeader());
     return response.data;
 };
+
+/**
+ * 🔹 Delete a single menu item
+ */
+export const deleteSingleMenuItem = async (id: number): Promise<void> => {
+    await axios.delete(`${API_URL}/${id}`, getAuthHeader());
+};
+
+/**
+ * 🔹 Bulk reassign specific items to a category
+ */
+export const bulkUpdateCategory = async (itemIds: number[], newCategory: string): Promise<void> => {
+    await axios.put(
+        `${API_URL}/category/${encodeURIComponent(newCategory)}/bulk`,
+        itemIds,
+        getAuthHeader()
+    );
+};

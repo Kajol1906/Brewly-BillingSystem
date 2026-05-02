@@ -7,20 +7,29 @@ import { motion } from 'motion/react';
 import { Coffee, Mail, Lock } from 'lucide-react';
 
 interface LoginScreenProps {
-    onLoginSuccess: (token: string) => void;
+    onLoginSuccess: (token: string, name?: string) => void;
     onGoToSignup: () => void;
+    googleError?: string;
 }
 
 export default function LoginScreen({
     onLoginSuccess,
     onGoToSignup,
+    googleError = '',
 }: LoginScreenProps) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState(googleError);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
+
+        if (!email || !password) {
+            setError('Please enter both email and password.');
+            return;
+        }
 
         try {
             const response = await axios.post(
@@ -28,11 +37,17 @@ export default function LoginScreen({
                 { email, password }
             );
 
-            // 🔐 Role comes ONLY from backend
-            onLoginSuccess(response.data.token);
+            onLoginSuccess(response.data.token, response.data.name);
 
-        } catch (error) {
-            alert("Invalid email or password");
+        } catch (error: any) {
+            const data = error.response?.data;
+            if (typeof data === 'string') {
+                setError(data);
+            } else if (data?.message) {
+                setError(data.message);
+            } else {
+                setError('Invalid email or password.');
+            }
         }
     };
 
@@ -151,7 +166,7 @@ export default function LoginScreen({
                                     type="email"
                                     placeholder="admin@brewly.com"
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e) => { setEmail(e.target.value); setError(''); }}
                                     className="w-full h-12 pl-12 pr-4 bg-muted/30 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30"
                                 />
                             </div>
@@ -169,11 +184,16 @@ export default function LoginScreen({
                                     type="password"
                                     placeholder="••••••••"
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) => { setPassword(e.target.value); setError(''); }}
                                     className="w-full h-12 pl-12 pr-4 bg-muted/30 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30"
                                 />
                             </div>
                         </motion.div>
+
+
+                        {error && (
+                            <p className="text-sm text-red-500 text-center">{error}</p>
+                        )}
 
                         <motion.button
                             type="submit"
@@ -197,7 +217,7 @@ export default function LoginScreen({
                         {/* Google Sign-In */}
                         <motion.button
                             type="button"
-                            onClick={() => { window.location.href = `${API_BASE}/api/auth/google`; }}
+                            onClick={() => { window.location.href = `${API_BASE}/api/auth/google?mode=login`; }}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             initial={{ y: 20, opacity: 0 }}

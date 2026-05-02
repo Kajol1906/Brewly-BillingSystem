@@ -66,7 +66,7 @@ export default function RevenueForecast() {
           <h3>Revenue Forecast</h3>
           <p className="text-sm text-muted-foreground mt-1">Last 7 days + next 7 projected</p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-success to-[#81C784] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
           <TrendingUp className="w-5 h-5 text-white" />
         </div>
       </div>

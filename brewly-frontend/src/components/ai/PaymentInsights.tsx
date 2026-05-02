@@ -55,7 +55,7 @@ export default function PaymentInsights() {
           <h3>Payment Insights</h3>
           <p className="text-sm text-muted-foreground mt-1">How customers prefer to pay</p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-success flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
           <CreditCard className="w-5 h-5 text-white" />
         </div>
       </div>

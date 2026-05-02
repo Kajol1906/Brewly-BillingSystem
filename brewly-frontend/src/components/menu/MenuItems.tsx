@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion } from 'motion/react';
 import { Search, Plus, Grid, List, Settings, Pencil, Upload, X, FileSpreadsheet, AlertCircle, CheckCircle2 } from 'lucide-react';
 import * as XLSX from 'xlsx';
-import { addMenuItem, getCategories, getCategoryCounts, deleteCategory, reassignCategory, updateMenuItem, bulkImportMenuItems } from "../services/menuService";
+import { addMenuItem, getCategories, getCategoryCounts, deleteCategory, reassignCategory, updateMenuItem, bulkImportMenuItems, deleteSingleMenuItem, bulkUpdateCategory } from "../services/menuService";
 
 
 import {
@@ -39,6 +39,18 @@ export default function MenuItems() {
 
     const [editItem, setEditItem] = useState<MenuItem | null>(null);
     const [editForm, setEditForm] = useState({ name: '', price: 0, category: '', imageUrl: '' });
+
+    // Selection mode state
+    const [selectionModeTargetCategory, setSelectionModeTargetCategory] = useState<string | null>(null);
+    const [selectedItemsForCategory, setSelectedItemsForCategory] = useState<number[]>([]);
+
+    // Toast state
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+    const showToast = (msg: string) => {
+        setToastMessage(msg);
+        setTimeout(() => setToastMessage(null), 3000);
+    };
 
     // Excel import state
     const [showImportModal, setShowImportModal] = useState(false);
@@ -204,6 +216,39 @@ export default function MenuItems() {
         }
     };
 
+    const handleDeleteSingleItem = async () => {
+        if (!editItem) return;
+        try {
+            const itemName = editItem.name;
+            await deleteSingleMenuItem(editItem.id);
+            setItems(prev => prev.filter(i => i.id !== editItem.id));
+            setEditItem(null);
+            fetchCategories();
+            showToast(`Item '${itemName}' deleted.`);
+        } catch (err) {
+            console.error("Failed to delete menu item", err);
+            showToast("Failed to delete item.");
+        }
+    };
+
+    const handleBulkUpdateCategory = async () => {
+        if (!selectionModeTargetCategory || selectedItemsForCategory.length === 0) {
+            setSelectionModeTargetCategory(null);
+            setSelectedItemsForCategory([]);
+            return;
+        }
+        try {
+            await bulkUpdateCategory(selectedItemsForCategory, selectionModeTargetCategory);
+            setSelectionModeTargetCategory(null);
+            setSelectedItemsForCategory([]);
+            await fetchMenu();
+            await fetchCategories();
+        } catch (err) {
+            console.error("Failed to bulk update items", err);
+            alert("Failed to move items to new category.");
+        }
+    };
+
     /* ================= EXCEL IMPORT ================= */
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -341,8 +386,43 @@ export default function MenuItems() {
                     <Upload className="w-5 h-5" style={{ color: '#ffffff' }} />
                     <span style={{ color: '#ffffff' }}>Import Excel</span>
                 </motion.button>
-
             </div>
+
+            {/* Selection Action Bar */}
+            {selectionModeTargetCategory && (
+                <div style={{ position: 'fixed', bottom: '30px', left: '50%', transform: 'translateX(-50%)', backgroundColor: '#1a1a1a', borderRadius: '12px', padding: '16px 24px', display: 'flex', alignItems: 'center', gap: '24px', zIndex: 1000, boxShadow: '0 8px 30px rgba(0,0,0,0.3)', color: '#fff' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontWeight: 600, fontSize: '15px' }}>{selectedItemsForCategory.length} selected</span>
+                        <span style={{ opacity: 0.6, fontSize: '14px' }}>|</span>
+                        <span style={{ fontSize: '14px', opacity: 0.9 }}>Moving to <strong style={{ color: '#FFC8A2' }}>{selectionModeTargetCategory}</strong></span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <button
+                            onClick={() => {
+                                setSelectionModeTargetCategory(null);
+                                setSelectedItemsForCategory([]);
+                            }}
+                            style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent', color: '#fff', fontSize: '13px', cursor: 'pointer' }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleBulkUpdateCategory}
+                            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', backgroundColor: '#FF8C42', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                        >
+                            Confirm Move
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Custom Toast Notification */}
+            {toastMessage && (
+                <div style={{ position: 'fixed', bottom: '20px', right: '20px', backgroundColor: '#333', color: '#fff', padding: '12px 24px', borderRadius: '8px', zIndex: 9999, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', gap: '8px', animation: 'fadeIn 0.3s ease-in-out' }}>
+                    <CheckCircle2 style={{ color: '#22c55e', width: '20px', height: '20px' }} />
+                    <span style={{ fontSize: '14px', fontWeight: 500 }}>{toastMessage}</span>
+                </div>
+            )}
 
             {/* Categories */}
             <div className="flex gap-2 overflow-x-auto">
@@ -367,7 +447,15 @@ export default function MenuItems() {
             {viewMode === 'grid' && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {items.map(item => (
-                        <div key={item.id} className="bg-card rounded-xl border shadow-soft">
+                        <div 
+                            key={item.id} 
+                            className={`bg-card rounded-xl border shadow-soft transition-all ${selectionModeTargetCategory ? 'cursor-pointer hover:border-primary' : ''} ${selectedItemsForCategory.includes(item.id) ? 'ring-2 ring-primary bg-primary/5' : ''}`}
+                            onClick={() => {
+                                if (selectionModeTargetCategory) {
+                                    setSelectedItemsForCategory(prev => prev.includes(item.id) ? prev.filter(id => id !== item.id) : [...prev, item.id]);
+                                }
+                            }}
+                        >
                             <div className="p-4">
                                 <h4>{item.name}</h4>
                                 <p className="text-sm text-muted-foreground">{item.category}</p>
@@ -379,22 +467,24 @@ export default function MenuItems() {
                                             {item.available ? 'Available' : 'Unavailable'}
                                         </span>
                                         <button
-                                            onClick={() => openEditModal(item)}
-                                            style={{ width: '28px', height: '28px', borderRadius: '6px', border: '1px solid #ddd', backgroundColor: '#f9f9f9', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            onClick={(e) => { e.stopPropagation(); openEditModal(item); }}
+                                            disabled={!!selectionModeTargetCategory}
+                                            style={{ width: '28px', height: '28px', borderRadius: '6px', border: '1px solid #ddd', backgroundColor: '#f9f9f9', cursor: selectionModeTargetCategory ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: selectionModeTargetCategory ? 0.5 : 1 }}
                                         >
                                             <Pencil style={{ width: '14px', height: '14px', color: '#6C63FF' }} />
                                         </button>
                                     </div>
                                     <div
-                                        onClick={() => toggleAvailability(item.id)}
+                                        onClick={(e) => { e.stopPropagation(); if(!selectionModeTargetCategory) toggleAvailability(item.id); }}
                                         style={{
                                             width: '44px',
                                             height: '24px',
                                             borderRadius: '12px',
                                             backgroundColor: item.available ? '#22c55e' : '#d1d5db',
-                                            cursor: 'pointer',
+                                            cursor: selectionModeTargetCategory ? 'not-allowed' : 'pointer',
                                             position: 'relative',
                                             transition: 'background-color 0.2s',
+                                            opacity: selectionModeTargetCategory ? 0.5 : 1,
                                         }}
                                     >
                                         <div
@@ -433,23 +523,32 @@ export default function MenuItems() {
                         </thead>
                         <tbody>
                             {items.map(item => (
-                                <tr key={item.id} className="border-t">
+                                <tr 
+                                    key={item.id} 
+                                    className={`border-t transition-colors ${selectionModeTargetCategory ? 'cursor-pointer hover:bg-muted/30' : ''} ${selectedItemsForCategory.includes(item.id) ? 'bg-primary/5' : ''}`}
+                                    onClick={() => {
+                                        if (selectionModeTargetCategory) {
+                                            setSelectedItemsForCategory(prev => prev.includes(item.id) ? prev.filter(id => id !== item.id) : [...prev, item.id]);
+                                        }
+                                    }}
+                                >
                                     <td className="p-4">{item.name}</td>
                                     <td className="p-4">{item.category}</td>
                                     <td className="p-4">₹{item.price}</td>
                                     <td className="p-4">
                                         <div className="flex items-center gap-3">
                                             <div
-                                                onClick={() => toggleAvailability(item.id)}
+                                                onClick={(e) => { e.stopPropagation(); if(!selectionModeTargetCategory) toggleAvailability(item.id); }}
                                                 style={{
                                                     width: '44px',
                                                     height: '24px',
                                                     borderRadius: '12px',
                                                     backgroundColor: item.available ? '#22c55e' : '#d1d5db',
-                                                    cursor: 'pointer',
+                                                    cursor: selectionModeTargetCategory ? 'not-allowed' : 'pointer',
                                                     position: 'relative',
                                                     transition: 'background-color 0.2s',
                                                     flexShrink: 0,
+                                                    opacity: selectionModeTargetCategory ? 0.5 : 1,
                                                 }}
                                             >
                                                 <div
@@ -473,8 +572,9 @@ export default function MenuItems() {
                                     </td>
                                     <td className="p-4">
                                         <button
-                                            onClick={() => openEditModal(item)}
-                                            style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #ddd', backgroundColor: '#f9f9f9', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            onClick={(e) => { e.stopPropagation(); openEditModal(item); }}
+                                            disabled={!!selectionModeTargetCategory}
+                                            style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #ddd', backgroundColor: '#f9f9f9', cursor: selectionModeTargetCategory ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: selectionModeTargetCategory ? 0.5 : 1 }}
                                         >
                                             <Pencil style={{ width: '15px', height: '15px', color: '#6C63FF' }} />
                                         </button>
@@ -571,12 +671,29 @@ export default function MenuItems() {
                                             {categoryCounts[cat] ?? 0} item{(categoryCounts[cat] ?? 0) !== 1 ? 's' : ''}
                                         </span>
                                     </div>
-                                    <button
-                                        onClick={() => { setDeleteTarget(cat); setDeleteAction('delete'); setMoveTarget(''); }}
-                                        style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #fca5a5', backgroundColor: '#fef2f2', color: '#ef4444', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
-                                    >
-                                        ✕
-                                    </button>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <button
+                                            onClick={() => {
+                                                setShowManageModal(false);
+                                                setSelectionModeTargetCategory(cat);
+                                                setSelectedItemsForCategory([]);
+                                            }}
+                                            title="Add items to this category"
+                                            style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #bfdbfe', backgroundColor: '#eff6ff', color: '#3b82f6', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
+                                        >
+                                            +
+                                        </button>
+                                        <button
+                                            onClick={() => { 
+                                                setDeleteTarget(cat); 
+                                                setDeleteAction((categoryCounts[cat] ?? 0) === 0 ? 'delete' : 'move'); 
+                                                setMoveTarget(''); 
+                                            }}
+                                            style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #fca5a5', backgroundColor: '#fef2f2', color: '#ef4444', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -652,19 +769,27 @@ export default function MenuItems() {
                             </div>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '28px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '28px' }}>
                             <button
-                                onClick={() => setEditItem(null)}
-                                style={{ padding: '10px 24px', borderRadius: '10px', border: '1px solid #ddd', backgroundColor: '#fff', color: '#555', fontSize: '14px', cursor: 'pointer' }}
+                                onClick={handleDeleteSingleItem}
+                                style={{ padding: '10px 24px', borderRadius: '10px', border: 'none', backgroundColor: '#fef2f2', color: '#ef4444', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
                             >
-                                Cancel
+                                Delete Item
                             </button>
-                            <button
-                                onClick={handleEditMenuItem}
-                                style={{ padding: '10px 24px', borderRadius: '10px', border: 'none', backgroundColor: '#6C63FF', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
-                            >
-                                Save Changes
-                            </button>
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                                <button
+                                    onClick={() => setEditItem(null)}
+                                    style={{ padding: '10px 24px', borderRadius: '10px', border: '1px solid #ddd', backgroundColor: '#fff', color: '#555', fontSize: '14px', cursor: 'pointer' }}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleEditMenuItem}
+                                    style={{ padding: '10px 24px', borderRadius: '10px', border: 'none', backgroundColor: '#6C63FF', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
+                                >
+                                    Save Changes
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>,
@@ -684,38 +809,34 @@ export default function MenuItems() {
 
                         {/* Radio options */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '14px', color: '#333' }}>
-                                <input
-                                    type="radio"
-                                    name="deleteAction"
-                                    checked={deleteAction === 'delete'}
-                                    onChange={() => setDeleteAction('delete')}
-                                    style={{ accentColor: '#ef4444' }}
-                                />
-                                Delete all items in this category
-                            </label>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '14px', color: '#333' }}>
-                                <input
-                                    type="radio"
-                                    name="deleteAction"
-                                    checked={deleteAction === 'move'}
-                                    onChange={() => setDeleteAction('move')}
-                                    style={{ accentColor: '#6C63FF' }}
-                                />
-                                Move items to another category
-                            </label>
+                            {(categoryCounts[deleteTarget] ?? 0) === 0 ? (
+                                <p style={{ fontSize: '14px', color: '#555' }}>
+                                    This category is empty and can be safely deleted.
+                                </p>
+                            ) : (
+                                <>
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '14px', color: '#333' }}>
+                                        <input
+                                            type="radio"
+                                            name="deleteAction"
+                                            checked={true}
+                                            readOnly
+                                            style={{ accentColor: '#6C63FF' }}
+                                        />
+                                        Move items to another category
+                                    </label>
 
-                            {deleteAction === 'move' && (
-                                <select
-                                    style={{ marginLeft: '28px', border: '1px solid #ddd', borderRadius: '10px', padding: '10px 14px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#fff' }}
-                                    value={moveTarget}
-                                    onChange={(e) => setMoveTarget(e.target.value)}
-                                >
-                                    <option value="">Select category...</option>
-                                    {categories.filter(c => c !== 'All' && c !== deleteTarget).map(cat => (
-                                        <option key={cat} value={cat}>{cat}</option>
-                                    ))}
-                                </select>
+                                    <select
+                                        style={{ marginLeft: '28px', border: '1px solid #ddd', borderRadius: '10px', padding: '10px 14px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#fff' }}
+                                        value={moveTarget}
+                                        onChange={(e) => setMoveTarget(e.target.value)}
+                                    >
+                                        <option value="">Select category...</option>
+                                        {categories.filter(c => c !== 'All' && c !== deleteTarget).map(cat => (
+                                            <option key={cat} value={cat}>{cat}</option>
+                                        ))}
+                                    </select>
+                                </>
                             )}
                         </div>
 
@@ -728,15 +849,15 @@ export default function MenuItems() {
                             </button>
                             <button
                                 onClick={handleDeleteCategory}
-                                disabled={deleteAction === 'move' && !moveTarget}
+                                disabled={((categoryCounts[deleteTarget] ?? 0) > 0) && !moveTarget}
                                 style={{
                                     padding: '10px 24px', borderRadius: '10px', border: 'none',
-                                    backgroundColor: deleteAction === 'delete' ? '#ef4444' : '#6C63FF',
+                                    backgroundColor: ((categoryCounts[deleteTarget] ?? 0) === 0) ? '#ef4444' : '#6C63FF',
                                     color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-                                    opacity: (deleteAction === 'move' && !moveTarget) ? 0.5 : 1,
+                                    opacity: (((categoryCounts[deleteTarget] ?? 0) > 0) && !moveTarget) ? 0.5 : 1,
                                 }}
                             >
-                                {deleteAction === 'delete' ? 'Delete All' : 'Move & Remove'}
+                                {((categoryCounts[deleteTarget] ?? 0) === 0) ? 'Delete' : 'Move & Delete'}
                             </button>
                         </div>
                     </div>

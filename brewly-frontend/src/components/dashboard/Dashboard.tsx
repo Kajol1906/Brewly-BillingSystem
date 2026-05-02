@@ -133,8 +133,7 @@ export default function Dashboard() {
         className="flex items-start justify-between"
       >
         <div>
-          <h1>Dashboard</h1>
-          <p className="text-muted-foreground mt-1">{subtitle}</p>
+          <p className="text-muted-foreground">{subtitle}</p>
         </div>
         {/* Period Selector */}
         <div className="flex items-center gap-1 bg-muted/50 rounded-xl p-1 border border-border">

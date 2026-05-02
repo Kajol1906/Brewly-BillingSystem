@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.brewly.brewly_backend.user.User;
+
 @Entity
 @jakarta.persistence.Table(name = "restaurant_tables") // "Table" is a reserved keyword in SQL
 @Data
@@ -30,4 +32,8 @@ public class Table {
         OCCUPIED,
         RESERVED
     }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

@@ -30,15 +30,15 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
     <motion.nav
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 h-24 border-b z-[100]" style={{ background: '#B48665', boxShadow: 'var(--shadow-sm)', borderBottom: '1px solid var(--border)', backdropFilter: 'blur(8px)' }}
+      className="fixed top-0 left-0 right-0 h-24 border-b z-[100]" style={{ background: '#5C3D2E', boxShadow: '0 4px 20px rgba(44, 24, 16, 0.25)', borderBottom: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}
     >
-      <div className="h-full px-8 flex items-center justify-between text-[#fff6e9]">
+      <div className="h-full px-8 flex items-center justify-between text-[#FFF6E9] font-bold">
         {/* Logo */}
         <div className="flex items-center gap-3">
           <GlassButton iconOnly className="w-10 h-10 rounded-xl pointer-events-none">
-            <Coffee className="w-6 h-6 text-primary" />
+            <Coffee className="w-6 h-6" style={{ color: '#FFF6E9', strokeWidth: 2.5 }} />
           </GlassButton>
-          <span className="font-['DM_Serif_Display'] text-2xl tracking-wide" style={{ color: '#fff6e9' }}>
+          <span className="font-['DM_Serif_Display'] text-2xl tracking-wide font-bold" style={{ color: '#FFF6E9' }}>
             Brewly
           </span>
         </div>
@@ -66,12 +66,12 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
                 >
                   {isActive ? (
                     <GlassButton iconOnly className="w-8 h-8 rounded-lg pointer-events-none">
-                      <Icon className="w-4 h-4" style={{ color: '#fff6e9' }} />
+                      <Icon className="w-4 h-4" style={{ color: '#FFF6E9' }} />
                     </GlassButton>
                   ) : (
-                    <Icon className="w-5 h-5 flex-shrink-0" style={{ color: '#fff6e9' }} />
+                    <Icon className="w-5 h-5 flex-shrink-0" style={{ color: '#FFF6E9' }} />
                   )}
-                  <span className="truncate w-full text-center" style={{ color: '#fff6e9' }}>{item.label}</span>
+                  <span className="truncate w-full text-center font-bold" style={{ color: '#FFF6E9' }}>{item.label}</span>
                   {isActive && (
                     <motion.div
                       layoutId="nav-indicator"
@@ -94,10 +94,10 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
             className="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-muted/50 transition-colors"
           >
             <GlassButton iconOnly className="w-10 h-10 rounded-full pointer-events-none">
-              <User className="w-5 h-5 text-primary" />
+              <User className="w-5 h-5" style={{ color: '#FFF6E9', strokeWidth: 2.5 }} />
             </GlassButton>
             <div className="text-left hidden md:block">
-              <p className="text-sm font-semibold font-sans" style={{ color: '#fff6e9' }}>{userName}</p>
+              <p className="text-sm font-bold font-sans" style={{ color: '#FFF6E9' }}>{userName}</p>
             </div>
           </motion.button>
 
@@ -107,7 +107,7 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 w-48 bg-[#FFF6E9] dark:bg-[#1e293b] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-[#B48665]/20 overflow-hidden z-[100]"
+              className="absolute right-0 top-full mt-2 w-48 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-[#B48665]/20 overflow-hidden z-[100]" style={{ backgroundColor: '#FFF6E9' }}
             >
               <button
                 onClick={() => {

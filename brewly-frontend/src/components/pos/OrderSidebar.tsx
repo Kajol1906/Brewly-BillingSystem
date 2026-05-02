@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'motion/react';
-import { X, Search, Plus, Minus, CreditCard, Percent, Receipt, Split } from 'lucide-react';
+import { X, Search, Plus, Minus, CreditCard, Percent, Receipt, Split, ShoppingBag } from 'lucide-react';
 import type { Table } from './POSScreen';
-import { getAvailableMenuItems, getCategories, MenuItem } from '../../services/menuService';
+import { getAvailableMenuItems, MenuItem } from '../../services/menuService';
 import { API_BASE } from '../../config/api';
 
 
 interface OrderSidebarProps {
-  table: Table;
+  table: Table | null;
   onClose: () => void;
 }
 
 export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
+  const isTakeaway = table === null;
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [cart, setCart] = useState<{ id: number; name: string; price: number; quantity: number }[]>([]);
@@ -23,15 +24,16 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
   const [dialogOnClose, setDialogOnClose] = useState<(() => void) | null>(null);
 
   useEffect(() => {
-    getAvailableMenuItems().then(setMenuItems);
-    getCategories().then(cats => {
+    getAvailableMenuItems().then(items => {
+      setMenuItems(items);
+      const cats = [...new Set(items.map(item => item.category))].sort();
       setCategories(cats);
       if (cats.length > 0) setSelectedCategory(cats[0]);
     });
   }, []);
 
   useEffect(() => {
-    if (table.status === 'occupied') {
+    if (!isTakeaway && table.status === 'occupied') {
       fetch(`${API_BASE}/api/pos/table/${table.id}/active`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -43,10 +45,10 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
     } else {
       setPlacedItems([]);
     }
-  }, [table]);
+  }, [table, isTakeaway]);
 
   const filteredItems = menuItems.filter(
-    item => item.category === selectedCategory && item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    item => item.available !== false && item.category === selectedCategory && item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const addToCart = (item: MenuItem) => {
@@ -59,27 +61,33 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
   };
 
 
-  // Helper to submit orders without closing UI
+  // Silent helper — places all cart items, throws on any failure (no dialog, no close)
+  const placeCartOrders = async () => {
+    for (const item of cart) {
+      const response = await fetch(`${API_BASE}/api/pos/order`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          menuItemId: item.id,
+          quantity: item.quantity,
+          tableId: isTakeaway ? null : table!.id,
+        }),
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(errText || `Failed to place order for ${item.name}`);
+      }
+    }
+  };
+
+  // "Place Order" button handler
   const submitOrder = async () => {
     try {
-      for (const item of cart) {
-        const response = await fetch(`${API_BASE}/api/pos/order`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            menuItemId: item.id,
-            quantity: item.quantity,
-            tableId: table.id,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to place order for ${item.name}`);
-        }
-      }
+      await placeCartOrders();
       setDialogMsg('Order placed successfully! Table is now occupied.');
       setDialogOnClose(() => () => { setCart([]); onClose(); });
     } catch (error: any) {
@@ -91,9 +99,9 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
 
   const handleGenerateBill = async (paymentMethod: 'CASH' | 'UPI') => {
     try {
-      // 1. If items in cart, place order first to update stock/revenue
+      // 1. If items in cart, place them silently first (no dialog)
       if (cart.length > 0) {
-        await submitOrder();
+        await placeCartOrders();
       }
 
       // 2. Generate Bill and Clear Table
@@ -106,7 +114,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
-          tableId: table.id,
+          tableId: isTakeaway ? null : table!.id,
           totalAmount: finalAmount,
           paymentMethod: paymentMethod,
         }),
@@ -116,7 +124,10 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
         throw new Error("Failed to generate bill");
       }
 
-      setDialogMsg(`Bill generated successfully via ${paymentMethod}! Table is now free.`);
+      const successMsg = isTakeaway
+        ? `Takeaway order completed! Payment via ${paymentMethod}.`
+        : `Bill generated successfully via ${paymentMethod}! Table is now free.`;
+      setDialogMsg(successMsg);
       setDialogOnClose(() => () => { setCart([]); onClose(); });
     } catch (error: any) {
       setDialogMsg(`Transaction failed: ${error.message || "Unknown error"}`);
@@ -137,8 +148,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
   const newSubtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const placedSubtotal = placedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const subtotal = newSubtotal + placedSubtotal;
-  const tax = subtotal * 0.05; // 5% tax
-  const total = subtotal + tax;
+  const total = subtotal;
 
   return (
     <>
@@ -157,43 +167,50 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed right-0 top-0 bottom-0 w-[480px] bg-white shadow-2xl z-50 flex flex-col"
+        className="fixed right-0 top-0 bottom-0 w-[480px] bg-card shadow-2xl z-50 flex flex-col border-l border-border"
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between bg-white">
+        <div className="p-6 border-b border-border flex items-center justify-between bg-card">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Table {table.tableNumber}</h3>
-            <div className={`inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium mt-1 ${table.status === 'occupied' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
-              }`}>
-              <div className={`w-1.5 h-1.5 rounded-full ${table.status === 'occupied' ? 'bg-red-500' : 'bg-green-500'
-                }`} />
-              {table.status.toUpperCase()}
-            </div>
+            <h3 className="text-lg font-semibold text-foreground">
+              {isTakeaway ? 'Takeaway Order' : `Table ${table!.tableNumber}`}
+            </h3>
+            {isTakeaway ? (
+              <div className="inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium mt-1 bg-amber-100 text-amber-700">
+                <ShoppingBag className="w-3 h-3" />
+                TAKEAWAY
+              </div>
+            ) : (
+              <div className={`inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium mt-1 ${table!.status === 'occupied' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                <div className={`w-1.5 h-1.5 rounded-full ${table!.status === 'occupied' ? 'bg-red-500' : 'bg-green-500'}`} />
+                {table!.status.toUpperCase()}
+              </div>
+            )}
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-colors text-muted-foreground hover:text-foreground"
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
         {/* Search */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-border">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search menu..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all text-gray-800 placeholder-gray-400"
+              className="w-full h-10 pl-10 pr-4 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all text-foreground placeholder-muted-foreground"
             />
           </div>
         </div>
 
         {/* Categories */}
-        <div className="p-4 border-b border-gray-200 bg-gray-50">
+        <div className="p-4 border-b border-border bg-background">
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
             {categories.map(category => (
               <motion.button
@@ -204,7 +221,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
                   px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors
                   ${selectedCategory === category
                     ? 'bg-gradient-to-r from-primary to-accent text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                    : 'bg-card text-muted-foreground hover:bg-muted border border-border'
                   }
                 `}
               >
@@ -225,11 +242,11 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
               whileHover={{ x: 4 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => addToCart(item)}
-              className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md hover:border-gray-300 transition-all"
+              className="w-full flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:shadow-md hover:border-primary/50 transition-all"
             >
               <div className="text-left">
-                <p className="font-medium text-gray-900">{item.name}</p>
-                <p className="text-sm text-gray-500 font-medium">₹{item.price}</p>
+                <p className="font-medium text-foreground">{item.name}</p>
+                <p className="text-sm text-muted-foreground font-medium">₹{item.price}</p>
               </div>
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                 <Plus className="w-4 h-4 text-white" />
@@ -240,19 +257,19 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
 
         {/* Cart Items */}
         {(cart.length > 0 || placedItems.length > 0) && (
-          <div className="border-t border-gray-200 p-6 bg-gray-50">
-            <h4 className="mb-3 font-semibold text-gray-900">Order Summary</h4>
+          <div className="border-t border-border p-6 bg-background">
+            <h4 className="mb-3 font-semibold text-foreground">Order Summary</h4>
             <div className="space-y-4 max-h-48 overflow-y-auto">
               {/* Placed Items */}
               {placedItems.length > 0 && (
                 <div>
-                  <h5 className="text-xs font-semibold text-gray-500 uppercase mb-2">Placed Items</h5>
+                  <h5 className="text-xs font-semibold text-muted-foreground uppercase mb-2">Placed Items</h5>
                   <div className="space-y-2">
                     {placedItems.map(item => (
                       <div key={`placed-${item.id}`} className="flex items-center justify-between text-sm opacity-80">
-                        <span className="text-gray-700">{item.name} <span className="text-gray-400 ml-1">x{item.quantity}</span></span>
+                        <span className="text-foreground opacity-80">{item.name} <span className="text-muted-foreground ml-1">x{item.quantity}</span></span>
                         <div className="flex items-center gap-3">
-                          <span className="w-16 text-right font-medium text-gray-700">₹{item.price * item.quantity}</span>
+                          <span className="w-16 text-right font-medium text-foreground">₹{item.price * item.quantity}</span>
                         </div>
                       </div>
                     ))}
@@ -267,24 +284,24 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
                   <div className="space-y-2">
                     {cart.map(item => (
                       <div key={`new-${item.id}`} className="flex items-center justify-between text-sm">
-                        <span className="text-gray-800 font-medium">{item.name}</span>
+                        <span className="text-foreground font-medium">{item.name}</span>
                         <div className="flex items-center gap-3">
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => updateQuantity(item.id, -1)}
-                              className="w-6 h-6 rounded-md bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                              className="w-6 h-6 rounded-md bg-muted hover:bg-muted/80 border border-border/50 flex items-center justify-center"
                             >
-                              <Minus className="w-3 h-3 text-gray-600" />
+                              <Minus className="w-3 h-3 text-muted-foreground" />
                             </button>
-                            <span className="w-8 text-center font-medium text-gray-800">{item.quantity}</span>
+                            <span className="w-8 text-center font-medium text-foreground">{item.quantity}</span>
                             <button
                               onClick={() => updateQuantity(item.id, 1)}
-                              className="w-6 h-6 rounded-md bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                              className="w-6 h-6 rounded-md bg-muted hover:bg-muted/80 border border-border/50 flex items-center justify-center"
                             >
-                              <Plus className="w-3 h-3 text-gray-600" />
+                              <Plus className="w-3 h-3 text-muted-foreground" />
                             </button>
                           </div>
-                          <span className="w-16 text-right font-medium text-gray-800">₹{item.price * item.quantity}</span>
+                          <span className="w-16 text-right font-medium text-foreground">₹{item.price * item.quantity}</span>
                         </div>
                       </div>
                     ))}
@@ -296,19 +313,15 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
         )}
 
         {/* Billing Bar */}
-        <div className="border-t border-gray-200 p-6 bg-white">
+        <div className="border-t border-border p-6 bg-card">
           <div className="space-y-2 mb-4">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Subtotal</span>
-              <span className="font-medium text-gray-800">₹{subtotal.toFixed(2)}</span>
+              <span className="text-muted-foreground">Subtotal</span>
+              <span className="font-medium text-foreground">₹{subtotal.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Tax (5%)</span>
-              <span className="font-medium text-gray-800">₹{tax.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between pt-2 border-t border-gray-200">
-              <span className="font-semibold text-gray-900">Total</span>
-              <span className="font-bold text-gray-900 text-lg">₹{total.toFixed(2)}</span>
+            <div className="flex justify-between pt-2 border-t border-border">
+              <span className="font-semibold text-foreground">Total</span>
+              <span className="font-bold text-foreground text-lg">₹{total.toFixed(2)}</span>
             </div>
           </div>
 
@@ -316,7 +329,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-2 h-10 px-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors text-gray-700"
+              className="flex items-center justify-center gap-2 h-10 px-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-foreground"
             >
               <Percent className="w-4 h-4" />
               <span className="text-sm font-medium">Discount</span>
@@ -324,7 +337,7 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-2 h-10 px-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors text-gray-700"
+              className="flex items-center justify-center gap-2 h-10 px-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-foreground"
             >
               <Split className="w-4 h-4" />
               <span className="text-sm font-medium">Split Bill</span>
@@ -332,20 +345,22 @@ export default function OrderSidebar({ table, onClose }: OrderSidebarProps) {
           </div>
 
           <div className="grid grid-cols-2 gap-2 mt-2">
-            <motion.button
-              onClick={submitOrder}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="col-span-2 flex items-center justify-center gap-2 h-12 bg-gradient-to-r from-danger to-[#FF8E8B] text-white rounded-xl shadow-soft hover:shadow-hover transition-all"
-            >
-              <Plus className="w-5 h-5" />
-              <span>Place Order</span>
-            </motion.button>
+            {!isTakeaway && (
+              <motion.button
+                onClick={submitOrder}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="col-span-2 flex items-center justify-center gap-2 h-12 bg-gradient-to-r from-primary to-accent text-white rounded-xl shadow-soft hover:shadow-hover transition-all"
+              >
+                <Plus className="w-5 h-5" />
+                <span>Place Order</span>
+              </motion.button>
+            )}
             <motion.button
               onClick={() => handleGenerateBill('CASH')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-2 h-12 bg-gradient-to-r from-secondary to-warning text-white rounded-xl shadow-soft hover:shadow-hover transition-all"
+              className="flex items-center justify-center gap-2 h-12 bg-gradient-to-r from-primary to-accent text-white rounded-xl shadow-soft hover:shadow-hover transition-all"
             >
               <Receipt className="w-5 h-5" />
               <span>Generate Bill</span>

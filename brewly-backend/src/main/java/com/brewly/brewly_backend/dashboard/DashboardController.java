@@ -3,6 +3,8 @@ package com.brewly.brewly_backend.dashboard;
 import com.brewly.brewly_backend.pos.Order;
 import com.brewly.brewly_backend.pos.OrderItem;
 import com.brewly.brewly_backend.pos.OrderRepository;
+import com.brewly.brewly_backend.security.UserContextHelper;
+import com.brewly.brewly_backend.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +24,7 @@ public class DashboardController {
     private final com.brewly.brewly_backend.pos.TableRepository tableRepository;
     private final com.brewly.brewly_backend.inventory.IngredientRepository ingredientRepository;
     private final com.brewly.brewly_backend.events.EventRepository eventRepository;
+    private final UserContextHelper userContextHelper;
 
     // Returns [periodStart, periodEnd, prevStart, prevEnd]
     private LocalDateTime[] resolvePeriod(String period) {
@@ -72,20 +75,21 @@ public class DashboardController {
 
     @GetMapping("/metrics")
     public DashboardMetricsDTO getMetrics(@RequestParam(defaultValue = "today") String period) {
+        User user = userContextHelper.getCurrentUser();
         LocalDateTime[] p = resolvePeriod(period);
 
-        List<Order> currentOrders = orderRepository.findAllByCreatedAtBetweenAndStatus(p[0], p[1], "BILLED");
-        List<Order> previousOrders = orderRepository.findAllByCreatedAtBetweenAndStatus(p[2], p[3], "BILLED");
+        List<Order> currentOrders = orderRepository.findAllByUserAndCreatedAtBetweenAndStatus(user, p[0], p[1], "BILLED");
+        List<Order> previousOrders = orderRepository.findAllByUserAndCreatedAtBetweenAndStatus(user, p[2], p[3], "BILLED");
 
         double revenue = calcRevenue(currentOrders);
         double prevRevenue = calcRevenue(previousOrders);
         long orderCount = currentOrders.size();
         long prevOrderCount = previousOrders.size();
 
-        long occupiedTables = tableRepository.countByStatus(com.brewly.brewly_backend.pos.Table.TableStatus.OCCUPIED);
-        long totalTables = tableRepository.count();
-        long lowStockCount = ingredientRepository.countLowStockIngredients();
-        long upcomingEvents = eventRepository.countByDateGreaterThanEqual(LocalDate.now());
+        long occupiedTables = tableRepository.countByUserAndStatus(user, com.brewly.brewly_backend.pos.Table.TableStatus.OCCUPIED);
+        long totalTables = tableRepository.findByUser(user).size();
+        long lowStockCount = ingredientRepository.countLowStockIngredientsByUser(user);
+        long upcomingEvents = eventRepository.countByUserAndDateGreaterThanEqual(user, LocalDate.now());
 
         return new DashboardMetricsDTO(
                 revenue, orderCount,
@@ -98,8 +102,9 @@ public class DashboardController {
 
     @GetMapping("/daily-sales")
     public List<DailySalesDTO> getDailySales(@RequestParam(defaultValue = "week") String period) {
+        User user = userContextHelper.getCurrentUser();
         LocalDateTime[] p = resolvePeriod(period);
-        List<Order> orders = orderRepository.findAllByCreatedAtBetweenAndStatus(p[0], p[1], "BILLED");
+        List<Order> orders = orderRepository.findAllByUserAndCreatedAtBetweenAndStatus(user, p[0], p[1], "BILLED");
 
         Map<String, Double> salesByDay = new LinkedHashMap<>();
 
@@ -158,8 +163,9 @@ public class DashboardController {
 
     @GetMapping("/orders")
     public List<OrderSummaryDTO> getOrders(@RequestParam(defaultValue = "today") String period) {
+        User user = userContextHelper.getCurrentUser();
         LocalDateTime[] p = resolvePeriod(period);
-        List<Order> orders = orderRepository.findAllByCreatedAtBetweenAndStatus(p[0], p[1], "BILLED");
+        List<Order> orders = orderRepository.findAllByUserAndCreatedAtBetweenAndStatus(user, p[0], p[1], "BILLED");
 
         return orders.stream().map(order -> {
             List<OrderSummaryDTO.OrderItemSummary> items = order.getItems().stream()
@@ -180,8 +186,9 @@ public class DashboardController {
 
     @GetMapping("/upcoming-events")
     public List<UpcomingEventDTO> getUpcomingEvents() {
+        User user = userContextHelper.getCurrentUser();
         List<com.brewly.brewly_backend.events.Event> events =
-                eventRepository.findByDateGreaterThanEqualOrderByDateAsc(LocalDate.now());
+                eventRepository.findByUserAndDateGreaterThanEqualOrderByDateAsc(user, LocalDate.now());
         return events.stream().map(e -> new UpcomingEventDTO(
                 e.getId(), e.getTitle(), e.getDate(), e.getTime(),
                 e.getType(), e.getGuestCount(), e.getPackageType()
@@ -190,8 +197,9 @@ public class DashboardController {
 
     @GetMapping("/top-selling")
     public List<TopSellingItemDTO> getTopSelling(@RequestParam(defaultValue = "week") String period) {
+        User user = userContextHelper.getCurrentUser();
         LocalDateTime[] p = resolvePeriod(period);
-        List<Order> orders = orderRepository.findAllByCreatedAtBetweenAndStatus(p[0], p[1], "BILLED");
+        List<Order> orders = orderRepository.findAllByUserAndCreatedAtBetweenAndStatus(user, p[0], p[1], "BILLED");
 
         Map<String, Long> qtyByItem = new HashMap<>();
         for (Order order : orders) {

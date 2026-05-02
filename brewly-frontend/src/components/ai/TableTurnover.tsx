@@ -55,7 +55,7 @@ export default function TableTurnover() {
           <h3>Table Turnover</h3>
           <p className="text-sm text-muted-foreground mt-1">Usage and average session time per table</p>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#45B7D1] to-[#4ECDC4] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
           <RotateCcw className="w-5 h-5 text-white" />
         </div>
       </div>
@@ -85,8 +85,8 @@ export default function TableTurnover() {
             className="p-4 rounded-xl bg-muted/10 border border-border flex flex-col"
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#45B7D1]/20 to-[#4ECDC4]/20 flex items-center justify-center border border-[#45B7D1]/20">
-                <span className="text-sm font-bold text-[#45B7D1]">T{table.tableNumber}</span>
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center border border-primary/20">
+                <span className="text-sm font-bold text-primary">T{table.tableNumber}</span>
               </div>
               <span className="text-xs text-muted-foreground">{table.seats} seats</span>
             </div>
@@ -96,7 +96,7 @@ export default function TableTurnover() {
                 initial={{ width: 0 }}
                 animate={{ width: `${(table.totalOrders / maxOrders) * 100}%` }}
                 transition={{ delay: 1 + index * 0.04, duration: 0.5 }}
-                className="h-full rounded-full bg-gradient-to-r from-[#45B7D1] to-[#4ECDC4]"
+                className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
               />
             </div>
             <div className="mt-auto flex items-center justify-between">

@@ -1,13 +1,10 @@
 import { motion } from 'motion/react';
-import { Sparkles } from 'lucide-react';
 import RecommendationEngine from './RecommendationEngine';
 import PeakHourForecast from './PeakHourForecast';
 import RevenueForecast from './RevenueForecast';
 import CategoryBreakdown from './CategoryBreakdown';
 import SlowMovingItems from './SlowMovingItems';
-import StockDepletion from './StockDepletion';
 import PaymentInsights from './PaymentInsights';
-import TableTurnover from './TableTurnover';
 
 export default function AIInsights() {
   return (
@@ -18,12 +15,6 @@ export default function AIInsights() {
         animate={{ y: 0, opacity: 1 }}
         className="relative"
       >
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-            <Sparkles className="w-6 h-6 text-white" />
-          </div>
-          <h1>AI Insights</h1>
-        </div>
         <p className="text-muted-foreground">
           Smart recommendations based on your order data
         </p>
@@ -51,8 +42,6 @@ export default function AIInsights() {
         <PeakHourForecast />
         <RecommendationEngine />
         <SlowMovingItems />
-        <StockDepletion />
-        <TableTurnover />
       </div>
     </div>
   );
