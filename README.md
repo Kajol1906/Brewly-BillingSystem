@@ -1,155 +1,97 @@
-# Brewly Billing System
+# ☕ Brewly — Full-Stack POS & Billing System
 
-A modern, full-stack POS and Billing System designed for cafes and restaurants. Brewly streamlines operations from order taking to billing, inventory management, event booking, and AI-powered business insights.
+**Brewly** is a high-performance, modern POS (Point of Sale) and Billing system designed for cafés and restaurants. It features real-time dashboard analytics, inventory management with recipe auto-deduction, calendar-based event booking, and a **Spring AI-powered Virtual Assistant**.
 
----
-
-## Key Features
-
-### Authentication
-- Secure user registration and login with JWT-based authentication.
-- Google OAuth 2.0 integration for one-click sign-in.
-
-### Landing Page
-- Professional landing page with hero section, feature highlights, use cases, and contact information.
-- Smooth scroll animations powered by Framer Motion.
-
-### Dashboard and Analytics
-- Real-time metric cards for Today's Revenue, Total Orders, Occupied Tables, and Low Stock items.
-- Daily Sales trend charts and Top Selling Items visualizations using Recharts.
-
-### Point of Sale (POS)
-- Interactive menu grid categorized by item type (Coffee, Snacks, etc.).
-- Cart management with add/remove items and quantity adjustments.
-- Order workflow: Place Order, then Generate Bill.
-- Billing supports Cash and UPI payment methods with automatic table clearing.
-
-### Table Management
-- Real-time table status display: Available (Green), Occupied (Red), Reserved (Orange).
-- Dynamic updates upon billing or event booking.
-
-### Menu and Inventory Management
-- Full menu item management with categorization.
-- Ingredient-level inventory tracking with stock levels and units.
-- Recipe linking: automatic ingredient deduction when menu items are sold.
-- Low stock alerts with visual warnings when stock dips below defined thresholds.
-
-### Event and Vendor Management
-- Calendar-based event booking for Birthdays, Corporate events, and more.
-- Vendor management for Photographers, DJs, and Decorators.
-- Direct vendor assignment to events during the booking process.
-- Table reservation integration with event scheduling.
-
-### AI Insights
-- Peak Hour Forecasting for staffing and preparation planning.
-- Smart Product Recommendations based on sales patterns.
-- Stock Depletion predictions and Category Performance analysis.
-
-### Settings
-- Customizable application settings and user preferences.
+![Dashboard Preview](file:///C:/Users/Kajol/.gemini/antigravity/brain/e0192ba7-c386-404a-abe1-38f19dbd78f2/media__1778790114162.png)
 
 ---
 
-## Technology Stack
+## 🚀 Key Features
 
-| Layer      | Technologies                                                  |
-|------------|---------------------------------------------------------------|
-| Frontend   | React, TypeScript, Vite, Tailwind CSS, Framer Motion, Recharts |
-| Backend    | Java 17, Spring Boot 3, Spring Data JPA, Hibernate            |
-| Database   | PostgreSQL                                                    |
-| Build      | Maven (Backend), npm (Frontend)                               |
+### 🛒 Point of Sale (POS) & Billing
+- **Interactive Menu**: Quick-add items to cart with category filtering.
+- **Table Management**: Real-time status tracking (Available, Occupied, Reserved).
+- **Flexible Payments**: Support for Cash and UPI payments with instant bill generation.
 
----
+### 🧠 Smart AI Assistant (New!)
+- **Natural Language Queries**: Ask questions about your business data like *"What is my revenue today?"* or *"How many tables are occupied?"*.
+- **Integrated Knowledge**: The AI understands every screen and field in the app to provide instant support.
+- **Powered by Spring AI**: Uses LLM Function Calling to securely bridge your database with AI intelligence.
 
-## Project Structure
+### 📊 Business Intelligence & Analytics
+- **6 AI-Powered Modules**: Revenue forecasting, peak hour traffic analysis, category performance, product recommendations, stock depletion prediction, and payment insights.
+- **Visual Dashboards**: Real-time charts for daily sales trends and top-selling items.
 
-```
-Brewly-BillingSystem/
-├── brewly-backend/          # Spring Boot backend
-│   ├── src/main/java/       # Java source code
-│   ├── src/main/resources/  # Configuration files
-│   ├── .env.properties      # Secrets (gitignored)
-│   ├── pom.xml              # Maven dependencies
-│   └── mvnw.cmd             # Maven wrapper
-├── brewly-frontend/         # React frontend
-│   ├── src/components/      # UI components
-│   ├── src/services/        # API service layer
-│   ├── src/context/         # React context providers
-│   ├── src/styles/          # Global styles
-│   ├── package.json         # npm dependencies
-│   └── vite.config.ts       # Vite configuration
-├── .gitignore
-└── README.md
-```
+### 📦 Inventory & Recipe Management
+- **Recipe Linking**: Automatically deducts ingredients from stock when a menu item is sold.
+- **Low Stock Alerts**: Visual warnings when ingredients hit their minimum threshold.
+- **Excel Export**: Export your menu and inventory data for offline reporting.
+
+### 📅 Event & Table Booking
+- **Calendar View**: Schedule and manage birthdays, corporate events, and large gatherings.
+- **Integrated Reservations**: Automatically blocks tables for booked events.
+
+### 🔐 Security & Auth
+- **Dual Authentication**: Secure login via JWT-based stateless auth or **Google OAuth 2.0**.
+- **Data Isolation**: Multi-tenant architecture ensuring each owner only sees their own data.
 
 ---
 
-## Setup Instructions
+## 🛠️ Technology Stack
+
+### Frontend
+- **React 18** (Vite + SWC)
+- **TypeScript**
+- **Tailwind CSS 4** & **Framer Motion**
+- **shadcn/ui** & **Radix UI**
+- **Recharts** (Data Visualization)
+- **Axios** & **React Hook Form**
+
+### Backend
+- **Java 17** & **Spring Boot 3.4**
+- **Spring AI** (Generative AI Integration)
+- **Spring Data JPA** & **Hibernate**
+- **Spring Security** (JWT + OAuth 2.0)
+- **Spring Boot Starter Mail** (SMTP)
+- **PostgreSQL** (Database)
+
+---
+
+## 📐 Architecture
+- **Layered Backend**: Controller → Service → Repository pattern for clean separation of concerns.
+- **RESTful API**: Stateless communication with JWT token exchange.
+- **Responsive SPA**: Mobile-first design for tablets and desktops.
+
+---
+
+## 📱 Application Screens
+1. **Landing Page**: Modern marketing page with smooth scroll animations.
+2. **Dashboard**: Central hub for business metrics and trends.
+3. **POS Screen**: Fast-paced order taking interface.
+4. **Inventory Table**: Deep-dive into stock levels and thresholds.
+5. **Menu Management**: Categorized menu CRUD and Excel export.
+6. **AI Insights**: Advanced analytics for business growth.
+7. **Event Calendar**: Monthly view for event planning.
+8. **AI Assistant**: Floating widget for natural language support.
+
+---
+
+## 🏁 Getting Started
 
 ### Prerequisites
-- Java 17 or higher
-- Node.js 18 or higher
-- PostgreSQL (running on port 5432)
+- Java 17+
+- Node.js 18+
+- PostgreSQL 14+
 
-### 1. Database Setup
-Create a PostgreSQL database named `brewly_db`. The application will automatically create tables and seed initial data on the first run.
-
-### 2. Backend Configuration
-Navigate to the backend directory and create a `.env.properties` file in the project root (`brewly-backend/.env.properties`) with the following variables:
-
-```properties
-# Google OAuth Credentials
-google.client.id=YOUR_GOOGLE_CLIENT_ID
-google.client.secret=YOUR_GOOGLE_CLIENT_SECRET
-
-# Contact form recipient
-contact.recipient.email=YOUR_EMAIL
-
-# Spring Mail SMTP settings
-spring.mail.host=smtp.gmail.com
-spring.mail.port=587
-spring.mail.username=YOUR_EMAIL
-spring.mail.password=YOUR_APP_PASSWORD
-spring.mail.properties.mail.smtp.auth=true
-spring.mail.properties.mail.smtp.starttls.enable=true
-
-# Database
-DB_PASSWORD=YOUR_DB_PASSWORD
-```
-
-### 3. Start the Backend
-```bash
-cd brewly-backend
-./mvnw spring-boot:run
-```
-The server will start at `http://localhost:8080`.
-
-### 4. Start the Frontend
-```bash
-cd brewly-frontend
-npm install
-npm run dev
-```
-The application will be available at `http://localhost:3000`.
+### Setup
+1. **Clone the repository**.
+2. **Database**: Create a database named `brewly_db`.
+3. **Backend**:
+   - Update `brewly-backend/src/main/resources/application.properties` with your PostgreSQL credentials.
+   - Run: `cd brewly-backend && ./mvnw spring-boot:run`
+4. **Frontend**:
+   - Run: `cd brewly-frontend && npm install && npm run dev`
+5. **Access**: Open `http://localhost:3000` (or `3001`).
 
 ---
-
-## API Endpoints
-
-| Module         | Endpoints                                                    |
-|----------------|--------------------------------------------------------------|
-| Authentication | `/api/auth/register`, `/api/auth/login`, `/api/auth/google`  |
-| Dashboard      | `/api/dashboard/metrics`, `/api/dashboard/sales/daily`, `/api/dashboard/sales/top-items` |
-| Tables         | `/api/tables`                                                |
-| POS / Billing  | `/api/billing/generate`                                      |
-| Menu           | `/api/menu`                                                  |
-| Inventory      | `/api/inventory`                                             |
-| Events         | `/api/events`                                                |
-| Vendors        | `/api/vendors`                                               |
-| AI Insights    | `/api/ai/peak-hours`, `/api/ai/recommendations`             |
-| Contact        | `/api/contact`                                               |
-
----
-
-## License
-This project is open-source and available under the MIT License.
+*Created with ❤️ for modern café management.*
