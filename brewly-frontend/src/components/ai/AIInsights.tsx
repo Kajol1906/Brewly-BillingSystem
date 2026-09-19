@@ -5,6 +5,10 @@ import RevenueForecast from './RevenueForecast';
 import CategoryBreakdown from './CategoryBreakdown';
 import SlowMovingItems from './SlowMovingItems';
 import PaymentInsights from './PaymentInsights';
+import StockDepletion from './StockDepletion';
+import TableTurnover from './TableTurnover';
+import BudgetEstimator from './BudgetEstimator';
+import WasteReduction from './WasteReduction';
 
 export default function AIInsights() {
   return (
@@ -42,6 +46,10 @@ export default function AIInsights() {
         <PeakHourForecast />
         <RecommendationEngine />
         <SlowMovingItems />
+        <StockDepletion />
+        <TableTurnover />
+        <BudgetEstimator />
+        <WasteReduction />
       </div>
     </div>
   );

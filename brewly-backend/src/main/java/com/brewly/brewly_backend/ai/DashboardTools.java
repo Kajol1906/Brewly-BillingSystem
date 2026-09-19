@@ -27,8 +27,12 @@ public class DashboardTools {
     private final EventRepository eventRepository;
     private final UserContextHelper userContextHelper;
 
-    public record MetricsRequest(String period) {}
-    public record MetricsResponse(double revenue, long orderCount, long occupiedTables, long totalTables, long lowStockCount, long upcomingEvents) {}
+    public record MetricsRequest(String period) {
+    }
+
+    public record MetricsResponse(double revenue, long orderCount, long occupiedTables, long totalTables,
+            long lowStockCount, long upcomingEvents) {
+    }
 
     @Bean
     @Description("Get dashboard metrics like revenue, order count, occupied tables, low stock count, and upcoming events for a specific period (today, yesterday, week, month)")
@@ -36,7 +40,7 @@ public class DashboardTools {
         return request -> {
             User user = userContextHelper.getCurrentUser();
             String period = request.period() != null ? request.period() : "today";
-            
+
             LocalDateTime start, end;
             LocalDate today = LocalDate.now();
 
@@ -60,19 +64,21 @@ public class DashboardTools {
             }
 
             List<Order> orders = orderRepository.findAllByUserAndCreatedAtBetweenAndStatus(user, start, end, "BILLED");
-            
+
             double revenue = orders.stream()
                     .flatMap(o -> o.getItems().stream())
                     .mapToDouble(item -> item.getQuantity() * item.getMenuItem().getPrice())
                     .sum();
-            
+
             long orderCount = orders.size();
-            long occupiedTables = tableRepository.countByUserAndStatus(user, com.brewly.brewly_backend.pos.Table.TableStatus.OCCUPIED);
+            long occupiedTables = tableRepository.countByUserAndStatus(user,
+                    com.brewly.brewly_backend.pos.Table.TableStatus.OCCUPIED);
             long totalTables = tableRepository.findByUser(user).size();
             long lowStockCount = ingredientRepository.countLowStockIngredientsByUser(user);
             long upcomingEventsCount = eventRepository.countByUserAndDateGreaterThanEqual(user, LocalDate.now());
 
-            return new MetricsResponse(revenue, orderCount, occupiedTables, totalTables, lowStockCount, upcomingEventsCount);
+            return new MetricsResponse(revenue, orderCount, occupiedTables, totalTables, lowStockCount,
+                    upcomingEventsCount);
         };
     }
 }

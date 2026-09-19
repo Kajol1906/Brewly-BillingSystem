@@ -13,6 +13,18 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
+// Auto-logout on 401 (expired/invalid token)
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.reload();
+    }
+    return Promise.reject(error);
+  }
+);
+
 createRoot(document.getElementById("root")!).render(
   <SettingsProvider>
     <App />

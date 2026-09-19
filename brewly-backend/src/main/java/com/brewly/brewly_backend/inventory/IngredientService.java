@@ -12,6 +12,7 @@ import com.brewly.brewly_backend.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.brewly.brewly_backend.exception.DuplicateResourceException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class IngredientService {
     private final MenuItemService menuItemService;
     private final RecipeIngredientRepository recipeIngredientRepository;
     private final UserContextHelper userContextHelper;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     public Ingredient addIngredient(Ingredient ingredient) {
         User user = userContextHelper.getCurrentUser();
@@ -65,6 +67,11 @@ public class IngredientService {
             menuItemService.updateAvailabilityBasedOnStock(menuItem);
         }
 
+        // 5️⃣ Broadcast WebSocket updates
+        try {
+            simpMessagingTemplate.convertAndSend("/topic/menu", "updated");
+        } catch (Exception ignored) {}
+
         return updatedIngredient;
     }
 
@@ -89,6 +96,11 @@ public class IngredientService {
             MenuItem menuItem = ri.getRecipe().getMenuItem();
             menuItemService.updateAvailabilityBasedOnStock(menuItem);
         }
+
+        // Broadcast WebSocket updates
+        try {
+            simpMessagingTemplate.convertAndSend("/topic/menu", "updated");
+        } catch (Exception ignored) {}
 
         return saved;
     }

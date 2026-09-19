@@ -150,8 +150,6 @@ public class DataSeederService {
                 new RecipeDetail(milk, 200.0),
                 new RecipeDetail(sugar, 15.0)));
 
-        // 4. Tables
-        seedTables(user);
     }
 
     private Ingredient createIngredient(User user, String name, Double qty, String unit, Double threshold) {
@@ -194,18 +192,5 @@ public class DataSeederService {
         }
     }
 
-    private void seedTables(User user) {
-        tableRepository.save(new Table(null, "1", 4, Table.TableStatus.OCCUPIED, 0.0, user));
-        tableRepository.save(new Table(null, "2", 2, Table.TableStatus.FREE, 0.0, user));
-        tableRepository.save(new Table(null, "3", 6, Table.TableStatus.RESERVED, 0.0, user));
-        tableRepository.save(new Table(null, "4", 4, Table.TableStatus.OCCUPIED, 0.0, user));
-        tableRepository.save(new Table(null, "5", 2, Table.TableStatus.FREE, 0.0, user));
-        tableRepository.save(new Table(null, "6", 8, Table.TableStatus.OCCUPIED, 0.0, user));
-        tableRepository.save(new Table(null, "7", 4, Table.TableStatus.FREE, 0.0, user));
-        tableRepository.save(new Table(null, "8", 2, Table.TableStatus.RESERVED, 0.0, user));
-        tableRepository.save(new Table(null, "9", 4, Table.TableStatus.FREE, 0.0, user));
-        tableRepository.save(new Table(null, "10", 6, Table.TableStatus.OCCUPIED, 0.0, user));
-        tableRepository.save(new Table(null, "11", 2, Table.TableStatus.FREE, 0.0, user));
-        tableRepository.save(new Table(null, "12", 4, Table.TableStatus.FREE, 0.0, user));
-    }
+
 }

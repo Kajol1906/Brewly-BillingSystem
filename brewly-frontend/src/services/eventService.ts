@@ -12,7 +12,6 @@ export interface Event {
     guestCount: number;
     time: string;
     packageType: string;
-    vendorIds?: number[];
     tableIds?: number[];
 }
 

@@ -24,20 +24,8 @@ export function HeroSection({ onGetStarted }: { onGetStarted?: () => void }) {
 	];
 
 	return (
-		<section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#FFFBF5] via-[#FBF8F3] to-[#D4A574]/10">
-			{/* Animated Background Pattern */}
-			<div className="absolute inset-0 opacity-10">
-				<svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-					<defs>
-						<pattern id="coffeeBeans" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-							<ellipse cx="20" cy="20" rx="8" ry="12" fill="#6A4334" opacity="0.3" />
-							<ellipse cx="60" cy="60" rx="10" ry="14" fill="#65350E" opacity="0.2" />
-							<ellipse cx="80" cy="30" rx="7" ry="11" fill="#B48665" opacity="0.25" />
-						</pattern>
-					</defs>
-					<rect width="100%" height="100%" fill="url(#coffeeBeans)" />
-				</svg>
-			</div>
+		<section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-transparent">
+
 
 			{/* Steam Effect */}
 			<div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-64 pointer-events-none">

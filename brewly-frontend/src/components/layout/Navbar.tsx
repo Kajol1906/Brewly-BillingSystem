@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { User, LogOut, Coffee, Settings, LayoutDashboard, ShoppingCart, Menu, Package, Calendar, Sparkles } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { User, LogOut, Coffee, Settings, LayoutDashboard, ShoppingCart, Menu, Package, Calendar, Sparkles, ChefHat, BookOpen } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useSettings } from '../../context/SettingsContext';
 import { GlassButton } from '../ui/GlassButton';
@@ -8,8 +8,10 @@ import type { Screen } from '../../App';
 const menuItems = [
   { id: 'dashboard' as Screen, label: 'Dashboard', icon: LayoutDashboard },
   { id: 'pos' as Screen, label: 'POS', icon: ShoppingCart },
+  { id: 'kds' as Screen, label: 'Kitchen', icon: ChefHat },
   { id: 'menu' as Screen, label: 'Menu', icon: Menu },
   { id: 'inventory' as Screen, label: 'Inventory', icon: Package },
+  { id: 'recipes' as Screen, label: 'Recipes', icon: BookOpen },
   { id: 'events' as Screen, label: 'Events', icon: Calendar },
   { id: 'ai-insights' as Screen, label: 'AI Insights', icon: Sparkles },
 ];
@@ -25,6 +27,19 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
   const [showDropdown, setShowDropdown] = useState(false);
   const { settings } = useSettings();
   const userName = settings.email ? settings.email.split('@')[0].charAt(0).toUpperCase() + settings.email.split('@')[0].slice(1) : 'Admin';
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!showDropdown) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showDropdown]);
 
   return (
     <motion.nav
@@ -39,7 +54,7 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
             <Coffee className="w-6 h-6" style={{ color: '#FFF6E9', strokeWidth: 2.5 }} />
           </GlassButton>
           <span className="font-['DM_Serif_Display'] text-2xl tracking-wide font-bold" style={{ color: '#FFF6E9' }}>
-            Brewly
+            {settings.storeName || 'Brewly'}
           </span>
         </div>
 
@@ -86,7 +101,7 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
         </div>
 
         {/* Profile Dropdown */}
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -107,28 +122,29 @@ export default function Navbar({ onLogout, currentScreen, onNavigate, onNavigate
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 w-48 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-[#B48665]/20 overflow-hidden z-[100]" style={{ backgroundColor: '#FFF6E9' }}
+              className="absolute right-0 top-full mt-2.5 w-48 rounded-2xl shadow-soft-lg border overflow-hidden z-[100] bg-[#FAF6F0]/95 backdrop-blur-md"
+              style={{ borderColor: 'rgba(92, 61, 46, 0.2)' }}
             >
               <button
                 onClick={() => {
                   setShowDropdown(false);
                   onNavigateToSettings();
                 }}
-                className="w-full px-4 py-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left font-bold text-foreground bg-transparent"
+                className="w-full px-4 py-3 flex items-center gap-3 hover:bg-[#5C3D2E]/10 transition-colors text-left font-bold text-[#2C1810] bg-transparent cursor-pointer"
               >
                 <GlassButton iconOnly className="w-8 h-8 p-0 rounded-lg pointer-events-none">
                   <Settings className="w-4 h-4 text-primary" />
                 </GlassButton>
-                <span className="font-sans">Settings</span>
+                <span className="font-sans text-xs uppercase tracking-wider">Settings</span>
               </button>
               <button
                 onClick={onLogout}
-                className="w-full px-4 py-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left font-bold text-destructive bg-transparent"
+                className="w-full px-4 py-3 flex items-center gap-3 hover:bg-red-500/10 transition-colors text-left font-bold text-destructive bg-transparent cursor-pointer"
               >
                 <GlassButton iconOnly className="w-8 h-8 p-0 rounded-lg pointer-events-none">
                   <LogOut className="w-4 h-4 text-destructive" />
                 </GlassButton>
-                <span className="font-sans">Logout</span>
+                <span className="font-sans text-xs uppercase tracking-wider">Logout</span>
               </button>
             </motion.div>
           )}

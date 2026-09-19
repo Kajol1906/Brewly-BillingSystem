@@ -24,6 +24,8 @@ public class Order {
 
     private Long tableId;
 
+    private String takeawayName;
+
     private String status = "ACTIVE"; // ACTIVE, BILLED
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)

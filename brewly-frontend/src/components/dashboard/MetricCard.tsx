@@ -72,9 +72,13 @@ export default function MetricCard({ title, value, change, trend, icon: Icon, co
 
         {/* Pulse Effect on Hover */}
         <motion.div
-          className="absolute top-0 right-0 w-3 h-3 rounded-full" style={{ backgroundColor: '#5C3D2E' }}
-          animate={{ scale: [1, 1.2, 1], opacity: [1, 0.5, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute top-0 right-0 w-3.5 h-3.5 rounded-full" 
+          style={{ 
+            backgroundColor: title.includes('Low-Stock') && value !== '0' ? '#c0392b' : '#5C3D2E',
+            boxShadow: title.includes('Low-Stock') && value !== '0' ? '0 0 10px rgba(192, 57, 43, 0.6)' : 'none'
+          }}
+          animate={title.includes('Low-Stock') && value !== '0' ? { scale: [1, 1.4, 1], opacity: [1, 0.3, 1] } : { scale: [1, 1.2, 1], opacity: [1, 0.5, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
         />
       </div>
     </motion.div>

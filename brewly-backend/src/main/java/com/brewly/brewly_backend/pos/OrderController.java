@@ -20,4 +20,14 @@ public class OrderController {
     public java.util.List<OrderItemDTO> getActiveOrdersForTable(@PathVariable Long tableId) {
         return orderService.getActiveOrdersForTable(tableId);
     }
+
+    @GetMapping("/orders/active")
+    public java.util.List<Order> getActiveOrders() {
+        return orderService.getAllActiveOrders();
+    }
+
+    @PostMapping("/order/{id}/prepare")
+    public void markAsPrepared(@PathVariable Long id) {
+        orderService.markOrderAsPrepared(id);
+    }
 }

@@ -2,13 +2,12 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import {
 	Smartphone,
-	LineChart,
 	Brain,
-	Zap,
-	ShieldCheck,
-	Users,
-	Receipt,
-	BarChart3,
+	Package,
+	LineChart,
+	ChefHat,
+	Lock,
+	Calendar,
 	Coffee,
 } from "lucide-react";
 
@@ -24,64 +23,57 @@ export function FeaturesSection() {
 	const features = [
 		{
 			icon: Smartphone,
-			title: "Smart POS System",
-			description: "Lightning-fast checkout with intuitive interface designed for busy coffee rushes. Supports multiple payment methods and offline mode.",
+			title: "Smart POS & Billing",
+			description: "Quick-add items to cart with category filtering. Support for Cash and instant UPI checkouts with dynamic on-screen scanning QR codes.",
 			color: "#D4A574",
-			year: "Core",
+			year: "POS",
 		},
 		{
 			icon: Brain,
-			title: "AI-Powered Analytics",
-			description: "Machine learning algorithms predict customer behavior, optimize menu pricing, and provide actionable insights for business growth.",
+			title: "Spring AI Chatbot",
+			description: "A virtual helper securely bridged with LLM Function Calling to answer questions about tables, daily revenue, and detailed screen flows.",
 			color: "#B48665",
 			year: "AI",
 		},
 		{
-			icon: LineChart,
-			title: "Real-time Dashboards",
-			description: "Live sales tracking, inventory monitoring, and performance metrics. Make data-driven decisions with up-to-the-second information.",
+			icon: Package,
+			title: "Recipe Stock Deduction",
+			description: "Links menu dishes to ingredients. Automatically deducts inventory during checkout and alerts you when stock hits minimum thresholds.",
 			color: "#6A4334",
-			year: "Insights",
+			year: "Recipe",
 		},
 		{
-			icon: Zap,
-			title: "Multi-Device Sync",
-			description: "Seamless synchronization across tablets, phones, and desktops. Your data is always current, no matter which device you're using.",
+			icon: LineChart,
+			title: "Real-time Analytics",
+			description: "Live dashboard tracking category breakdowns, peak hour traffic trends, slow-moving items, and stock depletion estimations.",
 			color: "#65350E",
-			year: "Cloud",
+			year: "Stats",
 		},
 		{
-			icon: ShieldCheck,
-			title: "Bank-Grade Security",
-			description: "End-to-end encryption, PCI DSS compliance, and secure payment processing. Your business and customer data is fully protected.",
+			icon: ChefHat,
+			title: "Kitchen Display (KDS)",
+			description: "Real-time ticket board for chefs that chimes on new counter orders and synchronizes completed preparation states instantly via WebSockets.",
 			color: "#D4A574",
+			year: "Kitchen",
+		},
+		{
+			icon: Lock,
+			title: "Multi-Tenant Security",
+			description: "Complete multi-tenant data isolation ensuring each owner only sees their own data. Secured via stateless JWT or Google OAuth 2.0.",
+			color: "#B48665",
 			year: "Secure",
 		},
 		{
-			icon: Users,
-			title: "Team Management",
-			description: "Staff scheduling, performance tracking, role-based permissions, and shift management. Streamline your workforce operations.",
-			color: "#B48665",
-			year: "Teams",
-		},
-		{
-			icon: Receipt,
-			title: "Smart Receipts",
-			description: "Digital receipts with loyalty program integration, email/SMS delivery, and eco-friendly paperless options. Boost customer retention.",
+			icon: Calendar,
+			title: "Calendar Event Scheduling",
+			description: "Schedule birthdays, parties, or large gatherings and automatically block table bookings during designated reservation hours.",
 			color: "#6A4334",
-			year: "Digital",
-		},
-		{
-			icon: BarChart3,
-			title: "Inventory Management",
-			description: "Automated stock tracking with predictive reorder alerts. Never run out of popular items or over-order slow-moving inventory.",
-			color: "#65350E",
-			year: "Stock",
+			year: "Events",
 		},
 	];
 
 	return (
-		<section ref={sectionRef} className="relative py-32 bg-gradient-to-b from-[#FBF8F3] to-[#FFFBF5] overflow-hidden">
+		<section ref={sectionRef} className="relative py-32 bg-transparent overflow-hidden">
 			{/* Hand-painted background texture */}
 			<div className="absolute inset-0 opacity-5">
 				<svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -163,8 +155,8 @@ export function FeaturesSection() {
 										className="relative group cursor-pointer"
 									>
 										{/* Paper texture background */}
-										<div className="absolute inset-0 bg-white rounded-2xl shadow-xl transform rotate-1 group-hover:rotate-2 transition-transform" />
-										<div className="absolute inset-0 bg-gradient-to-br from-white to-[#FBF8F3] rounded-2xl shadow-2xl" />
+										<div className="absolute inset-0 bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/40 transform rotate-1 group-hover:rotate-2 transition-transform duration-300" />
+										<div className="absolute inset-0 bg-gradient-to-br from-white/90 to-[#FAF6F0]/70 backdrop-blur-md rounded-2xl shadow-2xl border border-white/50" />
 
 										{/* Content */}
 										<div className="relative p-8 space-y-4">

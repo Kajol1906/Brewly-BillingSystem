@@ -170,65 +170,44 @@ export default function Dashboard() {
         <AnimatePresence>
           <div
             onClick={() => setShowOrders(false)}
-            style={{
-              position: 'fixed', inset: 0, zIndex: 9999,
-              backgroundColor: 'rgba(0,0,0,0.4)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md"
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               onClick={(e) => e.stopPropagation()}
-              style={{
-                backgroundColor: 'white',
-                borderRadius: '16px',
-                width: '640px',
-                maxHeight: '80vh',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
+              className="relative z-10 w-full max-w-[640px] max-h-[80vh] rounded-3xl border flex flex-col overflow-hidden shadow-soft-lg"
+              style={{ backgroundColor: '#FAF6F0', borderColor: 'rgba(92, 61, 46, 0.2)' }}
             >
               {/* Header */}
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '20px 24px', borderBottom: '1px solid #e5e7eb',
-              }}>
+              <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: 'rgba(92, 61, 46, 0.1)' }}>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{ordersLabel}</h3>
-                  <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#6b7280' }}>
-                    {orders.length} order{orders.length !== 1 ? 's' : ''} — ₹{orders.reduce((s, o) => s + o.total, 0).toLocaleString()} total
+                  <h3 className="text-xl font-serif font-bold text-[#2C1810]">{ordersLabel}</h3>
+                  <p className="text-sm text-[#8C7B6B] mt-1 font-medium">
+                    {orders.length} order{orders.length !== 1 ? 's' : ''} — <span className="text-[#5C3D2E] font-semibold">₹{orders.reduce((s, o) => s + o.total, 0).toLocaleString()}</span> total
                   </p>
                 </div>
                 <button
                   onClick={() => setShowOrders(false)}
-                  style={{
-                    width: '32px', height: '32px', border: 'none', borderRadius: '8px',
-                    backgroundColor: '#f3f4f6', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}
+                  className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#5C3D2E]/10 hover:bg-[#5C3D2E]/20 text-[#5C3D2E] transition-colors cursor-pointer"
                 >
-                  <X size={16} />
+                  <X size={18} />
                 </button>
               </div>
 
               {/* Orders List */}
-              <div style={{ overflow: 'auto', padding: '16px 24px', flex: 1 }}>
+              <div className="overflow-y-auto p-6 flex-1 scrollbar-thin">
                 {orders.length === 0 ? (
-                  <p style={{ textAlign: 'center', color: '#9ca3af', padding: '32px 0' }}>No orders for this period</p>
+                  <p className="text-center text-[#8C7B6B] py-12 font-medium">No orders for this period</p>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div className="flex flex-col">
                     {/* Table header */}
-                    <div style={{
-                      display: 'grid', gridTemplateColumns: '1fr auto auto',
-                      gap: '16px', padding: '8px 0', borderBottom: '2px solid #e5e7eb',
-                      marginBottom: '4px',
-                    }}>
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Item</span>
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', textAlign: 'center', minWidth: '40px' }}>Qty</span>
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', textAlign: 'right', minWidth: '70px' }}>Price</span>
+                    <div className="grid grid-cols-[1fr_auto_auto] gap-4 pb-2 border-b-2 border-[#5C3D2E]/15 mb-3">
+                      <span className="text-xs font-bold text-[#8C7B6B] uppercase tracking-wider">Item</span>
+                      <span className="text-xs font-bold text-[#8C7B6B] uppercase tracking-wider text-center min-w-[50px]">Qty</span>
+                      <span className="text-xs font-bold text-[#8C7B6B] uppercase tracking-wider text-right min-w-[80px]">Price</span>
                     </div>
                     {/* Aggregated items */}
                     {(() => {
@@ -247,26 +226,19 @@ export default function Dashboard() {
                       return Array.from(aggregated.entries()).map(([name, data]) => (
                         <div
                           key={name}
-                          style={{
-                            display: 'grid', gridTemplateColumns: '1fr auto auto',
-                            gap: '16px', padding: '10px 0', alignItems: 'center',
-                            borderBottom: '1px solid #f3f4f6',
-                          }}
+                          className="grid grid-cols-[1fr_auto_auto] gap-4 py-3.5 items-center border-b border-[#5C3D2E]/10 last:border-0"
                         >
-                          <span style={{ fontSize: '14px', color: '#374151', fontWeight: 500 }}>{name}</span>
-                          <span style={{ fontSize: '14px', color: '#374151', textAlign: 'center', minWidth: '40px' }}>×{data.quantity}</span>
-                          <span style={{ fontSize: '14px', fontWeight: 500, textAlign: 'right', minWidth: '70px' }}>₹{data.subtotal.toLocaleString()}</span>
+                          <span className="text-sm text-[#2C1810] font-semibold">{name}</span>
+                          <span className="text-sm text-[#5C3D2E] font-bold text-center min-w-[50px] bg-[#5C3D2E]/10 py-1 px-2.5 rounded-lg">×{data.quantity}</span>
+                          <span className="text-sm font-bold text-[#2C1810] text-right min-w-[80px]">₹{data.subtotal.toLocaleString()}</span>
                         </div>
                       ));
                     })()}
                     {/* Total */}
-                    <div style={{
-                      display: 'grid', gridTemplateColumns: '1fr auto auto',
-                      gap: '16px', padding: '12px 0 4px', borderTop: '2px solid #e5e7eb', marginTop: '4px',
-                    }}>
-                      <span style={{ fontWeight: 700, fontSize: '15px', color: '#6C63FF' }}>Total</span>
+                    <div className="grid grid-cols-[1fr_auto_auto] gap-4 pt-4 border-t-2 border-[#5C3D2E]/15 mt-3">
+                      <span className="font-serif font-bold text-lg text-[#2C1810]">Total</span>
                       <span></span>
-                      <span style={{ fontWeight: 700, fontSize: '15px', color: '#6C63FF', textAlign: 'right', minWidth: '70px' }}>
+                      <span className="font-serif font-bold text-lg text-[#5C3D2E] text-right min-w-[80px]">
                         ₹{orders.reduce((s, o) => s + o.total, 0).toLocaleString()}
                       </span>
                     </div>
@@ -284,82 +256,59 @@ export default function Dashboard() {
         <AnimatePresence>
           <div
             onClick={() => setShowEvents(false)}
-            style={{
-              position: 'fixed', inset: 0, zIndex: 9999,
-              backgroundColor: 'rgba(0,0,0,0.4)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md"
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               onClick={(e) => e.stopPropagation()}
-              style={{
-                backgroundColor: 'white',
-                borderRadius: '16px',
-                width: '560px',
-                maxHeight: '80vh',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
+              className="relative z-10 w-full max-w-[560px] max-h-[80vh] rounded-3xl border flex flex-col overflow-hidden shadow-soft-lg"
+              style={{ backgroundColor: '#FAF6F0', borderColor: 'rgba(92, 61, 46, 0.2)' }}
             >
               {/* Header */}
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '20px 24px', borderBottom: '1px solid #e5e7eb',
-              }}>
+              <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: 'rgba(92, 61, 46, 0.1)' }}>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>Upcoming Events</h3>
-                  <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#6b7280' }}>
+                  <h3 className="text-xl font-serif font-bold text-[#2C1810]">Upcoming Events</h3>
+                  <p className="text-sm text-[#8C7B6B] mt-1 font-medium">
                     {upcomingEvents.length} event{upcomingEvents.length !== 1 ? 's' : ''} scheduled
                   </p>
                 </div>
                 <button
                   onClick={() => setShowEvents(false)}
-                  style={{
-                    width: '32px', height: '32px', border: 'none', borderRadius: '8px',
-                    backgroundColor: '#f3f4f6', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}
+                  className="w-9 h-9 rounded-xl flex items-center justify-center bg-[#5C3D2E]/10 hover:bg-[#5C3D2E]/20 text-[#5C3D2E] transition-colors cursor-pointer"
                 >
-                  <X size={16} />
+                  <X size={18} />
                 </button>
               </div>
 
               {/* Events List */}
-              <div style={{ overflow: 'auto', padding: '16px 24px', flex: 1 }}>
+              <div className="overflow-y-auto p-6 flex-1 scrollbar-thin">
                 {upcomingEvents.length === 0 ? (
-                  <p style={{ textAlign: 'center', color: '#9ca3af', padding: '32px 0' }}>No upcoming events</p>
+                  <p className="text-center text-[#8C7B6B] py-12 font-medium">No upcoming events</p>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div className="flex flex-col gap-4">
                     {upcomingEvents.map((evt) => (
                       <div
                         key={evt.id}
-                        style={{
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '12px',
-                          padding: '16px',
-                          backgroundColor: '#fafafa',
-                        }}
+                        className="border bg-white p-5 rounded-2xl shadow-soft hover:shadow-hover hover:border-[#5C3D2E]/40 transition-all duration-200"
+                        style={{ borderColor: 'rgba(92, 61, 46, 0.15)' }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                          <span style={{ fontWeight: 600, fontSize: '15px', color: '#111827' }}>{evt.title}</span>
-                          <span style={{
-                            fontSize: '12px', fontWeight: 500,
-                            padding: '2px 10px', borderRadius: '20px',
-                            backgroundColor: '#EEF2FF', color: '#6C63FF',
-                          }}>{evt.type}</span>
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="font-serif font-bold text-base text-[#2C1810]">{evt.title}</span>
+                          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#5C3D2E]/10 text-[#5C3D2E]">
+                            {evt.type}
+                          </span>
                         </div>
-                        <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: '#6b7280' }}>
-                          <span>📅 {evt.date}</span>
-                          <span>🕐 {evt.time}</span>
-                          <span>👥 {evt.guestCount} guests</span>
+                        <div className="flex flex-wrap gap-4 text-xs text-[#8C7B6B] font-medium">
+                          <span className="flex items-center gap-1">📅 {evt.date}</span>
+                          <span className="flex items-center gap-1">🕐 {evt.time}</span>
+                          <span className="flex items-center gap-1">👥 {evt.guestCount} guests</span>
                         </div>
                         {evt.packageType && (
-                          <div style={{ marginTop: '6px', fontSize: '13px', color: '#6b7280' }}>
-                            📦 {evt.packageType} Package
+                          <div className="mt-2.5 pt-2.5 border-t border-dashed border-[#5C3D2E]/10 text-xs text-[#8C7B6B] font-medium">
+                            📦 <span className="text-[#2C1810] font-semibold">{evt.packageType}</span> Package
                           </div>
                         )}
                       </div>

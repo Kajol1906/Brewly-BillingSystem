@@ -6,6 +6,7 @@ import TableCard from './TableCard';
 import OrderSidebar from './OrderSidebar';
 import { GlassButton } from '../ui/GlassButton';
 import { createTable, deleteTable, renumberTables, getTablesWithReservations, Table as TableData } from '../../services/tableService';
+import { useWebSocket } from '../../services/useWebSocket';
 
 
 export interface Table extends Omit<TableData, 'status'> {
@@ -23,6 +24,11 @@ export function POSScreen() {
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [newTableSeats, setNewTableSeats] = useState('4');
     const [isTakeawayMode, setIsTakeawayMode] = useState(false);
+
+    // Real-time updates subscription
+    useWebSocket('/topic/tables', () => {
+        fetchTables();
+    });
 
     useEffect(() => {
         fetchTables();
@@ -84,6 +90,8 @@ export function POSScreen() {
         if (success) {
             await renumberTables();
             await fetchTables();
+        } else {
+            alert("Could not delete table. Ensure it is not occupied and has no active orders.");
         }
     };
 
@@ -131,35 +139,31 @@ export function POSScreen() {
             {createPortal(
                 <AnimatePresence>
                     {isAddDialogOpen && (
-                        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+                        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md">
                             <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute inset-0 bg-black/60"
-                                onClick={() => setIsAddDialogOpen(false)}
-                            />
-                            <motion.div
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                exit={{ scale: 0.9, opacity: 0 }}
-                                className="relative z-10 bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-2xl text-center"
-                                style={{ width: '500px', padding: '48px 64px' }}
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                                onClick={(e) => e.stopPropagation()}
+                                className="relative z-10 w-full max-w-[420px] rounded-3xl border p-8 shadow-soft-lg text-center"
+                                style={{ backgroundColor: '#FAF6F0', borderColor: 'rgba(92, 61, 46, 0.2)' }}
                             >
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                                <h3 className="text-xl font-serif font-bold text-[#2C1810] mb-2">
                                     Add New Table
                                 </h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                                <p className="text-xs text-[#8C7B6B] font-medium mb-6">
                                     Select the number of seats for the new table.
                                 </p>
                                 <div className="mb-6 text-left">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                                    <label className="block text-xs font-bold text-[#2C1810] uppercase tracking-wide mb-2.5">
                                         Number of Seats
                                     </label>
                                     <select
                                         value={newTableSeats}
                                         onChange={(e) => setNewTableSeats(e.target.value)}
-                                        className="w-full px-4 py-3 text-sm rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                                        className="w-full h-11 px-4 text-sm rounded-xl border bg-white text-[#2C1810] focus:outline-none focus:ring-2 focus:ring-[#5C3D2E]/30 transition-all font-medium cursor-pointer"
+                                        style={{ borderColor: 'rgba(92, 61, 46, 0.15)' }}
                                     >
                                         <option value="2">2 seats</option>
                                         <option value="4">4 seats</option>
@@ -168,16 +172,19 @@ export function POSScreen() {
                                         <option value="10">10 seats</option>
                                     </select>
                                 </div>
-                                <div className="flex gap-4 mt-2">
+                                <div className="flex gap-4">
                                     <button
                                         onClick={() => setIsAddDialogOpen(false)}
-                                        className="flex-1 px-4 py-3 text-sm font-medium rounded-xl border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+                                        className="flex-1 h-11 text-sm font-semibold rounded-xl border border-[#5C3D2E]/20 text-[#5C3D2E] hover:bg-[#5C3D2E]/5 transition-colors cursor-pointer"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         onClick={handleAddTable}
-                                        className="flex-1 px-4 py-3 text-sm font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                                        className="flex-1 h-11 text-sm font-bold rounded-xl text-white shadow-soft hover:shadow-hover transition-all cursor-pointer"
+                                        style={{
+                                            background: 'linear-gradient(135deg, #5C3D2E, #2C1810)'
+                                        }}
                                     >
                                         Add Table
                                     </button>
@@ -225,18 +232,38 @@ export function POSScreen() {
                 </div>
             </motion.div>
 
-            {/* Table Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-                {tables.map((table, index) => (
-                    <TableCard
-                        key={table.id}
-                        table={table}
-                        onClick={() => handleTableClick(table)}
-                        onDelete={handleDeleteTable}
-                        index={index}
-                    />
-                ))}
-            </div>
+            {/* Table Grid / Empty State */}
+            {tables.length === 0 ? (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex flex-col items-center justify-center py-16 px-4 border border-dashed rounded-3xl"
+                    style={{
+                        background: 'rgba(255, 255, 255, 0.4)',
+                        borderColor: 'rgba(92, 61, 46, 0.25)',
+                    }}
+                >
+                    <div className="w-16 h-16 rounded-2xl bg-[#FAF6F0] border border-[#5C3D2E]/10 flex items-center justify-center mb-4 shadow-soft">
+                        <Plus className="w-8 h-8 text-[#5C3D2E] opacity-80" />
+                    </div>
+                    <h3 className="text-xl font-bold font-serif text-[#2C1810]">No active tables found</h3>
+                    <p className="mt-1 text-center max-w-sm text-sm text-[#8C7B6B] font-medium leading-relaxed">
+                        Add custom dining tables using the "Add Table" button above to start managing dynamic dine-in orders!
+                    </p>
+                </motion.div>
+            ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                    {tables.map((table, index) => (
+                        <TableCard
+                            key={table.id}
+                            table={table}
+                            onClick={() => handleTableClick(table)}
+                            onDelete={handleDeleteTable}
+                            index={index}
+                        />
+                    ))}
+                </div>
+            )}
 
             {/* Order Sidebar */}
             <AnimatePresence>

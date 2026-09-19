@@ -3,9 +3,11 @@ import { Coffee } from "lucide-react";
 interface LandingNavbarProps {
   onLogin: () => void;
   onSignup: () => void;
+  isAuthenticated?: boolean;
+  onDashboard?: () => void;
 }
 
-export default function LandingNavbar({ onLogin, onSignup }: LandingNavbarProps) {
+export default function LandingNavbar({ onLogin, onSignup, isAuthenticated, onDashboard }: LandingNavbarProps) {
   return (
     <nav className="w-full flex items-center justify-between px-8 py-4 bg-transparent absolute top-0 left-0 z-50">
       {/* Logo */}
@@ -17,18 +19,29 @@ export default function LandingNavbar({ onLogin, onSignup }: LandingNavbarProps)
       </div>
       {/* Auth Buttons */}
       <div className="flex gap-4">
-        <button
-          className="px-5 py-2 rounded-full font-semibold bg-[#B48665] text-[#FBF8F3] hover:bg-[#65350E] transition"
-          onClick={onSignup}
-        >
-          Sign up
-        </button>
-        <button
-          className="px-5 py-2 rounded-full font-semibold border border-[#B48665] text-[#B48665] hover:bg-[#B48665] hover:text-[#FBF8F3] transition"
-          onClick={onLogin}
-        >
-          Sign in
-        </button>
+        {isAuthenticated ? (
+          <button
+            className="px-5 py-2 rounded-full font-semibold bg-[#B48665] text-[#FBF8F3] hover:bg-[#65350E] transition"
+            onClick={onDashboard}
+          >
+            Dashboard
+          </button>
+        ) : (
+          <>
+            <button
+              className="px-5 py-2 rounded-full font-semibold bg-[#B48665] text-[#FBF8F3] hover:bg-[#65350E] transition"
+              onClick={onSignup}
+            >
+              Sign up
+            </button>
+            <button
+              className="px-5 py-2 rounded-full font-semibold border border-[#B48665] text-[#B48665] hover:bg-[#B48665] hover:text-[#FBF8F3] transition"
+              onClick={onLogin}
+            >
+              Sign in
+            </button>
+          </>
+        )}
       </div>
     </nav>
   );

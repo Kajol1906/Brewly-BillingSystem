@@ -2,7 +2,7 @@ package com.brewly.brewly_backend.menu;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.brewly.brewly_backend.user.User;
 
@@ -27,8 +27,13 @@ public class MenuItem {
 
     private String imageUrl;
 
+    @Builder.Default
     private Boolean available=true;
 
+    @Builder.Default
+    private Boolean manuallyUnavailable = false;
+
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

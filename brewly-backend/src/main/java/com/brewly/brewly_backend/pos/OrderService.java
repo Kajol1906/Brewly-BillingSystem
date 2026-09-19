@@ -14,6 +14,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 import java.util.List;
 
 @Service
@@ -28,6 +30,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final TableRepository tableRepository;
     private final UserContextHelper userContextHelper;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     public void placeOrder(OrderRequest request) {
         User user = userContextHelper.getCurrentUser();
@@ -39,18 +42,22 @@ public class OrderService {
             throw new RuntimeException("Unauthorized");
         }
 
+        if (menuItem.getAvailable() != null && !menuItem.getAvailable()) {
+            throw new RuntimeException(menuItem.getName() + " is out of stock");
+        }
+
         // 2️⃣ Fetch recipe ingredients
         List<RecipeIngredient> recipeIngredients = recipeIngredientRepository.findByRecipe_MenuItem(menuItem);
 
         if (!recipeIngredients.isEmpty()) {
-            // 3️⃣ Validate stock
+            // 3️⃣ Validate stock — ensure enough for the full requested quantity
             for (RecipeIngredient ri : recipeIngredients) {
                 Ingredient ingredient = ri.getIngredient();
                 double requiredQty = ri.getQuantity() * request.getQuantity();
 
                 if (ingredient.getQuantity() < requiredQty) {
                     throw new RuntimeException(
-                            ingredient.getName() + " is out of stock");
+                             ingredient.getName() + " is out of stock");
                 }
             }
 
@@ -65,8 +72,24 @@ public class OrderService {
                 ingredientRepository.save(ingredient);
             }
 
-            // 5️⃣ Auto update availability
+            // 5️⃣ Recalculate availability for THIS menu item
             menuItemService.updateAvailabilityBasedOnStock(menuItem);
+
+            // 5b️⃣ Also recalculate availability for ALL other menu items
+            //      that share any of the same ingredients (they may also go out of stock)
+            java.util.Set<Long> updatedMenuItemIds = new java.util.HashSet<>();
+            updatedMenuItemIds.add(menuItem.getId());
+
+            for (RecipeIngredient ri : recipeIngredients) {
+                List<com.brewly.brewly_backend.recipe.RecipeIngredient> sharedMappings =
+                        recipeIngredientRepository.findByIngredient(ri.getIngredient());
+                for (com.brewly.brewly_backend.recipe.RecipeIngredient shared : sharedMappings) {
+                    MenuItem affectedItem = shared.getRecipe().getMenuItem();
+                    if (updatedMenuItemIds.add(affectedItem.getId())) {
+                        menuItemService.updateAvailabilityBasedOnStock(affectedItem);
+                    }
+                }
+            }
         }
 
         // 6️⃣ SAVE ORDER TO DB
@@ -82,11 +105,12 @@ public class OrderService {
 
         if (request.getTableId() != null) {
             order.setTableId(request.getTableId());
-            order.setStatus("ACTIVE");
-        } else {
-            // Takeaway order — no table lifecycle, mark as BILLED immediately
-            order.setStatus("BILLED");
         }
+        if (request.getTakeawayName() != null) {
+            order.setTakeawayName(request.getTakeawayName());
+        }
+        // Both dine-in and takeaway start as ACTIVE so they appear on KDS
+        order.setStatus("ACTIVE");
 
         orderRepository.save(order);
 
@@ -102,17 +126,29 @@ public class OrderService {
             table.setCurrentBill((table.getCurrentBill() == null ? 0.0 : table.getCurrentBill()) + itemTotal);
             tableRepository.save(table);
         }
+
+        // 8️⃣ Broadcast socket update to client
+        try {
+            simpMessagingTemplate.convertAndSend("/topic/orders", "updated");
+            simpMessagingTemplate.convertAndSend("/topic/tables", "updated");
+            simpMessagingTemplate.convertAndSend("/topic/menu", "updated");
+        } catch (Exception ignored) {}
     }
 
     public List<OrderItemDTO> getActiveOrdersForTable(Long tableId) {
         User user = userContextHelper.getCurrentUser();
         List<Order> activeOrders = orderRepository.findByUserAndTableIdAndStatus(user, tableId, "ACTIVE");
+        List<Order> preparedOrders = orderRepository.findByUserAndTableIdAndStatus(user, tableId, "PREPARED");
+
+        List<Order> allOrders = new java.util.ArrayList<>();
+        allOrders.addAll(activeOrders);
+        allOrders.addAll(preparedOrders);
 
         // Aggregate items by menu item ID AND price to combine quantities of identical items
         // placed in separate orders, but keep them separate if price changed.
         java.util.Map<String, OrderItemDTO> aggregatedItems = new java.util.HashMap<>();
 
-        for (Order order : activeOrders) {
+        for (Order order : allOrders) {
             for (OrderItem item : order.getItems()) {
                 Long menuId = item.getMenuItem().getId();
                 Double priceAtOrder = item.getPriceAtOrder() != null ? item.getPriceAtOrder() : item.getMenuItem().getPrice();
@@ -132,5 +168,27 @@ public class OrderService {
         }
 
         return new java.util.ArrayList<>(aggregatedItems.values());
+    }
+
+    public List<Order> getAllActiveOrders() {
+        User user = userContextHelper.getCurrentUser();
+        java.time.LocalDateTime todayStart = java.time.LocalDate.now().atStartOfDay();
+        return orderRepository.findAllByUserAndCreatedAtAfterAndStatus(user, todayStart, "ACTIVE");
+    }
+
+    public void markOrderAsPrepared(Long orderId) {
+        User user = userContextHelper.getCurrentUser();
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
+        order.setStatus("PREPARED");
+        orderRepository.save(order);
+
+        // Broadcast updates
+        try {
+            simpMessagingTemplate.convertAndSend("/topic/orders", "updated");
+        } catch (Exception ignored) {}
     }
 }

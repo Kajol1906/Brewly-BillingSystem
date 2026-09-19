@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 @RestController
 @RequestMapping("/api/billing")
 @RequiredArgsConstructor
@@ -17,6 +19,7 @@ public class BillController {
     private final OrderRepository orderRepository;
     private final com.brewly.brewly_backend.events.EventRepository eventRepository;
     private final UserContextHelper userContextHelper;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @PostMapping("/generate")
     @Transactional
@@ -46,12 +49,18 @@ public class BillController {
             table.setCurrentBill(0.0);
             tableRepository.save(table);
 
-            // 3. Mark orders as BILLED
+            // 3. Mark active and prepared orders as BILLED
             java.util.List<Order> activeOrders = orderRepository.findByUserAndTableIdAndStatus(user, request.getTableId(), "ACTIVE");
-            for (Order order : activeOrders) {
+            java.util.List<Order> preparedOrders = orderRepository.findByUserAndTableIdAndStatus(user, request.getTableId(), "PREPARED");
+            
+            java.util.List<Order> allOrders = new java.util.ArrayList<>();
+            allOrders.addAll(activeOrders);
+            allOrders.addAll(preparedOrders);
+            
+            for (Order order : allOrders) {
                 order.setStatus("BILLED");
             }
-            orderRepository.saveAll(activeOrders);
+            orderRepository.saveAll(allOrders);
 
             // 4. Mark associated events as COMPLETED
             java.util.List<com.brewly.brewly_backend.events.Event> todayEvents = eventRepository
@@ -64,10 +73,30 @@ public class BillController {
             eventRepository.saveAll(todayEvents);
         } else {
             // === TAKEAWAY BILLING ===
-            // Orders already marked as BILLED by OrderService, just create receipt
+            if (request.getTakeawayName() != null) {
+                java.util.List<Order> activeOrders = orderRepository.findByUserAndTakeawayNameAndStatus(user, request.getTakeawayName(), "ACTIVE");
+                java.util.List<Order> preparedOrders = orderRepository.findByUserAndTakeawayNameAndStatus(user, request.getTakeawayName(), "PREPARED");
+
+                java.util.List<Order> allOrders = new java.util.ArrayList<>();
+                allOrders.addAll(activeOrders);
+                allOrders.addAll(preparedOrders);
+
+                for (Order order : allOrders) {
+                    order.setStatus("BILLED");
+                }
+                orderRepository.saveAll(allOrders);
+            }
             bill.setTotalAmount(request.getTotalAmount());
         }
 
-        return billRepository.save(bill);
+        Bill savedBill = billRepository.save(bill);
+
+        // Broadcast socket update to client
+        try {
+            simpMessagingTemplate.convertAndSend("/topic/orders", "updated");
+            simpMessagingTemplate.convertAndSend("/topic/tables", "updated");
+        } catch (Exception ignored) {}
+
+        return savedBill;
     }
 }

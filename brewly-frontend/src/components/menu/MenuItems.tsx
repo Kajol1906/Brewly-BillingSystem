@@ -264,13 +264,24 @@ export default function MenuItems() {
             const rows: Record<string, unknown>[] = XLSX.utils.sheet_to_json(sheet);
 
             const parsed = rows.map((row) => {
-                const nameRaw = row['Name'] || row['name'] || row['ITEM'] || row['item'] || row['Item'] || row['Item Name'] || row['item name'] || '';
-                const priceRaw = row['Price'] || row['price'] || row['PRICE'] || row['Rate'] || row['rate'] || 0;
-                const catRaw = row['Category'] || row['category'] || row['CATEGORY'] || row['Type'] || row['type'] || '';
+                const nameRaw = row['Name'] || row['name'] || row['ITEM'] || row['item'] || row['Item'] || row['Item Name'] || row['item name'] || row['Product Name'] || row['product name'] || row['ProductName'] || row['productname'] || row['Title'] || row['title'] || '';
+                const priceRaw = row['Price'] || row['price'] || row['PRICE'] || row['Rate'] || row['rate'] || row['Cost'] || row['cost'] || 0;
+                const catRaw = row['Category'] || row['category'] || row['CATEGORY'] || row['Type'] || row['type'] || row['Group'] || row['group'] || '';
 
                 const name = String(nameRaw).trim();
-                const price = Number(priceRaw);
-                const category = String(catRaw).trim().toUpperCase() || 'UNCATEGORIZED';
+                
+                // Strip currency symbols ($, ₹, etc.), commas, and whitespace, keeping numbers and decimal point
+                let cleanPrice = String(priceRaw).replace(/[^0-9.]/g, '');
+                const decimalCount = (cleanPrice.match(/\./g) || []).length;
+                if (decimalCount > 1) {
+                    const parts = cleanPrice.split('.');
+                    cleanPrice = parts[0] + '.' + parts.slice(1).join('');
+                }
+                const price = cleanPrice ? Number(cleanPrice) : 0;
+                
+                const category = (catRaw && String(catRaw).trim()) 
+                    ? String(catRaw).trim().toUpperCase() 
+                    : 'UNCATEGORIZED';
 
                 let valid = true;
                 let error = '';
@@ -297,9 +308,14 @@ export default function MenuItems() {
             setImportResult(result);
             fetchMenu();
             fetchCategories();
-        } catch (err) {
+        } catch (err: any) {
             console.error('Bulk import failed', err);
-            alert('Import failed. Please try again.');
+            const status = err?.response?.status;
+            if (status === 401 || status === 403) {
+                alert('Session expired. Please log out and log back in.');
+            } else {
+                alert('Import failed: ' + (err?.response?.data?.message || err?.message || 'Please try again.'));
+            }
         } finally {
             setImporting(false);
         }

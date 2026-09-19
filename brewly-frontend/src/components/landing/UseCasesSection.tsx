@@ -55,7 +55,7 @@ export function UseCasesSection() {
 	];
 
 	return (
-		<section className="relative py-32 bg-gradient-to-b from-[#FFFBF5] to-[#FBF8F3] overflow-hidden">
+		<section className="relative py-32 bg-transparent overflow-hidden">
 			{/* Decorative background */}
 			<div className="absolute inset-0 opacity-5">
 				<svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -83,33 +83,49 @@ export function UseCasesSection() {
 				</motion.div>
 
 				{/* Use Cases Grid */}
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
 					{useCases.map((useCase, index) => {
 						const Icon = useCase.icon;
 						return (
 							<motion.div
 								key={index}
-								initial={{ opacity: 0, y: 50 }}
+								initial={{ opacity: 0, y: 40 }}
 								whileInView={{ opacity: 1, y: 0 }}
 								viewport={{ once: true, margin: "-100px" }}
-								transition={{ duration: 0.7, delay: index * 0.1 }}
-								className="relative bg-white rounded-2xl shadow-2xl p-7 flex flex-col gap-4 border border-[#B48665]/10"
+								transition={{ duration: 0.7, delay: index * 0.15 }}
+								className="group relative bg-white/70 backdrop-blur-md hover:-translate-y-2 hover:shadow-[0_24px_50px_rgba(92,61,46,0.16)] border border-white/50 hover:border-[#5C3D2E]/35 rounded-3xl p-8 flex flex-col justify-between gap-6 transition-all duration-300 overflow-hidden"
 							>
+								{/* Subtle ambient light glow in the corner on hover */}
+								<div 
+									className="absolute -right-16 -top-16 w-36 h-36 rounded-full opacity-[0.03] group-hover:opacity-[0.08] blur-2xl transition-opacity duration-300"
+									style={{ backgroundColor: useCase.color }}
+								/>
+
 								{/* Icon and Title */}
-								<div className="flex items-center gap-4">
-									<div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: `${useCase.color}20` }}>
-										<Icon className="w-6 h-6" style={{ color: useCase.color }} />
+								<div className="flex items-start gap-5">
+									<div 
+										className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-md bg-white border border-[#B48665]/20 group-hover:scale-110 transition-transform duration-300"
+										style={{ boxShadow: '0 8px 20px rgba(92, 61, 46, 0.05)' }}
+									>
+										<Icon className="w-6.5 h-6.5" style={{ color: useCase.color }} />
 									</div>
-									<div>
-										<h3 className="text-xl font-serif text-[#65350E]">{useCase.title}</h3>
-										<div className="text-[#6A4334]/60 text-sm">{useCase.description}</div>
+									<div className="flex-1">
+										<h3 className="text-xl font-serif font-bold text-[#65350E] group-hover:text-[#5C3D2E] transition-colors">
+											{useCase.title}
+										</h3>
+										<p className="text-[#6A4334]/70 text-sm mt-1.5 leading-relaxed">
+											{useCase.description}
+										</p>
 									</div>
 								</div>
 
 								{/* Features List */}
-								<ul className="flex flex-wrap gap-2 mt-2">
+								<ul className="flex flex-wrap gap-2.5 pt-4 border-t border-[#5C3D2E]/5">
 									{useCase.features.map((feature) => (
-										<li key={feature} className="bg-[#FBF8F3] text-[#6A4334]/80 px-3 py-1 rounded-full text-xs font-medium border border-[#B48665]/20">
+										<li 
+											key={feature} 
+											className="bg-[#FAF6F0] hover:bg-[#5C3D2E] hover:text-[#FAF6F0] text-[#6A4334]/90 px-3.5 py-1.5 rounded-xl text-xs font-semibold border border-[#B48665]/15 hover:scale-105 hover:shadow-soft transition-all duration-200 cursor-default"
+										>
 											{feature}
 										</li>
 									))}
@@ -130,7 +146,7 @@ export function UseCasesSection() {
 								whileInView={{ opacity: 1, y: 0 }}
 								viewport={{ once: true, margin: "-100px" }}
 								transition={{ duration: 0.7, delay: index * 0.1 }}
-								className="flex flex-col items-center gap-4 bg-[#FBF8F3] rounded-2xl shadow-lg p-8 border border-[#B48665]/10 max-w-xs mx-auto"
+								className="flex flex-col items-center gap-4 bg-white/70 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-white/40 max-w-xs mx-auto"
 							>
 								<div className="w-12 h-12 rounded-full flex items-center justify-center shadow" style={{ backgroundColor: `${benefit.color}20` }}>
 									<Icon className="w-6 h-6" style={{ color: benefit.color }} />

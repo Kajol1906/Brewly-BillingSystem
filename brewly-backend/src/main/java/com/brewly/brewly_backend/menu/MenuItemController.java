@@ -1,6 +1,5 @@
 package com.brewly.brewly_backend.menu;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,88 +14,87 @@ public class MenuItemController {
 
     private final MenuItemService service;
 
-    //get all menu items
+    // get all menu items
     @GetMapping
-    public List<MenuItem> getAllItems(){
+    public List<MenuItem> getAllItems() {
         return service.getAllItems();
     }
 
-    //pos view
+    // pos view
     @GetMapping("/available")
-    public List<MenuItem> getAvailableItems(){
+    public List<MenuItem> getAvailableItems() {
         return service.getAvailableItems();
     }
 
-
-    //filter by category
+    // filter by category
     @GetMapping("/category/{category}")
-    public List<MenuItem> getByCategory(@PathVariable String category){
+    public List<MenuItem> getByCategory(@PathVariable String category) {
         return service.getByCategory(category);
     }
 
-    //search menu items
+    // search menu items
     @GetMapping("/search")
-    public List<MenuItem> search(@RequestParam String q){
+    public List<MenuItem> search(@RequestParam String q) {
         return service.searchItems(q);
     }
 
-    //Add new menu item
+    // Add new menu item
     @PostMapping
-    public MenuItem addItem(@RequestBody MenuItem item){
+    public MenuItem addItem(@RequestBody MenuItem item) {
         return service.addItem(item);
     }
 
-    //get all categories
+    // get all categories
     @GetMapping("/categories")
-    public List<String> getCategories(){
+    public List<String> getCategories() {
         return service.getAllCategories();
     }
 
-    //get category item counts
+    // get category item counts
     @GetMapping("/categories/counts")
-    public Map<String, Long> getCategoryCounts(){
+    public Map<String, Long> getCategoryCounts() {
         return service.getCategoryItemCounts();
     }
 
-    //delete a category and all its items
+    // delete a category and all its items
     @DeleteMapping("/category/{category}")
-    public void deleteCategory(@PathVariable String category){
+    public void deleteCategory(@PathVariable String category) {
         service.deleteCategory(category);
     }
 
-    //reassign items from one category to another
+    // reassign items from one category to another
     @PutMapping("/category/{oldCategory}/reassign/{newCategory}")
-    public void reassignCategory(@PathVariable String oldCategory, @PathVariable String newCategory){
+    public void reassignCategory(@PathVariable String oldCategory, @PathVariable String newCategory) {
         service.reassignCategory(oldCategory, newCategory);
     }
 
-    //update menu item
+    // update menu item
     @PutMapping("/{id}")
-    public MenuItem updateItem(@PathVariable Long id, @RequestBody MenuItem item){
+    public MenuItem updateItem(@PathVariable Long id, @RequestBody MenuItem item) {
         return service.updateItem(id, item);
     }
 
-    //toggle availability
+    // toggle availability
     @PatchMapping("/{id}/toggle")
-    public MenuItem toggle(@PathVariable Long id){
+    public MenuItem toggle(@PathVariable Long id) {
         return service.toggleAvailability(id);
     }
 
-    //bulk import menu items
+    // bulk import menu items
     @PostMapping("/bulk")
-    public Map<String, Object> bulkImport(@RequestBody List<MenuItem> items){
+    public Map<String, Object> bulkImport(@RequestBody List<MenuItem> items) {
         return service.bulkImport(items);
     }
 
-    //delete a single menu item
+    // delete a single menu item
     @DeleteMapping("/{id}")
-    public void deleteMenuItem(@PathVariable Long id){
+    public void deleteMenuItem(@PathVariable Long id) {
         service.deleteMenuItem(id);
     }
 
-    //bulk reassignment
+    // bulk reassignment
     @PutMapping("/category/{newCategory}/bulk")
-    public void bulkUpdateCategory(@PathVariable String newCategory, @RequestBody List<Long> itemIds){
+    public void bulkUpdateCategory(@PathVariable String newCategory, @RequestBody List<Long> itemIds) {
         service.bulkUpdateCategory(itemIds, newCategory);
     }
 }

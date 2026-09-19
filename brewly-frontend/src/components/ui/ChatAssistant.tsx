@@ -65,17 +65,33 @@ export const ChatAssistant: React.FC = () => {
   };
 
   return (
+    /* Outer wrapper — fixed to viewport bottom-right */
     <div className="fixed bottom-6 right-6 z-50">
+
+      {/* Chat panel — positioned ABOVE the toggle button */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95, transformOrigin: 'bottom right' }}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="mb-4 w-96 h-[500px] bg-background/80 backdrop-blur-xl border border-border rounded-2xl shadow-2xl flex flex-column overflow-hidden"
+            style={{
+              position: 'absolute',
+              bottom: 68,   /* sits above the 56px button + 12px gap */
+              right: 0,
+              width: 384,
+              height: 500,
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              borderRadius: 20,
+              border: '1px solid var(--border)',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.18)',
+              background: 'var(--background)',
+            }}
           >
             {/* Header */}
-            <div className="p-4 border-b border-border bg-primary/5 flex items-center justify-between">
+            <div className="p-4 border-b border-border bg-primary/5 flex items-center justify-between" style={{ flexShrink: 0 }}>
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
                   <Sparkles size={18} className="text-primary" />
@@ -88,7 +104,7 @@ export const ChatAssistant: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => setIsOpen(false)}
                 className="p-1 hover:bg-muted rounded-md transition-colors"
               >
@@ -96,8 +112,11 @@ export const ChatAssistant: React.FC = () => {
               </button>
             </div>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {/* Messages — scrollable, takes all remaining space */}
+            <div
+              className="p-4 space-y-4"
+              style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}
+            >
               {messages.map((msg) => (
                 <motion.div
                   initial={{ opacity: 0, x: msg.sender === 'user' ? 10 : -10 }}
@@ -105,29 +124,42 @@ export const ChatAssistant: React.FC = () => {
                   key={msg.id}
                   className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`flex gap-2 max-w-[85%] ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}>
+                  <div className={`flex gap-2 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
+                    style={{ maxWidth: '85%' }}>
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                       msg.sender === 'user' ? 'bg-secondary/20' : 'bg-primary/10'
                     }`}>
-                      {msg.sender === 'user' ? <User size={14} /> : <Bot size={14} className="text-primary" />}
+                      {msg.sender === 'user'
+                        ? <User size={14} />
+                        : <Bot size={14} className="text-primary" />}
                     </div>
-                    <div className={`p-3 rounded-2xl text-sm ${
-                      msg.sender === 'user' 
-                        ? 'bg-primary text-primary-foreground rounded-tr-none' 
-                        : 'bg-muted rounded-tl-none'
-                    }`}>
+                    <div
+                      className={`text-sm ${
+                        msg.sender === 'user'
+                          ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-none'
+                          : 'bg-muted rounded-2xl rounded-tl-none'
+                      }`}
+                      style={{
+                        padding: '10px 14px',
+                        wordBreak: 'break-word',
+                        overflowWrap: 'anywhere',
+                        whiteSpace: 'pre-wrap',
+                        lineHeight: 1.55,
+                      }}
+                    >
                       {msg.text}
                     </div>
                   </div>
                 </motion.div>
               ))}
+
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="flex gap-2 max-w-[85%]">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <div className="flex gap-2" style={{ maxWidth: '85%' }}>
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <Bot size={14} className="text-primary" />
                     </div>
-                    <div className="p-3 rounded-2xl bg-muted rounded-tl-none flex items-center gap-2">
+                    <div className="p-3 rounded-2xl rounded-tl-none bg-muted flex items-center gap-2">
                       <Loader2 size={14} className="animate-spin text-primary" />
                       <span className="text-xs text-muted-foreground italic">Brewly is thinking...</span>
                     </div>
@@ -137,14 +169,14 @@ export const ChatAssistant: React.FC = () => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <div className="p-4 border-t border-border bg-background/50">
+            {/* Input — fixed at bottom of panel */}
+            <div className="p-4 border-t border-border bg-background/50" style={{ flexShrink: 0 }}>
               <div className="relative">
                 <input
                   type="text"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Ask about revenue, menu, or how to use..."
                   className="w-full bg-muted/50 border border-border rounded-xl py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 />
@@ -157,18 +189,20 @@ export const ChatAssistant: React.FC = () => {
                 </button>
               </div>
               <p className="text-[10px] text-center text-muted-foreground mt-2">
-                Powered by Spring AI & OpenAI
+                Powered by Spring AI &amp; OpenAI
               </p>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Toggle button */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
         className="w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-2xl flex items-center justify-center border-4 border-background"
+        style={{ position: 'relative' }}
       >
         {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
         {!isOpen && (
